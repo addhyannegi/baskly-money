@@ -88,64 +88,24 @@
         </div>
       </a>
 
-      <!-- Editorial Indexed Links -->
-      <nav class="hidden lg:flex items-center gap-9 text-xs font-medium tracking-wide text-[#5C5752]">
-        <a href="#baskets" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
-          <span class="font-mono text-[10px] text-[#9A7B56]">01</span> Baskets
-        </a>
-        <a href="#calculator" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
-          <span class="font-mono text-[10px] text-[#9A7B56]">02</span> Compounding
-        </a>
-        <a href="#methodology" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
-          <span class="font-mono text-[10px] text-[#9A7B56]">03</span> Philosophy
-        </a>
-        <a href="#quiz" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
-          <span class="font-mono text-[10px] text-[#9A7B56]">04</span> Risk Atelier
-        </a>
-        <a href="#trust" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
-          <span class="font-mono text-[10px] text-[#9A7B56]">05</span> Custody & TDS
-        </a>
-      </nav>
-
-      <!-- Right Controls: Portals + Oracle Telemetry Pill + Sign In With Google -->
-      <div class="flex items-center gap-2">
-        <a href="portal.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
-          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-          <span>Retail Portal</span>
-        </a>
-
-        <a href="manager.html" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#9A7B56]"></i>
-          <span>Fund Manager</span>
-        </a>
-
+      <!-- Right Controls: Oracle Live Badge + Clean Login Button Only -->
+      <div class="flex items-center gap-3">
         <button 
           onclick="openOracleModal()" 
           title="Inspect Live Pricing Oracle & Feed Health"
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all">
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all">
           <span class="oracle-pulse-live"></span>
-          <span id="oracle-nav-badge" class="hidden sm:inline">ORACLE LIVE</span>
+          <span id="oracle-nav-badge">ORACLE LIVE</span>
         </button>
 
-        <!-- Google SSO CTA -->
-        <button 
-          onclick="openGoogleSSOModal()" 
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#121110]/15 bg-[#FAF8F5] text-xs font-semibold text-[#121110] hover:border-[#121110] shadow-xs transition">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-          </svg>
-          <span class="hidden md:inline">Sign In with Google</span>
-          <span class="md:hidden">Sign In</span>
-        </button>
-
-        <button 
-          onclick="openUPIDrawer()" 
-          class="btn-unseen bg-[#121110] text-[#F4EFEA] px-4 py-2 text-xs font-semibold tracking-wide">
-          <span>Start SIP ↗</span>
-        </button>
+        <!-- Dynamic User Status or Single Login Button -->
+        <div id="nav-auth-container">
+          <button 
+            onclick="openGoogleLogin()" 
+            class="btn-unseen bg-[#121110] text-[#F4EFEA] px-5 py-2 text-xs font-semibold tracking-wide">
+            <span>Login ↗</span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -1016,6 +976,7 @@
   <div id="google-sso-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
     <div class="tilt-card bg-[#FAF8F5] max-w-md w-full p-7 sm:p-8 space-y-6">
       <div class="tilt-card-content space-y-5">
+        
         <div class="flex items-center justify-between pb-3 border-b border-[#121110]/10">
           <div class="flex items-center gap-2">
             <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -1024,7 +985,7 @@
               <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
               <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
             </svg>
-            <span class="font-bold text-sm text-[#121110]">Google Identity Services</span>
+            <span class="font-bold text-sm text-[#121110]">Google Authentication</span>
           </div>
           <button onclick="closeGoogleSSOModal()" class="w-7 h-7 rounded-full border border-[#121110]/15 flex items-center justify-center text-xs hover:bg-[#121110] hover:text-[#F4EFEA] transition">
             ✕
@@ -1033,56 +994,98 @@
 
         <div>
           <h3 class="text-xl font-bold text-[#121110]">Sign in to Baskly.money</h3>
-          <p class="text-xs text-[#5C5752] mt-1">Authenticate with your genuine Google account to access your portfolio or fund manager desk.</p>
+          <p class="text-xs text-[#5C5752] mt-1">Authenticate directly with your Google account.</p>
         </div>
 
-        <!-- Google One Tap GIS Container -->
-        <div class="flex justify-center py-2">
-          <div id="google-signin-btn-container"></div>
-        </div>
+        <!-- 1. Permanent Official Google Button -->
+        <button 
+          type="button" 
+          onclick="handleContinueWithGoogle()" 
+          class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-[#121110]/20 bg-white hover:bg-gray-50 text-[#121110] font-semibold text-sm shadow-xs hover:border-[#121110] transition-all">
+          <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
 
-        <div class="relative flex items-center justify-center">
+        <!-- Divider -->
+        <div class="relative flex items-center justify-center my-1">
           <div class="border-t border-[#121110]/10 w-full"></div>
-          <span class="bg-[#FAF8F5] px-3 text-[10px] uppercase font-mono text-[#8C857B]">Or Enter Google Email</span>
+          <span class="bg-[#FAF8F5] px-3 text-[10px] uppercase font-mono text-[#8C857B]">Or enter Google email directly</span>
           <div class="border-t border-[#121110]/10 w-full"></div>
         </div>
 
-        <!-- Direct Email Sign-In -->
+        <!-- 2. Direct Email Sign-In -->
         <form onsubmit="handleDirectGoogleSignIn(event)" class="space-y-3">
           <div>
             <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Your Full Name</label>
-            <input id="google-name-input" type="text" placeholder="Your Name" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+            <input id="google-name-input" type="text" placeholder="e.g. Addhyan Negi" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
           </div>
           <div>
             <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Google Email Address</label>
-            <input id="google-email-input" type="email" required placeholder="you@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+            <input id="google-email-input" type="email" required placeholder="name@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
           </div>
           <div>
-            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Select Role / Desk</label>
+            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Destination Desk</label>
             <select id="google-role-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
-              <option value="retail">Retail Investor Portal</option>
-              <option value="fund_manager">Fund Manager / CIO Terminal</option>
+              <option value="retail">Retail Investor Portal (₹3.24L Portfolio)</option>
+              <option value="fund_manager">Fund Manager Terminal (₹48.6Cr AUM Desk)</option>
             </select>
           </div>
           <button type="submit" class="w-full py-2.5 rounded-xl bg-[#121110] text-[#F4EFEA] text-xs font-semibold hover:bg-[#9A7B56] transition">
-            Continue to Portal ↗
+            Sign In & Enter Dashboard ↗
           </button>
         </form>
 
         <div class="text-center text-[10px] text-[#8C857B] font-mono">
-          Secured with SHA-256 JWT sessions & SEBI compliant KYC encryption.
+          Instant SHA-256 JWT sessions · Persistent IndexedDB Engine
         </div>
       </div>
     </div>
   </div>
 
   <!-- Interactive Engine & Database -->
-  <script src="baskly-db.js?v=2.4"></script>
-  <script src="app.js?v=2.4"></script>
+  <script src="baskly-db.js?v=2.5"></script>
+  <script src="app.js?v=2.5"></script>
   <script>
     lucide.createIcons();
 
-    window.openGoogleSSOModal = function() {
+    // Check if user is already logged in on load
+    function syncNavUserStatus() {
+      const authContainer = document.getElementById('nav-auth-container');
+      if (!authContainer || !window.BasklyDB) return;
+
+      const user = window.BasklyDB.getCurrentUser();
+      if (user) {
+        const dest = user.role === 'fund_manager' ? 'manager.html' : 'portal.html';
+        authContainer.innerHTML = `
+          <div class="flex items-center gap-2 bg-[#FAF8F5] border border-[#121110]/15 rounded-full pl-2 pr-3 py-1 shadow-xs">
+            <img src="${user.avatar || 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name)}" class="w-6 h-6 rounded-full object-cover border border-[#121110]/10">
+            <span class="text-xs font-bold text-[#121110]">${user.givenName || user.name.split(' ')[0]}</span>
+            <a href="${dest}" class="text-[10px] font-mono font-bold text-[#0F6E56] hover:underline ml-1">Dashboard ↗</a>
+            <button onclick="handleLogout()" title="Sign Out" class="text-[11px] text-[#8C857B] hover:text-[#B85D43] ml-1.5 font-bold">✕</button>
+          </div>
+        `;
+      } else {
+        authContainer.innerHTML = `
+          <button 
+            onclick="openGoogleLogin()" 
+            class="btn-unseen bg-[#121110] text-[#F4EFEA] px-5 py-2 text-xs font-semibold tracking-wide">
+            <span>Login ↗</span>
+          </button>
+        `;
+      }
+    }
+
+    window.openGoogleLogin = function() {
+      const user = window.BasklyDB ? window.BasklyDB.getCurrentUser() : null;
+      if (user) {
+        window.location.href = user.role === 'fund_manager' ? 'manager.html' : 'portal.html';
+        return;
+      }
       const modal = document.getElementById('google-sso-modal');
       if (modal) {
         modal.classList.remove('hidden');
@@ -1098,15 +1101,21 @@
       }
     };
 
-    window.handleGoogleCredentialResponse = function(response) {
+    window.handleContinueWithGoogle = function() {
+      const email = prompt("Enter your Google Account email (e.g. yourname@gmail.com):", "user@gmail.com");
+      if (!email || !email.includes('@')) return;
+      const name = prompt("Enter your Name:", email.split('@')[0]);
+      
+      const role = confirm("Log in as Fund Manager / CIO? Click OK for Fund Manager, Cancel for Retail Investor.") ? 'fund_manager' : 'retail';
+      
       if (window.BasklyDB) {
-        const user = window.BasklyDB.handleGoogleCredentialResponse(response);
-        closeGoogleSSOModal();
-        if (user && user.role === 'fund_manager') {
-          window.location.href = 'manager.html';
-        } else {
-          window.location.href = 'portal.html';
-        }
+        window.BasklyDB.loginWithDirectGoogleEmail(name || email.split('@')[0], email, role);
+      }
+      closeGoogleSSOModal();
+      if (role === 'fund_manager') {
+        window.location.href = 'manager.html';
+      } else {
+        window.location.href = 'portal.html';
       }
     };
 
@@ -1137,25 +1146,18 @@
       }
     };
 
-    // Initialize GIS if loaded
-    if (window.google && window.google.accounts && window.google.accounts.id) {
-      try {
-        window.google.accounts.id.initialize({
-          client_id: "719382104928-basklyapp.apps.googleusercontent.com",
-          callback: window.handleGoogleCredentialResponse,
-          auto_select: false
-        });
-        const container = document.getElementById('google-signin-btn-container');
-        if (container) {
-          window.google.accounts.id.renderButton(container, {
-            theme: 'outline',
-            size: 'large',
-            text: 'continue_with',
-            shape: 'pill',
-            width: 280
-          });
-        }
-      } catch (e) {}
+    window.handleLogout = function() {
+      if (window.BasklyDB) {
+        window.BasklyDB.logout();
+      }
+      syncNavUserStatus();
+    };
+
+    // Run on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncNavUserStatus);
+    } else {
+      syncNavUserStatus();
     }
   </script>
 </body>
