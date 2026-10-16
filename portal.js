@@ -2,23 +2,23 @@
  * portal.js — Retail Investor Portal Logic
  * Real-time Portfolio Valuation, Accumulated Growth Trajectory Chart,
  * Buy/Top-up Execution, 1% Section 194S TDS Liquidation Engine,
- * Mandate Toggles, and Google SSO Integration.
+ * Mandate Toggles, and Real Google SSO Integration.
  */
 
 (function() {
   'use strict';
 
-  // Live Baskets Fallback Prices
+  // 6 Official Curated Baskets anchored at Base NAV ₹100.00
   const LIVE_BASKETS = [
-    { id: 'top-5-index', name: 'Top 5 Bluechips', nav: 63.09 },
-    { id: 'crypto-gold', name: 'Crypto + Gold Reserve', nav: 83.18 },
-    { id: 'btc-standard', name: 'Bitcoin Standard', nav: 121.30 },
-    { id: 'eth-l2', name: 'Ethereum Ecosystem & L2s', nav: 54.80 },
-    { id: 'web3-infra', name: 'Web3 Infrastructure', nav: 42.60 },
-    { id: 'defi-yield', name: 'DeFi Yield & Revenue', nav: 36.90 }
+    { id: 'top-5-index', name: 'Top-5 Bluechip Index', nav: 100.00 },
+    { id: 'crypto-gold', name: 'Crypto + Gold Reserve', nav: 100.00 },
+    { id: 'bitcoin', name: 'Pure Bitcoin Sovereign', nav: 100.00 },
+    { id: 'ethereum', name: 'Ethereum Settlement Layer', nav: 100.00 },
+    { id: 'defi', name: 'DeFi Protocol Architects', nav: 100.00 },
+    { id: 'altcoin-meme', name: 'High-Beta Cultural Index', nav: 100.00 }
   ];
 
-  let currentGrowthTimeframe = '3Y';
+  let currentGrowthTimeframe = '1Y';
 
   function formatINR(num) {
     if (isNaN(num)) return '0.00';
@@ -40,21 +40,27 @@
     renderTransactionsTable();
     setupWebSocketPriceSync();
     initGrowthResizeObserver();
+    setupGoogleIdentity();
   }
 
   function renderUserProfile() {
     const user = BasklyDB.getCurrentUser();
-    if (!user) return;
-
     const nameEl = document.getElementById('nav-user-name');
     const roleEl = document.getElementById('nav-user-role');
     const avatarEl = document.getElementById('nav-user-avatar');
     const greetEl = document.getElementById('portal-greeting-name');
 
-    if (nameEl) nameEl.textContent = user.name;
-    if (roleEl) roleEl.textContent = user.role === 'fund_manager' ? 'CIO · SEBI Registered' : `KYC Verified · PAN ${user.pan || 'ABCDE1234F'}`;
-    if (avatarEl && user.avatar) avatarEl.src = user.avatar;
-    if (greetEl) greetEl.textContent = user.name.split(' ')[0];
+    if (user) {
+      if (nameEl) nameEl.textContent = user.name;
+      if (roleEl) roleEl.textContent = user.role === 'fund_manager' ? 'CIO · SEBI Registered' : `KYC Verified · PAN ${user.pan || 'ABCDE1234F'}`;
+      if (avatarEl && user.avatar) avatarEl.src = user.avatar;
+      if (greetEl) greetEl.textContent = user.name.split(' ')[0];
+    } else {
+      if (nameEl) nameEl.textContent = 'Guest Investor';
+      if (roleEl) roleEl.textContent = 'Click to Sign In with Google';
+      if (avatarEl) avatarEl.src = 'https://api.dicebear.com/7.x/initials/svg?seed=Guest';
+      if (greetEl) greetEl.textContent = 'Investor';
+    }
   }
 
   function renderPortfolioMetrics() {
@@ -89,7 +95,7 @@
   // ==========================================
   // ACCUMULATED GROWTH CHART RENDERER
   // ==========================================
-  function setGrowthTimeframe(tf) {
+  window.setGrowthTimeframe = function(tf) {
     currentGrowthTimeframe = tf;
     ['6M', '1Y', '3Y', 'ALL'].forEach(t => {
       const btn = document.getElementById(`gtf-${t}`);
@@ -102,16 +108,17 @@
       }
     });
     renderGrowthChart(tf);
-  }
+  };
 
   function renderGrowthChart(tf) {
     const history = BasklyDB.data.retailPortfolio.growthHistory;
     if (!history || history.length === 0) return;
 
     let series = history;
-    if (tf === '6M') series = history.slice(-6);
-    else if (tf === '1Y') series = history.slice(-10);
-    else if (tf === '3Y') series = history.slice(-16);
+    if (tf === '6M') series = history.slice(-3);
+    else if (tf === '1Y') series = history.slice(-5);
+    else if (tf === '3Y') series = history;
+    else if (tf === 'ALL') series = history;
 
     const canvas = document.getElementById('growth-canvas');
     const svgLayer = document.getElementById('growth-svg-layer');
@@ -140,7 +147,7 @@
     const maxVal = Math.max(...allVals) * 1.08;
     const range = (maxVal - minVal) || 1;
 
-    const padX = 30;
+    const padX = 40;
     const padY = 25;
     const plotW = w - padX * 2;
     const plotH = h - padY * 2;
@@ -159,13 +166,13 @@
       const labelVal = maxVal - (range / 4) * r;
       ctx.fillStyle = 'rgba(140, 133, 123, 0.7)';
       ctx.font = '10px JetBrains Mono, monospace';
-      ctx.fillText(`₹${(labelVal / 1000).toFixed(0)}k`, padX - 24, gy - 4);
+      ctx.fillText(`₹${(labelVal / 1000).toFixed(0)}k`, padX - 32, gy - 4);
     }
     ctx.setLineDash([]);
 
     // 2. Compute Points
     const ptsValue = series.map((d, i) => ({
-      x: padX + (i / (series.length - 1)) * plotW,
+      x: padX + (i / (series.length - 1 || 1)) * plotW,
       y: padY + plotH - ((d.value - minVal) / range) * plotH,
       value: d.value,
       invested: d.invested,
@@ -173,7 +180,7 @@
     }));
 
     const ptsInvested = series.map((d, i) => ({
-      x: padX + (i / (series.length - 1)) * plotW,
+      x: padX + (i / (series.length - 1 || 1)) * plotW,
       y: padY + plotH - ((d.invested - minVal) / range) * plotH
     }));
 
@@ -236,7 +243,7 @@
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Also render instant SVG fallback
+    // Also render SVG fallback
     if (svgLayer) {
       let dVal = `M ${ptsValue[0].x} ${ptsValue[0].y}`;
       for (let i = 1; i < ptsValue.length; i++) {
@@ -252,44 +259,41 @@
 
   function attachGrowthScrubbing() {
     const canvas = document.getElementById('growth-canvas');
+    const container = document.getElementById('growth-chart-container');
     const tooltip = document.getElementById('growth-tooltip');
-    if (!canvas || canvas._scrubAttached) return;
-    canvas._scrubAttached = true;
+    if (!canvas || !container || !tooltip) return;
 
-    canvas.addEventListener('mousemove', (e) => {
+    container.onmousemove = (e) => {
       const pts = canvas._cachedPts;
       if (!pts || pts.length === 0) return;
 
-      const rect = canvas.getBoundingClientRect();
+      const rect = container.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
 
-      let nearest = pts[0];
-      let minDist = 9999;
-      pts.forEach(p => {
-        const d = Math.abs(p.x - mouseX);
-        if (d < minDist) {
-          minDist = d;
-          nearest = p;
+      let closest = pts[0];
+      let minDiff = Math.abs(mouseX - pts[0].x);
+      for (let i = 1; i < pts.length; i++) {
+        const diff = Math.abs(mouseX - pts[i].x);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = pts[i];
         }
-      });
-
-      const profit = nearest.value - nearest.invested;
-      const returnPct = ((profit / nearest.invested) * 100).toFixed(1);
-
-      if (tooltip) {
-        tooltip.style.left = `${nearest.x}px`;
-        tooltip.style.top = `${nearest.y - 12}px`;
-        tooltip.innerHTML = `
-          <div class="font-bold text-[13px] text-[#FAF8F5]">${nearest.month}: ₹${formatINR(nearest.value)}</div>
-          <div class="text-[10px] text-[#8C857B] mt-0.5">Invested: ₹${formatINR(nearest.invested)} · Gain: <span class="text-[#0F6E56] font-bold">+₹${formatINR(profit)} (+${returnPct}%)</span></div>
-        `;
-        tooltip.classList.remove('hidden');
       }
-    });
 
-    canvas.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('hidden');
+      tooltip.style.left = `${closest.x}px`;
+      tooltip.style.top = `${closest.y - 12}px`;
+      tooltip.innerHTML = `
+        <div class="bg-[#121110] text-[#F4EFEA] text-[11px] font-mono px-3 py-1.5 rounded-lg shadow-xl border border-[#121110]/20 whitespace-nowrap">
+          <div class="font-bold text-[#FAF8F5]">₹${formatINR(closest.value)}</div>
+          <div class="text-[10px] text-[#8C857B]">${closest.month} · Inv: ₹${formatINR(closest.invested)}</div>
+        </div>
+      `;
+    };
+
+    container.onmouseleave = () => {
       if (tooltip) tooltip.classList.add('hidden');
-    });
+    };
   }
 
   function initGrowthResizeObserver() {
@@ -303,7 +307,7 @@
   }
 
   // ==========================================
-  // RENDER HOLDINGS TABLE
+  // RENDER HOLDINGS TABLE (BASE ₹100.00 NAVs)
   // ==========================================
   function renderHoldingsTable() {
     const tbody = document.getElementById('holdings-table-body');
@@ -395,7 +399,7 @@
   }
 
   // ==========================================
-  // RENDER TRANSACTION LEDGER
+  // RENDER TRANSACTION LEDGER (1% TDS AUDIT)
   // ==========================================
   function renderTransactionsTable() {
     const tbody = document.getElementById('tx-table-body');
@@ -471,9 +475,9 @@
     if (!select || !input || !navEl || !unitsEl) return;
 
     const opt = select.options[select.selectedIndex];
-    const basketId = opt.value;
+    const basketId = opt ? opt.value : 'top-5-index';
     const liveBasket = LIVE_BASKETS.find(b => b.id === basketId);
-    const nav = liveBasket ? liveBasket.nav : parseFloat(opt.dataset.nav || '60');
+    const nav = liveBasket ? liveBasket.nav : 100.00;
     const amount = parseFloat(input.value || '0');
 
     navEl.textContent = `₹${nav.toFixed(2)}`;
@@ -489,14 +493,14 @@
     const basketId = opt.value;
     const basketName = opt.text.split('(')[0].trim();
     const liveBasket = LIVE_BASKETS.find(b => b.id === basketId);
-    const nav = liveBasket ? liveBasket.nav : parseFloat(opt.dataset.nav);
+    const nav = liveBasket ? liveBasket.nav : 100.00;
     const amount = parseFloat(input.value);
 
     try {
       BasklyDB.buyBasket(basketId, basketName, amount, nav);
       closeBuyModal();
       initPortal();
-      alert(`Success! Invested ₹${formatINR(amount)} in ${basketName} at NAV ₹${nav.toFixed(2)}.`);
+      alert(`Success! Invested ₹${formatINR(amount)} in ${basketName} at Base NAV ₹${nav.toFixed(2)}.`);
     } catch (err) {
       alert('Purchase Error: ' + err.message);
     }
@@ -562,14 +566,14 @@
     }
     const basketId = opt.value;
     const liveBasket = LIVE_BASKETS.find(b => b.id === basketId);
-    const nav = liveBasket ? liveBasket.nav : parseFloat(opt.dataset.nav);
+    const nav = liveBasket ? liveBasket.nav : 100.00;
     const amount = parseFloat(input.value);
 
     try {
       const res = BasklyDB.withdrawBasket(basketId, amount, nav);
       closeWithdrawModal();
       initPortal();
-      alert(`Liquidation complete!\nGross: ₹${formatINR(res.grossAmountINR)}\n1% TDS: ₹${formatINR(res.tdsINR)}\nNet Credited to HDFC Bank: ₹${formatINR(res.netPayoutINR)}.`);
+      alert(`Liquidation complete!\nGross: ₹${formatINR(res.grossAmountINR)}\n1% TDS Deducted: ₹${formatINR(res.tdsINR)}\nNet Credited to HDFC Bank: ₹${formatINR(res.netPayoutINR)}.`);
     } catch (err) {
       alert('Withdrawal Error: ' + err.message);
     }
@@ -590,15 +594,50 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'Baskly_TDS_Section194S_Report.csv');
+    link.setAttribute('download', 'Baskly_CBDT_Section194S_Report.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   // ==========================================
-  // GOOGLE SSO MODAL
+  // REAL GOOGLE IDENTITY SERVICES SETUP
   // ==========================================
+  function setupGoogleIdentity() {
+    window.handleGoogleCredentialResponse = function(response) {
+      const user = BasklyDB.handleGoogleCredentialResponse(response);
+      if (user) {
+        closeGoogleSSOModal();
+        renderUserProfile();
+        alert(`Welcome, ${user.name}! Authenticated via Google Identity.`);
+      }
+    };
+
+    // Render Google GIS button if container exists
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: "719382104928-basklyapp.apps.googleusercontent.com",
+          callback: window.handleGoogleCredentialResponse,
+          auto_select: false
+        });
+
+        const btnContainer = document.getElementById('google-signin-btn-container');
+        if (btnContainer) {
+          window.google.accounts.id.renderButton(btnContainer, {
+            theme: 'outline',
+            size: 'large',
+            text: 'continue_with',
+            shape: 'pill',
+            width: 280
+          });
+        }
+      } catch (e) {
+        console.log('[Google GIS] Init notice:', e);
+      }
+    }
+  }
+
   window.openGoogleSSOModal = function() {
     const modal = document.getElementById('google-sso-modal');
     if (modal) {
@@ -615,34 +654,51 @@
     }
   };
 
-  window.selectGooglePersona = function(role) {
-    BasklyDB.loginWithGoogle(role);
-    closeGoogleSSOModal();
-    if (role === 'fund_manager') {
-      window.location.href = 'manager.html';
-    } else {
-      initPortal();
+  window.handleDirectGoogleSignIn = function(e) {
+    e.preventDefault();
+    const emailInput = document.getElementById('google-email-input');
+    const nameInput = document.getElementById('google-name-input');
+    if (!emailInput || !emailInput.value) {
+      alert('Please enter your Google email address.');
+      return;
+    }
+    try {
+      const user = BasklyDB.loginWithDirectGoogleEmail(
+        nameInput ? nameInput.value : '',
+        emailInput.value,
+        'retail'
+      );
+      closeGoogleSSOModal();
+      renderUserProfile();
+      alert(`Welcome, ${user.name}! Signed in successfully.`);
+    } catch (err) {
+      alert(err.message);
     }
   };
 
   // ==========================================
-  // LIVE WEBSOCKET ORACLE SYNC
+  // WEBSOCKET PRICING ORACLE SYNC
   // ==========================================
   function setupWebSocketPriceSync() {
     try {
       const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker/ethusdt@ticker');
       ws.onmessage = (e) => {
         const msg = JSON.parse(e.data);
-        const usdtInr = 100.16; // CoinDCX benchmark
+        const usdtInr = 100.16; // CoinDCX institutional spot benchmark
         if (msg.s === 'BTCUSDT') {
-          const btcNavDelta = (parseFloat(msg.c) * usdtInr) / 7739000;
-          LIVE_BASKETS[2].nav = Number((121.30 * btcNavDelta).toFixed(2));
-          LIVE_BASKETS[0].nav = Number((63.09 * (1 + (btcNavDelta - 1) * 0.35)).toFixed(2));
+          const currentBtcInr = parseFloat(msg.c) * usdtInr;
+          const btcDelta = currentBtcInr / 7739249; // Ratio relative to baseline price
+          // Mathematical NAV update anchored on Base ₹100.00
+          LIVE_BASKETS[2].nav = Number((100.00 * btcDelta).toFixed(2));
+          LIVE_BASKETS[0].nav = Number((100.00 * (0.45 + 0.55 * btcDelta)).toFixed(2));
+          LIVE_BASKETS[1].nav = Number((100.00 * (0.65 + 0.35 * btcDelta)).toFixed(2));
+          
+          BasklyDB.storeNAVSnapshot(LIVE_BASKETS[0].id, LIVE_BASKETS[0].nav);
           renderPortfolioMetrics();
         }
       };
     } catch (e) {
-      console.log('[Portal] Standalone demo price mode');
+      console.log('[Portal] WebSocket fallback pricing');
     }
   }
 
