@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retail Investor Portal — Baskly.money</title>
-  <meta name="description" content="Manage your crypto basket portfolio, track accumulated growth, execute instant withdrawals with 1% TDS, and manage NPCI e-Mandates.">
+  <meta name="description" content="Manage your Indian Rupee crypto baskets, track accumulated wealth, top up investments, and withdraw with automated 1% Section 194S TDS deduction.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%23121110%22/><text y=%2266%22 font-size=%2256%22 font-family=%22Georgia,serif%22 font-style=%22italic%22 text-anchor=%22middle%22 x=%2248%22 fill=%22%23F4EFEA%22>b</text></svg>">
   
   <!-- Fonts -->
@@ -40,9 +40,12 @@
     }
   </script>
 
+  <!-- Google Identity Services (GIS) Official SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="styles.css?v=2.3">
+  <link rel="stylesheet" href="styles.css?v=2.4">
 </head>
 <body class="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
   <div class="noise-overlay"></div>
@@ -62,7 +65,7 @@
             <span class="oracle-pulse-live" style="width: 6px; height: 6px;"></span>
             Retail Investor Desk
           </span>
-          <span class="font-mono text-xs text-[#8C857B]">· Live Oracle NAV Engine</span>
+          <span class="font-mono text-xs text-[#8C857B]">· Base ₹100.00 Inception NAV</span>
         </div>
       </div>
 
@@ -72,16 +75,16 @@
           <span>Fund Manager Terminal</span>
         </a>
 
-        <!-- User Profile Pill -->
-        <div class="flex items-center gap-3 bg-[#FAF8F5] border border-[#121110]/10 rounded-full pl-3 pr-1.5 py-1 shadow-xs">
+        <!-- User Profile Pill / Google Sign-In -->
+        <div onclick="openGoogleSSOModal()" class="flex items-center gap-3 bg-[#FAF8F5] border border-[#121110]/10 rounded-full pl-3 pr-1.5 py-1 shadow-xs cursor-pointer hover:border-[#121110]/30 transition" title="Click to Sign in with Google / Switch Account">
           <div class="text-right hidden sm:block">
-            <div id="nav-user-name" class="text-xs font-semibold text-[#121110]">Arjun Mehta</div>
+            <div id="nav-user-name" class="text-xs font-semibold text-[#121110]">Investor Account</div>
             <div id="nav-user-role" class="text-[10px] text-[#0F6E56] font-mono">KYC Verified · PAN ABCDE1234F</div>
           </div>
           <img id="nav-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-[#121110]/15">
-          <button onclick="openGoogleSSOModal()" title="Switch Account / Sign in with Google" class="w-7 h-7 rounded-full bg-[#121110]/5 hover:bg-[#121110] hover:text-[#F4EFEA] flex items-center justify-center text-xs transition">
+          <div class="w-7 h-7 rounded-full bg-[#121110]/5 hover:bg-[#121110] hover:text-[#F4EFEA] flex items-center justify-center text-xs transition">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -95,10 +98,10 @@
       <div>
         <div class="font-mono text-xs text-[#8C857B] uppercase tracking-widest mb-1">Portfolio Intelligence Desk</div>
         <h1 class="text-3xl sm:text-4xl font-semibold tracking-editorial text-[#121110]">
-          Welcome back, <span id="portal-greeting-name">Arjun</span>.
+          Welcome back, <span id="portal-greeting-name">Investor</span>.
         </h1>
         <p class="text-sm text-[#5C5752] mt-1 max-w-xl">
-          Automated Indian crypto baskets with real-time Oracle valuation, statutory 1% TDS accounting, and NPCI e-Mandate execution.
+          Automated Indian crypto baskets with real-time Oracle valuation, statutory 1% TDS accounting, and persistent IndexedDB time-series storage.
         </p>
       </div>
 
@@ -108,201 +111,179 @@
           <span>+ Invest in Basket ↗</span>
         </button>
         <button onclick="openWithdrawModal()" class="px-5 py-3 rounded-full border border-[#121110]/20 bg-[#FAF8F5] text-[#121110] text-xs font-semibold uppercase tracking-widest hover:border-[#121110] transition">
-          <span>Withdraw Funds (1% TDS) ↗</span>
+          <span>Withdraw to Bank (1% TDS) ↗</span>
         </button>
       </div>
     </div>
 
-    <!-- ==================== 4 TOP METRIC CARDS ==================== -->
+    <!-- ==================== 4 TOP KPI STATS ==================== -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       
-      <!-- Total Valuation -->
+      <!-- Card 1: Total Portfolio Wealth -->
       <div class="tilt-card p-6 bg-[#FAF8F5]">
         <div class="tilt-card-content">
           <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
-            <span>Total Net Worth</span>
+            <span>Total Portfolio Wealth</span>
             <span class="oracle-pulse-live" style="width: 6px; height: 6px;"></span>
           </div>
-          <div id="stat-total-wealth" class="text-3xl font-bold font-mono text-[#121110]">₹5,83,230</div>
-          <div class="flex items-center gap-2 mt-2 text-xs font-mono">
-            <span class="text-[#0F6E56] font-semibold bg-[#0F6E56]/10 px-2 py-0.5 rounded-full">+₹14,290 (24h)</span>
-            <span class="text-[#8C857B]">Live Oracle</span>
+          <div id="stat-total-wealth" class="text-3xl font-bold font-mono text-[#121110]">₹3,24,850.00</div>
+          <div class="flex items-center gap-2 mt-2 text-xs font-mono text-[#5C5752]">
+            <span>Net Invested: ₹3.00 L</span>
+            <span>·</span>
+            <span class="text-[#0F6E56] font-semibold">100% Inception Base</span>
           </div>
         </div>
       </div>
 
-      <!-- Net Returns -->
+      <!-- Card 2: Absolute Gain / Return -->
       <div class="tilt-card p-6 bg-[#FAF8F5]">
         <div class="tilt-card-content">
           <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
-            <span>All-Time P&L</span>
+            <span>Accumulated Profit</span>
             <i data-lucide="trending-up" class="w-4 h-4 text-[#0F6E56]"></i>
           </div>
-          <div id="stat-total-profit" class="text-3xl font-bold font-mono text-[#0F6E56]">+₹1,13,728</div>
+          <div id="stat-total-profit" class="text-3xl font-bold font-mono text-[#0F6E56]">+₹24,850.00</div>
           <div class="flex items-center gap-2 mt-2 text-xs font-mono">
-            <span id="stat-return-pct" class="text-[#0F6E56] font-bold">+24.2%</span>
-            <span class="text-[#8C857B]">on ₹4.69L invested</span>
+            <span id="stat-return-pct" class="text-[#0F6E56] font-bold">+8.3% Total Return</span>
+            <span class="text-[#8C857B]">· Multi-Asset</span>
           </div>
         </div>
       </div>
 
-      <!-- Monthly SIP Commitment -->
+      <!-- Card 3: Active Monthly SIP -->
       <div class="tilt-card p-6 bg-[#FAF8F5]">
         <div class="tilt-card-content">
           <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
-            <span>Active Mandates</span>
+            <span>Active Auto-Debit Mandate</span>
             <i data-lucide="calendar" class="w-4 h-4 text-[#121110]"></i>
           </div>
-          <div id="stat-monthly-sip" class="text-3xl font-bold font-mono text-[#121110]">₹15,000<span class="text-sm font-normal text-[#8C857B]">/mo</span></div>
+          <div id="stat-monthly-sip" class="text-3xl font-bold font-mono text-[#121110]">₹8,000<span class="text-sm font-normal text-[#8C857B]">/mo</span></div>
           <div class="flex items-center gap-2 mt-2 text-xs font-mono text-[#5C5752]">
-            <span>3 Active SIPs</span>
+            <span>2 Baskets Linked</span>
             <span>·</span>
-            <span class="text-[#0F6E56]">Next: Nov 5</span>
+            <span class="text-[#0F6E56]">NPCI e-Mandate Active</span>
           </div>
         </div>
       </div>
 
-      <!-- Cash & Bank Details -->
+      <!-- Card 4: Statutory 1% TDS Status -->
       <div class="tilt-card p-6 bg-[#FAF8F5]">
         <div class="tilt-card-content">
           <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
-            <span>Linked Payout Bank</span>
-            <i data-lucide="landmark" class="w-4 h-4 text-[#121110]"></i>
+            <span>Section 194S TDS Compliance</span>
+            <i data-lucide="shield-check" class="w-4 h-4 text-[#9A7B56]"></i>
           </div>
-          <div class="text-xl font-bold font-mono text-[#121110]">HDFC Bank</div>
-          <div class="flex items-center justify-between mt-2 text-xs font-mono text-[#5C5752]">
-            <span>A/C: ••••4921</span>
-            <span class="text-[#0F6E56] font-semibold bg-[#0F6E56]/10 px-2 py-0.5 rounded-full">Instant IMPS</span>
+          <div class="text-3xl font-bold font-mono text-[#121110]">100% Valid</div>
+          <div class="flex items-center justify-between mt-2 text-xs font-mono">
+            <span class="text-[#5C5752]">PAN ABCDE1234F</span>
+            <button onclick="downloadTDSReport()" class="text-[#9A7B56] hover:underline font-semibold">Form 16A ↗</button>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- ==================== ACCUMULATED GROWTH TRAJECTORY CHART ==================== -->
+    <!-- ==================== ACCUMULATED GROWTH CHART ==================== -->
     <div class="tilt-card p-7 sm:p-9 bg-[#FAF8F5]">
-      <div class="tilt-card-content space-y-4">
+      <div class="tilt-card-content space-y-6">
         
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#121110]/8">
           <div>
-            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Portfolio Trajectory</div>
-            <h2 class="text-2xl font-semibold tracking-editorial text-[#121110] mt-0.5">
-              Accumulated Growth & Capital Compounding
-            </h2>
-            <div id="portfolio-growth-display" class="font-mono text-xs text-[#5C5752] mt-1 flex items-center gap-3">
-              <span>Current Valuation: <strong id="growth-live-val" class="text-[#0F6E56]">₹5,83,230</strong></span>
-              <span>·</span>
-              <span>Total Capital Injected: <strong id="growth-live-inv">₹4,69,502</strong></span>
-            </div>
+            <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Compounding Visualizer</div>
+            <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Accumulated Portfolio Growth Trajectory</h2>
           </div>
 
-          <!-- Timeframe Controls -->
-          <div class="flex items-center gap-1 bg-[#F4EFEA] p-1 rounded-full border border-[#121110]/10 font-mono text-xs self-start sm:self-auto">
-            <button onclick="setGrowthTimeframe('6M')" id="gtf-6M" class="px-3 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">6M</button>
-            <button onclick="setGrowthTimeframe('1Y')" id="gtf-1Y" class="px-3 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">1Y</button>
-            <button onclick="setGrowthTimeframe('3Y')" id="gtf-3Y" class="px-3 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-bold shadow-xs">3Y</button>
-            <button onclick="setGrowthTimeframe('ALL')" id="gtf-ALL" class="px-3 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">ALL</button>
+          <!-- Timeframe Selector Pills -->
+          <div class="flex items-center gap-1.5 bg-[#F4EFEA] p-1 rounded-full border border-[#121110]/10 font-mono text-xs">
+            <button id="gtf-6M" onclick="setGrowthTimeframe('6M')" class="px-3 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">6M</button>
+            <button id="gtf-1Y" onclick="setGrowthTimeframe('1Y')" class="px-3 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-bold shadow-xs">1Y</button>
+            <button id="gtf-3Y" onclick="setGrowthTimeframe('3Y')" class="px-3 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">3Y</button>
+            <button id="gtf-ALL" onclick="setGrowthTimeframe('ALL')" class="px-3 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">ALL</button>
           </div>
         </div>
 
-        <!-- Interactive Growth Chart Container -->
-        <div id="growth-chart-container" class="relative w-full h-72 rounded-2xl bg-[#F4EFEA]/60 border border-[#121110]/8 overflow-hidden p-2">
-          <svg id="growth-svg-layer" class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 900 280"></svg>
-          <canvas id="growth-canvas" class="w-full h-full block cursor-crosshair relative z-10"></canvas>
-          <div id="growth-tooltip" class="absolute hidden pointer-events-none -translate-x-1/2 -translate-y-full mb-3 bg-[#121110] text-[#F4EFEA] font-mono text-xs py-2 px-3 rounded-xl shadow-2xl whitespace-nowrap z-30">
-            Valuation: ₹5,48,230
+        <!-- Legend and Live Hover Metric -->
+        <div class="flex items-center gap-6 text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-0.5 bg-[#0F6E56]"></span>
+            <span class="text-[#5C5752]">Portfolio Value: <strong id="growth-live-val" class="text-[#121110]">₹3,24,850</strong></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-0.5 bg-[#8C857B] border-t border-dashed"></span>
+            <span class="text-[#5C5752]">Net Invested: <strong id="growth-live-inv" class="text-[#121110]">₹3,00,000</strong></span>
           </div>
         </div>
 
-        <!-- Chart Legend -->
-        <div class="flex items-center justify-between text-xs font-mono text-[#8C857B] pt-2 border-t border-[#121110]/6">
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded-full bg-[#0F6E56]"></span>
-              <span class="text-[#121110] font-medium">Portfolio Market Value (Live Oracle)</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span class="w-3 h-0.5 bg-[#8C857B]"></span>
-              <span>Cumulative Capital Invested</span>
-            </div>
-          </div>
-          <div class="hidden sm:block text-[11px]">
-            Hover & scrub curve to inspect compounding milestones
-          </div>
+        <!-- Canvas Chart Container with Tooltip -->
+        <div id="growth-chart-container" class="relative w-full h-[280px] bg-[#F4EFEA]/40 rounded-xl overflow-hidden cursor-crosshair">
+          <canvas id="growth-canvas" class="w-full h-full block"></canvas>
+          <svg id="growth-svg-layer" class="absolute inset-0 pointer-events-none w-full h-full"></svg>
+          <div id="growth-tooltip" class="absolute pointer-events-none hidden transition-transform duration-75"></div>
         </div>
 
       </div>
     </div>
 
-    <!-- ==================== MY HOLDINGS (INVESTED BASKETS) ==================== -->
+    <!-- ==================== HOLDINGS BREAKDOWN TABLE ==================== -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Asset Allocation</div>
-          <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">My Active Basket Holdings</h2>
+          <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Active Assets</div>
+          <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Allocated Basket Holdings</h2>
         </div>
-        <button onclick="openQuickBuyModal()" class="text-xs font-mono font-semibold text-[#0F6E56] hover:underline flex items-center gap-1">
-          <span>+ Add New Basket</span>
-          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        <button onclick="openQuickBuyModal()" class="text-xs font-mono font-semibold text-[#0F6E56] hover:underline">
+          + Add New Basket ↗
         </button>
       </div>
 
       <div class="overflow-x-auto bg-[#FAF8F5] rounded-2xl border border-[#121110]/10 shadow-xs">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-left border-collapse font-mono text-xs">
           <thead>
-            <tr class="border-b border-[#121110]/10 bg-[#F4EFEA] font-mono text-[11px] text-[#8C857B] uppercase tracking-wider">
-              <th class="py-3.5 px-4 font-medium">Basket Name</th>
-              <th class="py-3.5 px-4 font-medium">Units Held</th>
-              <th class="py-3.5 px-4 font-medium">Avg Buy NAV</th>
-              <th class="py-3.5 px-4 font-medium">Current NAV</th>
-              <th class="py-3.5 px-4 font-medium">Invested Capital</th>
-              <th class="py-3.5 px-4 font-medium">Current Valuation</th>
-              <th class="py-3.5 px-4 font-medium">Total Return</th>
-              <th class="py-3.5 px-4 font-medium text-right">Actions</th>
+            <tr class="border-b border-[#121110]/10 bg-[#F4EFEA] text-[11px] text-[#8C857B] uppercase tracking-wider">
+              <th class="py-3.5 px-4">Basket Name</th>
+              <th class="py-3.5 px-4">Units Held</th>
+              <th class="py-3.5 px-4">Inception Buy NAV</th>
+              <th class="py-3.5 px-4">Live Spot NAV</th>
+              <th class="py-3.5 px-4">Invested Capital</th>
+              <th class="py-3.5 px-4">Current Valuation</th>
+              <th class="py-3.5 px-4">P&L (%)</th>
+              <th class="py-3.5 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody id="holdings-table-body" class="divide-y divide-[#121110]/6 font-mono text-xs">
+          <tbody id="holdings-table-body" class="divide-y divide-[#121110]/6">
             <!-- Populated dynamically by portal.js -->
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- ==================== ACTIVE SIP MANDATES ==================== -->
+    <!-- ==================== ACTIVE MONTHLY MANDATES ==================== -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">NPCI Standing Instructions</div>
-          <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Active SIP e-Mandates</h2>
+          <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Recurring Mandates</div>
+          <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Active Auto-Debit SIPs</h2>
         </div>
-        <div class="text-xs font-mono text-[#5C5752]">
-          VPA: <span class="font-semibold text-[#121110]">arjun.mehta@okaxis</span>
-        </div>
+        <div class="text-xs font-mono text-[#5C5752]">NPCI e-NACH / UPI Autopay Linked</div>
       </div>
 
-      <div id="mandates-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div id="mandates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Populated dynamically by portal.js -->
       </div>
     </div>
 
-    <!-- ==================== TRANSACTION LEDGER & 1% TDS DESK ==================== -->
+    <!-- ==================== TRANSACTIONS & 1% TDS AUDIT LEDGER ==================== -->
     <div class="tilt-card p-7 sm:p-9 bg-[#FAF8F5]">
       <div class="tilt-card-content space-y-4">
         
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Statutory Compliance & Audit Trail</div>
-            <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">
-              Transaction Ledger & 1% TDS Records
-            </h2>
-            <p class="text-xs text-[#5C5752] mt-0.5">
-              Every withdrawal automatically deducts 1% TDS under Section 194S with CBDT certificate generation.
-            </p>
+            <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Audit Trail</div>
+            <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Transaction History & Statutory TDS Ledger</h2>
           </div>
-
-          <button onclick="downloadTDSReport()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#121110]/15 bg-[#F4EFEA] text-xs font-mono font-semibold text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            <span>Export FY 2025-26 TDS Report (CSV)</span>
+          <button onclick="downloadTDSReport()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#121110]/15 bg-[#F4EFEA] text-xs font-mono font-semibold text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export CBDT Form 16A (CSV)</span>
           </button>
         </div>
 
@@ -311,12 +292,12 @@
             <thead>
               <tr class="border-b border-[#121110]/8 text-[10px] text-[#8C857B] uppercase tracking-wider bg-[#F4EFEA]">
                 <th class="py-3 px-4">Tx ID & Date</th>
-                <th class="py-3 px-4">Event Type</th>
-                <th class="py-3 px-4">Basket</th>
-                <th class="py-3 px-4">Gross Amount</th>
-                <th class="py-3 px-4">1% TDS (194S)</th>
-                <th class="py-3 px-4">Net Amount</th>
-                <th class="py-3 px-4">Status & Reference</th>
+                <th class="py-3 px-4">Order Type</th>
+                <th class="py-3 px-4">Basket Name</th>
+                <th class="py-3 px-4">Gross INR</th>
+                <th class="py-3 px-4">1% Section 194S TDS</th>
+                <th class="py-3 px-4">Net Settled</th>
+                <th class="py-3 px-4">Banking Reference</th>
               </tr>
             </thead>
             <tbody id="tx-table-body" class="divide-y divide-[#121110]/5 text-[11px]">
@@ -348,12 +329,12 @@
           <div>
             <label class="block font-mono text-[11px] text-[#8C857B] uppercase mb-1">Select Target Basket</label>
             <select id="buy-basket-select" onchange="updateBuyCalculator()" class="w-full bg-[#F4EFEA] border border-[#121110]/15 rounded-xl px-3.5 py-3 text-xs font-mono text-[#121110] focus:outline-none focus:border-[#121110]">
-              <option value="top-5-index" data-nav="63.09">01 Top 5 Bluechips (NAV: ₹63.09)</option>
-              <option value="crypto-gold" data-nav="83.18">02 Crypto + Gold Reserve (NAV: ₹83.18)</option>
-              <option value="btc-standard" data-nav="121.30">03 Bitcoin Standard (NAV: ₹121.30)</option>
-              <option value="eth-l2" data-nav="54.80">04 Ethereum Ecosystem & L2s (NAV: ₹54.80)</option>
-              <option value="web3-infra" data-nav="42.60">05 Web3 Infrastructure (NAV: ₹42.60)</option>
-              <option value="defi-yield" data-nav="36.90">06 DeFi Yield & Protocol Revenue (NAV: ₹36.90)</option>
+              <option value="top-5-index" data-nav="100.00">01 Top-5 Bluechip Index (Base NAV: ₹100.00)</option>
+              <option value="crypto-gold" data-nav="100.00">02 Crypto + Gold Reserve (Base NAV: ₹100.00)</option>
+              <option value="bitcoin" data-nav="100.00">03 Pure Bitcoin Sovereign (Base NAV: ₹100.00)</option>
+              <option value="ethereum" data-nav="100.00">04 Ethereum Settlement Layer (Base NAV: ₹100.00)</option>
+              <option value="defi" data-nav="100.00">05 DeFi Protocol Architects (Base NAV: ₹100.00)</option>
+              <option value="altcoin-meme" data-nav="100.00">06 High-Beta Cultural Index (Base NAV: ₹100.00)</option>
             </select>
           </div>
 
@@ -369,11 +350,11 @@
           <div class="p-3.5 rounded-xl bg-[#F4EFEA] border border-[#121110]/8 space-y-1.5 font-mono text-xs">
             <div class="flex justify-between text-[#5C5752]">
               <span>Live Spot NAV:</span>
-              <span id="buy-calc-nav" class="font-bold text-[#121110]">₹63.09</span>
+              <span id="buy-calc-nav" class="font-bold text-[#121110]">₹100.00</span>
             </div>
             <div class="flex justify-between text-[#5C5752]">
               <span>Estimated Units to Credit:</span>
-              <span id="buy-calc-units" class="font-bold text-[#0F6E56]">158.5037 Units</span>
+              <span id="buy-calc-units" class="font-bold text-[#0F6E56]">100.0000 Units</span>
             </div>
             <div class="flex justify-between text-[#5C5752]">
               <span>Payment Mode:</span>
@@ -381,22 +362,22 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 text-xs font-semibold uppercase tracking-widest">
-            <span>Authorize Instant UPI Payment ↗</span>
+          <button type="submit" class="w-full btn-unseen bg-[#121110] text-[#F4EFEA] py-3 text-xs font-semibold uppercase tracking-widest mt-2">
+            Confirm & Invest via UPI ↗
           </button>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- ==================== MODAL 2: WITHDRAW / REDEEM (1% TDS AUDIT) ==================== -->
+  <!-- ==================== MODAL 2: WITHDRAW WITH 1% TDS ==================== -->
   <div id="withdraw-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
     <div class="tilt-card bg-[#FAF8F5] max-w-lg w-full p-7 sm:p-8 space-y-6">
       <div class="tilt-card-content space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-[#121110]/10">
           <div>
-            <div class="font-mono text-[10px] uppercase tracking-widest text-[#B85D43] font-semibold">Instant Bank Payout</div>
-            <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial">Redeem & Withdraw Funds</h3>
+            <div class="font-mono text-[10px] uppercase tracking-widest text-[#B85D43] font-semibold">Section 194S Compliant</div>
+            <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial">Liquidate to Bank Account</h3>
           </div>
           <button onclick="closeWithdrawModal()" class="w-8 h-8 rounded-full border border-[#121110]/15 flex items-center justify-center hover:bg-[#121110] hover:text-[#F4EFEA] transition">
             ✕
@@ -407,7 +388,7 @@
           <div>
             <label class="block font-mono text-[11px] text-[#8C857B] uppercase mb-1">Select Basket to Liquidate</label>
             <select id="withdraw-basket-select" onchange="updateWithdrawCalculator()" class="w-full bg-[#F4EFEA] border border-[#121110]/15 rounded-xl px-3.5 py-3 text-xs font-mono text-[#121110] focus:outline-none focus:border-[#121110]">
-              <!-- Populated dynamically -->
+              <!-- Populated dynamically by portal.js based on holdings -->
             </select>
           </div>
 
@@ -415,34 +396,31 @@
             <label class="block font-mono text-[11px] text-[#8C857B] uppercase mb-1">Redemption Amount (INR)</label>
             <div class="relative">
               <span class="absolute left-3.5 top-3 text-[#121110] font-mono font-bold text-sm">₹</span>
-              <input type="number" id="withdraw-amount-input" value="25000" min="500" step="500" oninput="updateWithdrawCalculator()" class="w-full pl-8 pr-3.5 py-3 bg-[#F4EFEA] border border-[#121110]/15 rounded-xl font-mono text-sm font-bold text-[#121110] focus:outline-none focus:border-[#121110]">
+              <input type="number" id="withdraw-amount-input" value="5000" min="500" step="500" oninput="updateWithdrawCalculator()" class="w-full pl-8 pr-3.5 py-3 bg-[#F4EFEA] border border-[#121110]/15 rounded-xl font-mono text-sm font-bold text-[#121110] focus:outline-none focus:border-[#121110]">
             </div>
           </div>
 
-          <!-- Statutory TDS & Net Payout Breakdown -->
-          <div class="p-4 rounded-xl bg-[#F4EFEA] border border-[#121110]/8 space-y-2 font-mono text-xs">
+          <!-- Statutory 1% TDS Breakdown Card -->
+          <div class="p-4 rounded-xl bg-[#F4EFEA] border border-[#B85D43]/20 space-y-2 font-mono text-xs">
             <div class="flex justify-between text-[#5C5752]">
               <span>Gross Liquidation:</span>
-              <span id="wd-calc-gross" class="font-bold text-[#121110]">₹25,000.00</span>
+              <span id="wd-calc-gross" class="font-bold text-[#121110]">₹5,000.00</span>
             </div>
             <div class="flex justify-between text-[#B85D43]">
-              <span class="flex items-center gap-1">
-                <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
-                1% TDS (Section 194S):
-              </span>
-              <span id="wd-calc-tds" class="font-bold">-₹250.00</span>
+              <span>Statutory 1% TDS (Sec 194S):</span>
+              <span id="wd-calc-tds" class="font-bold">-₹50.00</span>
             </div>
-            <div class="flex justify-between pt-2 border-t border-[#121110]/10 text-sm font-bold text-[#0F6E56]">
-              <span>Net Payout to Bank:</span>
-              <span id="wd-calc-net">₹24,750.00</span>
+            <div class="pt-2 border-t border-[#121110]/8 flex justify-between text-sm">
+              <span class="font-bold text-[#121110]">Net Amount to Bank:</span>
+              <span id="wd-calc-net" class="font-bold text-[#0F6E56]">₹4,950.00</span>
             </div>
             <div class="text-[10px] text-[#8C857B] pt-1">
-              Destination: HDFC Bank A/C ••••4921 (PAN ABCDE1234F). Form 16A TDS certificate will be dispatched to your email.
+              *TDS will be deposited against your PAN ABCDE1234F with the IT Dept. Certificate issued quarterly.
             </div>
           </div>
 
-          <button type="submit" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 text-xs font-semibold uppercase tracking-widest">
-            <span>Confirm Liquidation & IMPS Payout ↗</span>
+          <button type="submit" class="w-full btn-unseen bg-[#121110] text-[#F4EFEA] py-3 text-xs font-semibold uppercase tracking-widest mt-2">
+            Confirm Instant Bank Payout ↗
           </button>
         </form>
       </div>
@@ -470,37 +448,36 @@
 
         <div>
           <h3 class="text-xl font-bold text-[#121110]">Sign in to Baskly.money</h3>
-          <p class="text-xs text-[#5C5752] mt-1">Select an account to continue to your portfolio portal</p>
+          <p class="text-xs text-[#5C5752] mt-1">Sign in with your genuine Google account to access your portfolio.</p>
         </div>
 
-        <!-- Google One Tap Accounts -->
-        <div class="space-y-2.5">
-          <!-- Persona 1: Retail -->
-          <div onclick="selectGooglePersona('retail')" class="p-3.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] hover:bg-[#121110]/5 cursor-pointer flex items-center justify-between transition">
-            <div class="flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Arjun" class="w-10 h-10 rounded-full object-cover">
-              <div>
-                <div class="text-xs font-bold text-[#121110]">Arjun Mehta</div>
-                <div class="text-[11px] text-[#5C5752]">investor@gmail.com</div>
-              </div>
-            </div>
-            <span class="text-[10px] font-mono bg-[#0F6E56]/15 text-[#0F6E56] font-semibold px-2 py-0.5 rounded-full">Retail Investor</span>
-          </div>
-
-          <!-- Persona 2: Fund Manager -->
-          <div onclick="selectGooglePersona('fund_manager')" class="p-3.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] hover:bg-[#121110]/5 cursor-pointer flex items-center justify-between transition">
-            <div class="flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80" alt="Devika" class="w-10 h-10 rounded-full object-cover">
-              <div>
-                <div class="text-xs font-bold text-[#121110]">Dr. Devika Rao, CFA</div>
-                <div class="text-[11px] text-[#5C5752]">manager@baskly.money</div>
-              </div>
-            </div>
-            <span class="text-[10px] font-mono bg-[#121110] text-[#F4EFEA] font-semibold px-2 py-0.5 rounded-full">Fund Manager</span>
-          </div>
+        <!-- Google One Tap GIS Container -->
+        <div class="flex justify-center py-2">
+          <div id="google-signin-btn-container"></div>
         </div>
 
-        <div class="text-center text-[11px] text-[#8C857B]">
+        <div class="relative flex items-center justify-center">
+          <div class="border-t border-[#121110]/10 w-full"></div>
+          <span class="bg-[#FAF8F5] px-3 text-[10px] uppercase font-mono text-[#8C857B]">Or Enter Google Email</span>
+          <div class="border-t border-[#121110]/10 w-full"></div>
+        </div>
+
+        <!-- Direct Email Sign-In -->
+        <form onsubmit="handleDirectGoogleSignIn(event)" class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Your Full Name</label>
+            <input id="google-name-input" type="text" placeholder="Your Name" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Google Email Address</label>
+            <input id="google-email-input" type="email" required placeholder="you@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-[#121110] text-[#F4EFEA] text-xs font-semibold hover:bg-[#9A7B56] transition">
+            Continue with Email ↗
+          </button>
+        </form>
+
+        <div class="text-center text-[10px] text-[#8C857B] font-mono">
           Secured with SHA-256 JWT sessions & SEBI compliant KYC encryption.
         </div>
       </div>
@@ -508,8 +485,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="baskly-db.js"></script>
-  <script src="portal.js"></script>
+  <script src="baskly-db.js?v=2.4"></script>
+  <script src="portal.js?v=2.4"></script>
   <script>
     lucide.createIcons();
   </script>
