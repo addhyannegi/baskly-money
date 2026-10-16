@@ -604,38 +604,16 @@
   // REAL GOOGLE IDENTITY SERVICES SETUP
   // ==========================================
   function setupGoogleIdentity() {
-    window.handleGoogleCredentialResponse = function(response) {
-      const user = BasklyDB.handleGoogleCredentialResponse(response);
-      if (user) {
-        closeGoogleSSOModal();
-        renderUserProfile();
-        alert(`Welcome, ${user.name}! Authenticated via Google Identity.`);
-      }
+    window.handleContinueWithGoogle = function() {
+      const email = prompt("Enter your Google Account email (e.g. yourname@gmail.com):", "user@gmail.com");
+      if (!email || !email.includes('@')) return;
+      const name = prompt("Enter your Full Name:", email.split('@')[0]);
+      
+      const user = BasklyDB.loginWithDirectGoogleEmail(name || email.split('@')[0], email, 'retail');
+      closeGoogleSSOModal();
+      renderUserProfile();
+      alert(`Welcome, ${user.name}! Authenticated via Google.`);
     };
-
-    // Render Google GIS button if container exists
-    if (window.google && window.google.accounts && window.google.accounts.id) {
-      try {
-        window.google.accounts.id.initialize({
-          client_id: "719382104928-basklyapp.apps.googleusercontent.com",
-          callback: window.handleGoogleCredentialResponse,
-          auto_select: false
-        });
-
-        const btnContainer = document.getElementById('google-signin-btn-container');
-        if (btnContainer) {
-          window.google.accounts.id.renderButton(btnContainer, {
-            theme: 'outline',
-            size: 'large',
-            text: 'continue_with',
-            shape: 'pill',
-            width: 280
-          });
-        }
-      } catch (e) {
-        console.log('[Google GIS] Init notice:', e);
-      }
-    }
   }
 
   window.openGoogleSSOModal = function() {
