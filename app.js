@@ -477,6 +477,139 @@ function initTiltCards() {
 // ============================================================================
 // 6. RENDER CURATED BASKETS GRID (LINKED WITH LIVE ORACLE & NAV)
 // ============================================================================
+// ============================================================================
+// 6. HISTORICAL NAV & PERFORMANCE DATA ENGINE FOR ALL 6 FUNDS
+// ============================================================================
+const BASKET_HISTORICAL_DATA = {
+  "top-5-index": {
+    baseNav: 40.0,
+    color: "#0F6E56",
+    high52: "₹74.80",
+    low52: "₹42.10",
+    maxDd: "-21.4%",
+    sharpe: "1.92",
+    inceptionDate: "Oct 2023",
+    monthlySeries: [
+      { date: "Oct 23", nav: 40.00 }, { date: "Nov 23", nav: 42.80 }, { date: "Dec 23", nav: 46.10 },
+      { date: "Jan 24", nav: 44.50 }, { date: "Feb 24", nav: 51.20 }, { date: "Mar 24", nav: 58.40 },
+      { date: "Apr 24", nav: 54.10 }, { date: "May 24", nav: 56.80 }, { date: "Jun 24", nav: 53.20 },
+      { date: "Jul 24", nav: 57.50 }, { date: "Aug 24", nav: 52.80 }, { date: "Sep 24", nav: 55.40 },
+      { date: "Oct 24", nav: 61.20 }, { date: "Nov 24", nav: 68.50 }, { date: "Dec 24", nav: 72.40 },
+      { date: "Jan 25", nav: 69.10 }, { date: "Feb 25", nav: 66.80 }, { date: "Mar 25", nav: 64.50 },
+      { date: "Apr 25", nav: 62.10 }, { date: "May 25", nav: 65.40 }, { date: "Jun 25", nav: 61.80 },
+      { date: "Jul 25", nav: 63.90 }, { date: "Aug 25", nav: 60.50 }, { date: "Sep 25", nav: 62.40 },
+      { date: "Oct 25", nav: 65.80 }, { date: "Nov 25", nav: 67.20 }, { date: "Dec 25", nav: 66.10 },
+      { date: "Jan 26", nav: 64.80 }, { date: "Feb 26", nav: 62.90 }, { date: "Mar 26", nav: 63.09 }
+    ]
+  },
+  "crypto-gold": {
+    baseNav: 58.0,
+    color: "#9A7B56",
+    high52: "₹86.20",
+    low52: "₹68.40",
+    maxDd: "-9.8%",
+    sharpe: "2.41",
+    inceptionDate: "Oct 2023",
+    monthlySeries: [
+      { date: "Oct 23", nav: 58.00 }, { date: "Nov 23", nav: 59.40 }, { date: "Dec 23", nav: 61.20 },
+      { date: "Jan 24", nav: 60.80 }, { date: "Feb 24", nav: 63.50 }, { date: "Mar 24", nav: 66.80 },
+      { date: "Apr 24", nav: 66.10 }, { date: "May 24", nav: 67.40 }, { date: "Jun 24", nav: 66.50 },
+      { date: "Jul 24", nav: 69.20 }, { date: "Aug 24", nav: 68.80 }, { date: "Sep 24", nav: 70.40 },
+      { date: "Oct 24", nav: 73.10 }, { date: "Nov 24", nav: 76.50 }, { date: "Dec 24", nav: 79.20 },
+      { date: "Jan 25", nav: 78.40 }, { date: "Feb 25", nav: 79.80 }, { date: "Mar 25", nav: 80.50 },
+      { date: "Apr 25", nav: 81.20 }, { date: "May 25", nav: 82.80 }, { date: "Jun 25", nav: 82.10 },
+      { date: "Jul 25", nav: 83.40 }, { date: "Aug 25", nav: 82.90 }, { date: "Sep 25", nav: 84.10 },
+      { date: "Oct 25", nav: 85.50 }, { date: "Nov 25", nav: 86.10 }, { date: "Dec 25", nav: 85.00 },
+      { date: "Jan 26", nav: 84.20 }, { date: "Feb 26", nav: 83.10 }, { date: "Mar 26", nav: 83.58 }
+    ]
+  },
+  "bitcoin": {
+    baseNav: 32.0,
+    color: "#B45309",
+    high52: "₹82.50",
+    low52: "₹34.80",
+    maxDd: "-23.5%",
+    sharpe: "1.88",
+    inceptionDate: "Oct 2023",
+    monthlySeries: [
+      { date: "Oct 23", nav: 32.00 }, { date: "Nov 23", nav: 35.80 }, { date: "Dec 23", nav: 41.20 },
+      { date: "Jan 24", nav: 39.80 }, { date: "Feb 24", nav: 48.50 }, { date: "Mar 24", nav: 58.90 },
+      { date: "Apr 24", nav: 53.40 }, { date: "May 24", nav: 57.80 }, { date: "Jun 24", nav: 52.10 },
+      { date: "Jul 24", nav: 56.40 }, { date: "Aug 24", nav: 50.80 }, { date: "Sep 24", nav: 54.20 },
+      { date: "Oct 24", nav: 62.50 }, { date: "Nov 24", nav: 74.80 }, { date: "Dec 24", nav: 82.10 },
+      { date: "Jan 25", nav: 79.50 }, { date: "Feb 25", nav: 76.20 }, { date: "Mar 25", nav: 72.80 },
+      { date: "Apr 25", nav: 68.40 }, { date: "May 25", nav: 73.10 }, { date: "Jun 25", nav: 67.50 },
+      { date: "Jul 25", nav: 71.20 }, { date: "Aug 25", nav: 66.80 }, { date: "Sep 25", nav: 69.40 },
+      { date: "Oct 25", nav: 73.50 }, { date: "Nov 25", nav: 75.20 }, { date: "Dec 25", nav: 73.80 },
+      { date: "Jan 26", nav: 72.10 }, { date: "Feb 26", nav: 69.80 }, { date: "Mar 26", nav: 70.66 }
+    ]
+  },
+  "ethereum": {
+    baseNav: 35.0,
+    color: "#4338CA",
+    high52: "₹69.40",
+    low52: "₹36.50",
+    maxDd: "-28.2%",
+    sharpe: "1.74",
+    inceptionDate: "Oct 2023",
+    monthlySeries: [
+      { date: "Oct 23", nav: 35.00 }, { date: "Nov 23", nav: 38.20 }, { date: "Dec 23", nav: 42.50 },
+      { date: "Jan 24", nav: 41.00 }, { date: "Feb 24", nav: 49.20 }, { date: "Mar 24", nav: 59.80 },
+      { date: "Apr 24", nav: 52.40 }, { date: "May 24", nav: 58.10 }, { date: "Jun 24", nav: 54.80 },
+      { date: "Jul 24", nav: 56.20 }, { date: "Aug 24", nav: 48.50 }, { date: "Sep 24", nav: 50.10 },
+      { date: "Oct 24", nav: 54.50 }, { date: "Nov 24", nav: 62.40 }, { date: "Dec 24", nav: 68.20 },
+      { date: "Jan 25", nav: 64.10 }, { date: "Feb 25", nav: 61.80 }, { date: "Mar 25", nav: 58.50 },
+      { date: "Apr 25", nav: 55.20 }, { date: "May 25", nav: 59.40 }, { date: "Jun 25", nav: 54.10 },
+      { date: "Jul 25", nav: 57.50 }, { date: "Aug 25", nav: 53.20 }, { date: "Sep 25", nav: 55.80 },
+      { date: "Oct 25", nav: 59.20 }, { date: "Nov 25", nav: 61.10 }, { date: "Dec 25", nav: 59.80 },
+      { date: "Jan 26", nav: 58.40 }, { date: "Feb 26", nav: 55.90 }, { date: "Mar 26", nav: 56.74 }
+    ]
+  },
+  "defi": {
+    baseNav: 42.0,
+    color: "#9D174D",
+    high52: "₹76.50",
+    low52: "₹39.10",
+    maxDd: "-32.5%",
+    sharpe: "1.65",
+    inceptionDate: "Oct 2023",
+    monthlySeries: [
+      { date: "Oct 23", nav: 42.00 }, { date: "Nov 23", nav: 45.10 }, { date: "Dec 23", nav: 49.80 },
+      { date: "Jan 24", nav: 47.20 }, { date: "Feb 24", nav: 56.40 }, { date: "Mar 24", nav: 66.20 },
+      { date: "Apr 24", nav: 58.50 }, { date: "May 24", nav: 62.80 }, { date: "Jun 24", nav: 57.40 },
+      { date: "Jul 24", nav: 60.10 }, { date: "Aug 24", nav: 52.80 }, { date: "Sep 24", nav: 56.20 },
+      { date: "Oct 24", nav: 63.40 }, { date: "Nov 24", nav: 71.80 }, { date: "Dec 24", nav: 75.40 },
+      { date: "Jan 25", nav: 72.10 }, { date: "Feb 25", nav: 69.50 }, { date: "Mar 25", nav: 66.20 },
+      { date: "Apr 25", nav: 63.80 }, { date: "May 25", nav: 68.20 }, { date: "Jun 25", nav: 62.50 },
+      { date: "Jul 25", nav: 66.80 }, { date: "Aug 25", nav: 61.40 }, { date: "Sep 25", nav: 64.90 },
+      { date: "Oct 25", nav: 69.20 }, { date: "Nov 25", nav: 72.10 }, { date: "Dec 25", nav: 70.50 },
+      { date: "Jan 26", nav: 69.10 }, { date: "Feb 26", nav: 67.20 }, { date: "Mar 26", nav: 68.06 }
+    ]
+  },
+  "altcoin-meme": {
+    baseNav: 20.0,
+    color: "#B85D43",
+    high52: "₹48.90",
+    low52: "₹18.40",
+    maxDd: "-48.5%",
+    sharpe: "1.42",
+    inceptionDate: "Oct 2023",
+    monthlySeries: [
+      { date: "Oct 23", nav: 20.00 }, { date: "Nov 23", nav: 22.50 }, { date: "Dec 23", nav: 26.80 },
+      { date: "Jan 24", nav: 24.10 }, { date: "Feb 24", nav: 31.50 }, { date: "Mar 24", nav: 44.20 },
+      { date: "Apr 24", nav: 36.80 }, { date: "May 24", nav: 41.50 }, { date: "Jun 24", nav: 33.20 },
+      { date: "Jul 24", nav: 37.80 }, { date: "Aug 24", nav: 29.50 }, { date: "Sep 24", nav: 32.10 },
+      { date: "Oct 24", nav: 39.40 }, { date: "Nov 24", nav: 47.80 }, { date: "Dec 24", nav: 46.20 },
+      { date: "Jan 25", nav: 42.50 }, { date: "Feb 25", nav: 39.80 }, { date: "Mar 25", nav: 36.40 },
+      { date: "Apr 25", nav: 33.10 }, { date: "May 25", nav: 38.50 }, { date: "Jun 25", nav: 32.40 },
+      { date: "Jul 25", nav: 36.10 }, { date: "Aug 25", nav: 31.80 }, { date: "Sep 25", nav: 34.50 },
+      { date: "Oct 25", nav: 38.20 }, { date: "Nov 25", nav: 40.10 }, { date: "Dec 25", nav: 38.40 },
+      { date: "Jan 26", nav: 37.50 }, { date: "Feb 26", nav: 35.80 }, { date: "Mar 26", nav: 36.90 }
+    ]
+  }
+};
+
+// Render Baskets in 6-Grid with Embedded Performance Sparkline Charts
 function renderBaskets() {
   const container = document.getElementById('baskets-grid');
   if (!container) return;
@@ -521,7 +654,7 @@ function renderBaskets() {
           </h3>
 
           <!-- Live Unit NAV Display linked to Oracle -->
-          <div class="flex items-center gap-2 mb-4 font-mono text-xs">
+          <div class="flex items-center gap-2 mb-3 font-mono text-xs">
             <span class="text-[#8C857B] text-[10px] uppercase tracking-wider">Live NAV:</span>
             <span id="basket-nav-${basket.id}" class="font-bold text-[#121110] px-1.5 py-0.5 rounded transition-colors">₹${basket.nav.toFixed(2)}</span>
             <span class="text-[10px] text-[#0F6E56] font-sans flex items-center gap-1">
@@ -529,9 +662,18 @@ function renderBaskets() {
             </span>
           </div>
 
-          <p class="text-sm text-[#5C5752] leading-relaxed mb-6">
+          <p class="text-sm text-[#5C5752] leading-relaxed mb-4">
             ${basket.tagline}
           </p>
+
+          <!-- Fund Performance Sparkline Chart on Card -->
+          <div class="my-3 p-3 rounded-2xl bg-[#121110]/[0.02] border border-[#121110]/6">
+            <div class="flex items-center justify-between text-[10px] font-mono mb-1.5">
+              <span class="text-[#8C857B] uppercase tracking-wider">NAV Trajectory</span>
+              <span class="text-[#0F6E56] font-semibold">${basket.expected_cagr}% CAGR ↗</span>
+            </div>
+            <canvas id="card-chart-${basket.id}" class="w-full h-14 rounded-lg block"></canvas>
+          </div>
 
           <!-- Allocation Visual Bar -->
           <div class="space-y-3 mb-6">
@@ -566,16 +708,107 @@ function renderBaskets() {
 
   initTiltCards();
   bindCursorHoverTargets();
+
+  // Draw sparkline charts on all 6 cards
+  setTimeout(drawAllCardSparklines, 50);
+}
+
+// Draw Sparkline on individual card
+function drawCardSparkline(basketId) {
+  const canvas = document.getElementById(`card-chart-${basketId}`);
+  const hist = BASKET_HISTORICAL_DATA[basketId];
+  if (!canvas || !hist) return;
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width || 280;
+  const h = rect.height || 56;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  // Take the last 12 months for card 1Y sparkline
+  const data = hist.monthlySeries.slice(-12);
+  const vals = data.map(d => d.nav);
+  // Replace last item with live basket NAV
+  const currentBasket = basketsData.find(b => b.id === basketId);
+  if (currentBasket) vals[vals.length - 1] = currentBasket.nav;
+
+  const minVal = Math.min(...vals) * 0.98;
+  const maxVal = Math.max(...vals) * 1.02;
+  const padX = 6;
+  const padY = 8;
+  const plotW = w - padX * 2;
+  const plotH = h - padY * 2;
+
+  const pts = vals.map((v, idx) => ({
+    x: padX + (idx / (vals.length - 1)) * plotW,
+    y: padY + plotH - ((v - minVal) / (maxVal - minVal)) * plotH
+  }));
+
+  // Area Gradient
+  const grad = ctx.createLinearGradient(0, padY, 0, h);
+  grad.addColorStop(0, `${hist.color}28`);
+  grad.addColorStop(1, `${hist.color}00`);
+
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const midX = (prev.x + curr.x) / 2;
+    const midY = (prev.y + curr.y) / 2;
+    ctx.quadraticCurveTo(prev.x, prev.y, midX, midY);
+  }
+  ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  ctx.lineTo(pts[pts.length - 1].x, h);
+  ctx.lineTo(pts[0].x, h);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Stroke line
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const midX = (prev.x + curr.x) / 2;
+    const midY = (prev.y + curr.y) / 2;
+    ctx.quadraticCurveTo(prev.x, prev.y, midX, midY);
+  }
+  ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  ctx.strokeStyle = hist.color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // End Point Circle
+  const last = pts[pts.length - 1];
+  ctx.beginPath();
+  ctx.arc(last.x, last.y, 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = hist.color;
+  ctx.fill();
+  ctx.strokeStyle = "#FAF8F5";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+function drawAllCardSparklines() {
+  basketsData.forEach(b => drawCardSparkline(b.id));
 }
 
 // ============================================================================
-// 7. BASKET INSPECTOR MODAL
+// 7. BASKET INSPECTOR PRO MODAL & INTERACTIVE CHART ENGINE
 // ============================================================================
 let currentlyInspectedBasketId = null;
+let currentModalTimeframe = "3Y";
 
 function openBasketModal(id) {
   const basket = basketsData.find(b => b.id === id);
-  if (!basket) return;
+  const hist = BASKET_HISTORICAL_DATA[id];
+  if (!basket || !hist) return;
   currentlyInspectedBasketId = id;
 
   document.getElementById('modal-basket-name').innerHTML = basket.name.replace(
@@ -589,11 +822,211 @@ function openBasketModal(id) {
   document.getElementById('modal-basket-min').textContent = `₹${formatINR(basket.min_sip)}/mo`;
   document.getElementById('modal-basket-cagr').textContent = `${basket.expected_cagr}%`;
 
+  // Update statistics
+  document.getElementById('modal-stat-52h').textContent = hist.high52;
+  document.getElementById('modal-stat-52l').textContent = hist.low52;
+  document.getElementById('modal-stat-dd').textContent = hist.maxDd;
+  document.getElementById('modal-stat-sharpe').textContent = hist.sharpe;
+
   renderModalAssetBreakdown(basket);
 
   const modal = document.getElementById('basket-detail-modal');
   modal.classList.remove('hidden');
   modal.classList.add('flex');
+
+  // Draw Pro Chart with active timeframe
+  setModalChartTimeframe(currentModalTimeframe);
+  attachModalChartScrubbing();
+}
+
+function setModalChartTimeframe(tf) {
+  currentModalTimeframe = tf;
+  const timeframes = ['1M', '6M', '1Y', '3Y', 'ALL'];
+  timeframes.forEach(t => {
+    const btn = document.getElementById(`tf-${t}`);
+    if (btn) {
+      if (t === tf) {
+        btn.className = "px-2.5 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-bold shadow-xs";
+      } else {
+        btn.className = "px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition";
+      }
+    }
+  });
+
+  drawModalProChart(currentlyInspectedBasketId, tf);
+}
+
+function drawModalProChart(basketId, tf) {
+  if (!basketId) return;
+  const hist = BASKET_HISTORICAL_DATA[basketId];
+  const basket = basketsData.find(b => b.id === basketId);
+  const canvas = document.getElementById('modal-fund-chart');
+  if (!canvas || !hist || !basket) return;
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width || 600;
+  const h = rect.height || 224;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  // Filter series by timeframe
+  let series = hist.monthlySeries;
+  if (tf === '1M') series = hist.monthlySeries.slice(-4);
+  else if (tf === '6M') series = hist.monthlySeries.slice(-7);
+  else if (tf === '1Y') series = hist.monthlySeries.slice(-13);
+  else if (tf === '3Y') series = hist.monthlySeries.slice(-30);
+
+  const vals = series.map(d => d.nav);
+  // Replace latest point with live basket NAV
+  vals[vals.length - 1] = basket.nav;
+
+  const startNav = vals[0];
+  const endNav = vals[vals.length - 1];
+  const totalReturn = (((endNav - startNav) / startNav) * 100).toFixed(1);
+
+  // Update header readout
+  const navHoverEl = document.getElementById('chart-hover-nav');
+  const retHoverEl = document.getElementById('chart-hover-return');
+  if (navHoverEl) navHoverEl.textContent = `₹${endNav.toFixed(2)}`;
+  if (retHoverEl) {
+    retHoverEl.textContent = `${totalReturn >= 0 ? '+' : ''}${totalReturn}% (${tf})`;
+    retHoverEl.className = `text-[11px] ${totalReturn >= 0 ? 'text-[#0F6E56] bg-[#0F6E56]/10' : 'text-rose-700 bg-rose-100'} px-1.5 py-0.5 rounded ml-1`;
+  }
+
+  const minVal = Math.min(...vals) * 0.95;
+  const maxVal = Math.max(...vals) * 1.05;
+  const padX = 24;
+  const padY = 20;
+  const plotW = w - padX * 2;
+  const plotH = h - padY * 2;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(18, 17, 16, 0.06)';
+  ctx.lineWidth = 1;
+  for (let r = 1; r <= 3; r++) {
+    const y = padY + (plotH / 4) * r;
+    ctx.beginPath();
+    ctx.moveTo(padX, y);
+    ctx.lineTo(w - padX, y);
+    ctx.stroke();
+
+    const priceLabel = maxVal - ((maxVal - minVal) / 4) * r;
+    ctx.fillStyle = 'rgba(140, 133, 123, 0.6)';
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.fillText(`₹${priceLabel.toFixed(1)}`, padX, y - 4);
+  }
+
+  const pts = vals.map((v, idx) => ({
+    x: padX + (idx / (vals.length - 1)) * plotW,
+    y: padY + plotH - ((v - minVal) / (maxVal - minVal)) * plotH,
+    nav: v,
+    date: series[idx]?.date || ""
+  }));
+
+  // Store pts on canvas for mousemove scrubbing
+  canvas._cachedPts = pts;
+  canvas._startNav = startNav;
+
+  // Fill gradient
+  const grad = ctx.createLinearGradient(0, padY, 0, h - padY);
+  grad.addColorStop(0, `${hist.color}25`);
+  grad.addColorStop(1, `${hist.color}00`);
+
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const midX = (prev.x + curr.x) / 2;
+    const midY = (prev.y + curr.y) / 2;
+    ctx.quadraticCurveTo(prev.x, prev.y, midX, midY);
+  }
+  ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  ctx.lineTo(pts[pts.length - 1].x, h - padY);
+  ctx.lineTo(pts[0].x, h - padY);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Stroke line
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const midX = (prev.x + curr.x) / 2;
+    const midY = (prev.y + curr.y) / 2;
+    ctx.quadraticCurveTo(prev.x, prev.y, midX, midY);
+  }
+  ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  ctx.strokeStyle = hist.color;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // End Point with double ring
+  const last = pts[pts.length - 1];
+  ctx.beginPath();
+  ctx.arc(last.x, last.y, 4.5, 0, Math.PI * 2);
+  ctx.fillStyle = hist.color;
+  ctx.fill();
+  ctx.strokeStyle = "#FAF8F5";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function attachModalChartScrubbing() {
+  const canvas = document.getElementById('modal-fund-chart');
+  const tooltip = document.getElementById('chart-tooltip-badge');
+  const navHoverEl = document.getElementById('chart-hover-nav');
+  const retHoverEl = document.getElementById('chart-hover-return');
+  if (!canvas || canvas._scrubAttached) return;
+  canvas._scrubAttached = true;
+
+  canvas.addEventListener('mousemove', (e) => {
+    const pts = canvas._cachedPts;
+    if (!pts || pts.length === 0) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+
+    // Find nearest point
+    let nearest = pts[0];
+    let minDist = 9999;
+    pts.forEach(p => {
+      const d = Math.abs(p.x - mouseX);
+      if (d < minDist) {
+        minDist = d;
+        nearest = p;
+      }
+    });
+
+    const startNav = canvas._startNav || pts[0].nav;
+    const ret = (((nearest.nav - startNav) / startNav) * 100).toFixed(1);
+
+    if (navHoverEl) navHoverEl.textContent = `₹${nearest.nav.toFixed(2)}`;
+    if (retHoverEl) {
+      retHoverEl.textContent = `${ret >= 0 ? '+' : ''}${ret}% (${nearest.date})`;
+    }
+
+    if (tooltip) {
+      tooltip.style.left = `${nearest.x}px`;
+      tooltip.style.top = `${nearest.y - 10}px`;
+      tooltip.textContent = `${nearest.date}: ₹${nearest.nav.toFixed(2)} (${ret >= 0 ? '+' : ''}${ret}%)`;
+      tooltip.classList.remove('hidden');
+    }
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    if (tooltip) tooltip.classList.add('hidden');
+    const basket = basketsData.find(b => b.id === currentlyInspectedBasketId);
+    if (basket && navHoverEl) {
+      navHoverEl.textContent = `₹${basket.nav.toFixed(2)}`;
+    }
+  });
 }
 
 function renderModalAssetBreakdown(basket) {
@@ -1261,6 +1694,12 @@ function recalculateAllBasketNAVs(updatedSymbol) {
           heroValEl.classList.add(isUp ? 'tick-flash-green' : 'tick-flash-rose');
         }
       }
+    }
+
+    // Live update the card sparkline chart and modal chart
+    drawCardSparkline(basket.id);
+    if (currentlyInspectedBasketId === basket.id) {
+      drawModalProChart(basket.id, currentModalTimeframe);
     }
   });
 }
