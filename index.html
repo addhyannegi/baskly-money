@@ -24,8 +24,11 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Google Identity Services (GIS) Official SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <!-- Unseen Studio Inspired Luxury Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=2.3">
+  <link rel="stylesheet" href="styles.css?v=2.4">
 </head>
 <body class="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
 
@@ -800,13 +803,13 @@
               </div>
             </div>
 
-            <!-- Timeframe Controls -->
+            <!-- Timeframe Controls (1D, 1W, 1M, 1Y, 5Y) -->
             <div class="flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-full border border-[#121110]/10 font-mono text-[10px]">
+              <button onclick="setModalChartTimeframe('1D')" id="tf-1D" class="px-2.5 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-bold shadow-xs">1D</button>
+              <button onclick="setModalChartTimeframe('1W')" id="tf-1W" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">1W</button>
               <button onclick="setModalChartTimeframe('1M')" id="tf-1M" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">1M</button>
-              <button onclick="setModalChartTimeframe('6M')" id="tf-6M" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">6M</button>
               <button onclick="setModalChartTimeframe('1Y')" id="tf-1Y" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">1Y</button>
-              <button onclick="setModalChartTimeframe('3Y')" id="tf-3Y" class="px-2.5 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-bold shadow-xs">3Y</button>
-              <button onclick="setModalChartTimeframe('ALL')" id="tf-ALL" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">ALL</button>
+              <button onclick="setModalChartTimeframe('5Y')" id="tf-5Y" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">5Y</button>
             </div>
           </div>
 
@@ -1030,37 +1033,43 @@
 
         <div>
           <h3 class="text-xl font-bold text-[#121110]">Sign in to Baskly.money</h3>
-          <p class="text-xs text-[#5C5752] mt-1">Select an authenticated Google identity to enter the portal</p>
+          <p class="text-xs text-[#5C5752] mt-1">Authenticate with your genuine Google account to access your portfolio or fund manager desk.</p>
         </div>
 
-        <!-- Google One Tap Personas -->
-        <div class="space-y-2.5">
-          <!-- Persona 1: Retail -->
-          <div onclick="selectGooglePersonaAndRedirect('retail')" class="p-3.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] hover:bg-[#121110]/5 cursor-pointer flex items-center justify-between transition">
-            <div class="flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Arjun" class="w-10 h-10 rounded-full object-cover">
-              <div>
-                <div class="text-xs font-bold text-[#121110]">Arjun Mehta</div>
-                <div class="text-[11px] text-[#5C5752]">investor@gmail.com</div>
-              </div>
-            </div>
-            <span class="text-[10px] font-mono bg-[#0F6E56]/15 text-[#0F6E56] font-semibold px-2 py-0.5 rounded-full">Retail Investor ↗</span>
-          </div>
-
-          <!-- Persona 2: Fund Manager -->
-          <div onclick="selectGooglePersonaAndRedirect('fund_manager')" class="p-3.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] hover:bg-[#121110]/5 cursor-pointer flex items-center justify-between transition">
-            <div class="flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80" alt="Devika" class="w-10 h-10 rounded-full object-cover">
-              <div>
-                <div class="text-xs font-bold text-[#121110]">Dr. Devika Rao, CFA</div>
-                <div class="text-[11px] text-[#5C5752]">manager@baskly.money</div>
-              </div>
-            </div>
-            <span class="text-[10px] font-mono bg-[#121110] text-[#F4EFEA] font-semibold px-2 py-0.5 rounded-full">Fund Manager ↗</span>
-          </div>
+        <!-- Google One Tap GIS Container -->
+        <div class="flex justify-center py-2">
+          <div id="google-signin-btn-container"></div>
         </div>
 
-        <div class="text-center text-[11px] text-[#8C857B]">
+        <div class="relative flex items-center justify-center">
+          <div class="border-t border-[#121110]/10 w-full"></div>
+          <span class="bg-[#FAF8F5] px-3 text-[10px] uppercase font-mono text-[#8C857B]">Or Enter Google Email</span>
+          <div class="border-t border-[#121110]/10 w-full"></div>
+        </div>
+
+        <!-- Direct Email Sign-In -->
+        <form onsubmit="handleDirectGoogleSignIn(event)" class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Your Full Name</label>
+            <input id="google-name-input" type="text" placeholder="Your Name" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Google Email Address</label>
+            <input id="google-email-input" type="email" required placeholder="you@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-[#5C5752] mb-1">Select Role / Desk</label>
+            <select id="google-role-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]">
+              <option value="retail">Retail Investor Portal</option>
+              <option value="fund_manager">Fund Manager / CIO Terminal</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-[#121110] text-[#F4EFEA] text-xs font-semibold hover:bg-[#9A7B56] transition">
+            Continue to Portal ↗
+          </button>
+        </form>
+
+        <div class="text-center text-[10px] text-[#8C857B] font-mono">
           Secured with SHA-256 JWT sessions & SEBI compliant KYC encryption.
         </div>
       </div>
@@ -1068,8 +1077,8 @@
   </div>
 
   <!-- Interactive Engine & Database -->
-  <script src="baskly-db.js"></script>
-  <script src="app.js?v=2.3"></script>
+  <script src="baskly-db.js?v=2.4"></script>
+  <script src="app.js?v=2.4"></script>
   <script>
     lucide.createIcons();
 
@@ -1089,9 +1098,36 @@
       }
     };
 
-    window.selectGooglePersonaAndRedirect = function(role) {
+    window.handleGoogleCredentialResponse = function(response) {
       if (window.BasklyDB) {
-        window.BasklyDB.loginWithGoogle(role);
+        const user = window.BasklyDB.handleGoogleCredentialResponse(response);
+        closeGoogleSSOModal();
+        if (user && user.role === 'fund_manager') {
+          window.location.href = 'manager.html';
+        } else {
+          window.location.href = 'portal.html';
+        }
+      }
+    };
+
+    window.handleDirectGoogleSignIn = function(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('google-name-input');
+      const emailInput = document.getElementById('google-email-input');
+      const roleSelect = document.getElementById('google-role-select');
+      
+      if (!emailInput || !emailInput.value) {
+        alert('Please enter your Google email.');
+        return;
+      }
+
+      const role = roleSelect ? roleSelect.value : 'retail';
+      if (window.BasklyDB) {
+        window.BasklyDB.loginWithDirectGoogleEmail(
+          nameInput ? nameInput.value : '',
+          emailInput.value,
+          role
+        );
       }
       closeGoogleSSOModal();
       if (role === 'fund_manager') {
@@ -1100,6 +1136,27 @@
         window.location.href = 'portal.html';
       }
     };
+
+    // Initialize GIS if loaded
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: "719382104928-basklyapp.apps.googleusercontent.com",
+          callback: window.handleGoogleCredentialResponse,
+          auto_select: false
+        });
+        const container = document.getElementById('google-signin-btn-container');
+        if (container) {
+          window.google.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            text: 'continue_with',
+            shape: 'pill',
+            width: 280
+          });
+        }
+      } catch (e) {}
+    }
   </script>
 </body>
 </html>
