@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>baskly.money® — Quietly Compounding Crypto Wealth in Rupees</title>
+  <meta name="description" content="Curated crypto index baskets priced in Rupees. Automated via NPCI UPI AutoPay from ₹1,000/month with 1:1 cold custody and automated 1% TDS.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%23121110%22/><text y=%2266%22 font-size=%2256%22 font-family=%22Georgia,serif%22 font-style=%22italic%22 text-anchor=%22middle%22 x=%2248%22 fill=%22%23F4EFEA%22>b</text></svg>">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js for Interactive 3D Iridescent Pearl & Glass Sculpture -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Unseen Studio Inspired Luxury Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
+
+  <!-- ==================== 1. TACTILE FILM GRAIN OVERLAY ==================== -->
+  <div class="noise-overlay"></div>
+
+  <!-- ==================== 2. CUSTOM MAGNETIC FLUID CURSOR ==================== -->
+  <div id="cursor-dot" class="custom-cursor-dot hidden md:block"></div>
+  <div id="cursor-ring" class="custom-cursor-ring hidden md:flex">
+    <span id="cursor-label" class="cursor-label">INSPECT ↗</span>
+  </div>
+
+  <!-- ==================== 3. CINEMATIC PRELOADER CURTAIN ==================== -->
+  <div id="preloader" class="preloader">
+    <div class="flex items-center justify-between text-xs font-mono tracking-widest uppercase text-[#F4EFEA]/60">
+      <span>baskly.money® — India</span>
+      <span>Systematic Digital Asset Baskets</span>
+    </div>
+
+    <div class="my-auto max-w-3xl">
+      <div class="text-xs font-mono uppercase tracking-[0.25em] text-[#9A7B56] mb-3">Initialising Sovereign Index Engine</div>
+      <div class="text-4xl sm:text-6xl font-light tracking-editorial leading-tight">
+        Quietly compounding <span class="font-serif-italic text-5xl sm:text-7xl text-[#E8DFD5]">wealth</span> in Rupees.
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex items-baseline justify-between">
+        <span class="text-xs font-mono uppercase tracking-widest text-[#F4EFEA]/50">Loading WebGL Atelier</span>
+        <div class="font-serif-italic text-5xl sm:text-7xl leading-none">
+          <span id="preloader-count">000</span><span class="text-2xl font-mono not-italic text-[#9A7B56]">%</span>
+        </div>
+      </div>
+      <div class="preloader-bar-track">
+        <div id="preloader-bar" class="preloader-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 4. INTERACTIVE 3D WEBGL PEARL SCULPTURE ==================== -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- ==================== 5. EDITORIAL GLASS NAVBAR ==================== -->
+  <header class="sticky top-0 z-40 w-full unseen-glass-nav transition-all">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Brand Identity -->
+      <a href="#" class="flex items-center gap-3 group" data-magnetic>
+        <div class="w-9 h-9 rounded-full bg-[#121110] text-[#F4EFEA] flex items-center justify-center font-serif-italic text-xl group-hover:bg-[#9A7B56] transition-colors">
+          b
+        </div>
+        <div class="flex flex-col">
+          <span class="font-semibold text-lg tracking-editorial leading-none text-[#121110]">
+            baskly<span class="font-serif-italic font-normal text-xl text-[#9A7B56]">.money</span><sup class="text-[9px] font-mono ml-0.5">®</sup>
+          </span>
+          <span class="text-[9px] font-mono uppercase tracking-[0.2em] text-[#8C857B] mt-0.5">Rupee Crypto SIPs</span>
+        </div>
+      </a>
+
+      <!-- Editorial Indexed Links -->
+      <nav class="hidden lg:flex items-center gap-9 text-xs font-medium tracking-wide text-[#5C5752]">
+        <a href="#baskets" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
+          <span class="font-mono text-[10px] text-[#9A7B56]">01</span> Baskets
+        </a>
+        <a href="#calculator" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
+          <span class="font-mono text-[10px] text-[#9A7B56]">02</span> Compounding
+        </a>
+        <a href="#methodology" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
+          <span class="font-mono text-[10px] text-[#9A7B56]">03</span> Philosophy
+        </a>
+        <a href="#quiz" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
+          <span class="font-mono text-[10px] text-[#9A7B56]">04</span> Risk Atelier
+        </a>
+        <a href="#trust" class="hover:text-[#121110] transition-colors flex items-center gap-1" data-magnetic>
+          <span class="font-mono text-[10px] text-[#9A7B56]">05</span> Custody & TDS
+        </a>
+      </nav>
+
+      <!-- Right Controls: Unseen 3D Wave Toggle + Magnetic CTA -->
+      <div class="flex items-center gap-3">
+        <button 
+          onclick="toggleAmbientMotion()" 
+          title="Toggle 3D WebGL Sculpture Motion"
+          class="hidden sm:inline-flex items-center gap-2.5 px-3.5 py-2 rounded-full border border-[#121110]/15 text-[11px] font-mono uppercase tracking-wider text-[#121110] hover:border-[#121110] transition-all"
+          data-magnetic>
+          <div id="ambient-wave" class="wave-bars text-[#9A7B56]">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <span id="ambient-label">3D Live</span>
+        </button>
+
+        <button 
+          onclick="openUPIDrawer()" 
+          class="btn-unseen bg-[#121110] text-[#F4EFEA] px-5 py-2.5 text-xs font-semibold tracking-wide"
+          data-magnetic>
+          <span>Start ₹1,000 SIP ↗</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 6. HERO SECTION (UNSEEN STUDIO ASYMMETRIC EDITORIAL) ==================== -->
+  <main class="relative z-10">
+    <section class="relative pt-14 pb-24 md:pt-24 md:pb-32 max-w-7xl mx-auto px-6">
+      
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left 7 Columns: Monumental Editorial Typography -->
+        <div class="lg:col-span-7 space-y-8">
+          
+          <!-- Eyebrow Tag -->
+          <div class="reveal-up hero-reveal inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#FAF8F5]/85 border border-[#121110]/10 backdrop-blur-md">
+            <span class="w-2 h-2 rounded-full bg-[#0F6E56] animate-pulse"></span>
+            <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5C5752]">
+              Indian Rupee SIPs · NPCI AutoPay · 1% TDS Reconciled
+            </span>
+          </div>
+
+          <!-- Unseen-Style Mixed Sans + High-Contrast Editorial Serif Headline -->
+          <h1 class="reveal-up hero-reveal text-5xl sm:text-7xl lg:text-[82px] font-semibold text-[#121110] tracking-editorial leading-[0.98]">
+            Quietly building<br>
+            <span class="font-serif-italic font-light text-6xl sm:text-8xl lg:text-[96px] text-[#9A7B56] pr-2">generational</span><br>
+            crypto wealth.
+          </h1>
+
+          <!-- Editorial Lead Paragraph -->
+          <p class="reveal-up hero-reveal text-base sm:text-xl text-[#5C5752] max-w-xl font-normal leading-relaxed">
+            Retire from 3 AM chart anxiety and speculative noise. Invest from <strong class="text-[#121110] font-semibold">₹1,000/month</strong> into rule-based, market-cap weighted crypto baskets—automated via UPI AutoPay.
+          </p>
+
+          <!-- Magnetic CTA Row -->
+          <div class="reveal-up hero-reveal flex flex-wrap items-center gap-4 pt-2">
+            <a 
+              href="#baskets" 
+              class="btn-unseen bg-[#121110] text-[#F4EFEA] px-8 py-4 text-sm font-semibold tracking-wide shadow-lg"
+              data-magnetic>
+              <span class="flex items-center gap-2.5">
+                Explore 06 Curated Baskets
+                <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+              </span>
+            </a>
+
+            <button 
+              onclick="openUPIDrawer()" 
+              class="btn-unseen-light px-7 py-4 text-sm font-semibold text-[#121110]"
+              data-magnetic>
+              <span class="flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-[#9A7B56]"></i>
+                Simulate UPI Mandate
+              </span>
+            </button>
+          </div>
+
+          <!-- Micro Metrics Strip -->
+          <div class="reveal-up hero-reveal grid grid-cols-3 gap-6 pt-8 border-t border-[#121110]/10 max-w-lg">
+            <div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Minimum Habit</div>
+              <div class="font-serif-italic text-3xl text-[#121110] mt-0.5">₹1,000<span class="font-sans text-xs not-italic text-[#8C857B]">/mo</span></div>
+            </div>
+            <div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Rebalancing</div>
+              <div class="font-serif-italic text-3xl text-[#121110] mt-0.5">Monthly <span class="font-sans text-xs not-italic text-[#0F6E56]">Auto</span></div>
+            </div>
+            <div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Custody Standard</div>
+              <div class="font-serif-italic text-3xl text-[#121110] mt-0.5">1:1 <span class="font-sans text-xs not-italic text-[#8C857B]">Cold Vault</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right 5 Columns: Floating 3D-Tilt Glass Live Mandate Artifact -->
+        <div class="lg:col-span-5 reveal-up hero-reveal">
+          <div class="tilt-card p-7 sm:p-8 animate-float" data-cursor-label="LIVE MANDATE">
+            <div class="tilt-card-content space-y-6">
+              
+              <div class="flex items-start justify-between border-b border-[#121110]/10 pb-5">
+                <div>
+                  <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#9A7B56]">Active Folio · #IND-8841</span>
+                  <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mt-1">
+                    Top-5 <span class="font-serif-italic font-normal text-3xl">Bluechip</span> SIP
+                  </h3>
+                  <p class="text-xs text-[#5C5752] mt-0.5">HDFC Bank UPI AutoPay · 5th of every month</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-[#0F6E56]/10 text-[#0F6E56] font-semibold">
+                  ● Compounding
+                </span>
+              </div>
+
+              <!-- Portfolio Valuation Display -->
+              <div class="grid grid-cols-2 gap-4 bg-[#F4EFEA]/80 p-4 rounded-2xl border border-[#121110]/8">
+                <div>
+                  <div class="font-mono text-[10px] uppercase tracking-wider text-[#8C857B]">Current NAV Value</div>
+                  <div class="text-2xl font-bold text-[#121110] font-mono mt-1">₹2,84,650</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-mono text-[10px] uppercase tracking-wider text-[#8C857B]">Net XIRR Return</div>
+                  <div class="text-2xl font-bold text-[#0F6E56] font-mono mt-1">+31.4%</div>
+                </div>
+              </div>
+
+              <!-- Live Constituent Weights -->
+              <div class="space-y-2.5">
+                <div class="flex justify-between text-[11px] font-mono uppercase tracking-wider text-[#8C857B]">
+                  <span>Automatic Allocation</span>
+                  <span>Rebalanced 4d ago</span>
+                </div>
+                <div class="w-full h-2 rounded-full overflow-hidden flex bg-[#121110]/5">
+                  <div style="width: 55%; background: #D97706;"></div>
+                  <div style="width: 20%; background: #4F46E5;"></div>
+                  <div style="width: 10%; background: #0D9488;"></div>
+                  <div style="width: 8%; background: #CA8A04;"></div>
+                  <div style="width: 7%; background: #1E293B;"></div>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5 pt-2 text-center">
+                  <div class="bg-[#FAF8F5] py-2 rounded-xl border border-[#121110]/8">
+                    <div class="font-mono text-[10px] font-bold text-[#121110]">BTC</div>
+                    <div class="text-[10px] text-[#9A7B56] font-mono">55%</div>
+                  </div>
+                  <div class="bg-[#FAF8F5] py-2 rounded-xl border border-[#121110]/8">
+                    <div class="font-mono text-[10px] font-bold text-[#121110]">ETH</div>
+                    <div class="text-[10px] text-[#4F46E5] font-mono">20%</div>
+                  </div>
+                  <div class="bg-[#FAF8F5] py-2 rounded-xl border border-[#121110]/8">
+                    <div class="font-mono text-[10px] font-bold text-[#121110]">SOL</div>
+                    <div class="text-[10px] text-[#0D9488] font-mono">10%</div>
+                  </div>
+                  <div class="bg-[#FAF8F5] py-2 rounded-xl border border-[#121110]/8">
+                    <div class="font-mono text-[10px] font-bold text-[#121110]">BNB</div>
+                    <div class="text-[10px] text-[#CA8A04] font-mono">8%</div>
+                  </div>
+                  <div class="bg-[#FAF8F5] py-2 rounded-xl border border-[#121110]/8">
+                    <div class="font-mono text-[10px] font-bold text-[#121110]">XRP</div>
+                    <div class="text-[10px] text-[#1E293B] font-mono">7%</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-2 flex items-center justify-between text-xs text-[#5C5752]">
+                <span class="font-mono text-[11px]">✓ Section 194S TDS Ready</span>
+                <button onclick="openBasketModal('top-5-index')" class="font-semibold text-[#121110] underline underline-offset-4 hover:text-[#9A7B56] transition-colors">
+                  Inspect Methodology ↗
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 7. INFINITE EDITORIAL MARQUEE RIBBON ==================== -->
+    <div class="marquee-wrap py-4">
+      <div class="marquee-track space-x-12 text-xs font-mono uppercase tracking-[0.22em] text-[#5C5752]">
+        <span>✦ RULE-BASED CRYPTO BASKETS</span>
+        <span>✦ PRICED DIRECTLY IN INDIAN RUPEES (INR)</span>
+        <span>✦ NPCI UPI AUTOPAY MANDATES</span>
+        <span>✦ AUTOMATED 1% TDS & FORM 26AS SYNC</span>
+        <span>✦ 1:1 SEGREGATED COLD VAULT CUSTODY</span>
+        <span>✦ ZERO LOCK-IN · T+1 BANK REDEMPTION</span>
+        <span>✦ RULE-BASED CRYPTO BASKETS</span>
+        <span>✦ PRICED DIRECTLY IN INDIAN RUPEES (INR)</span>
+        <span>✦ NPCI UPI AUTOPAY MANDATES</span>
+        <span>✦ AUTOMATED 1% TDS & FORM 26AS SYNC</span>
+        <span>✦ 1:1 SEGREGATED COLD VAULT CUSTODY</span>
+        <span>✦ ZERO LOCK-IN · T+1 BANK REDEMPTION</span>
+      </div>
+    </div>
+
+    <!-- ==================== 8. THE PHILOSOPHY (03 EDITORIAL PILLARS) ==================== -->
+    <section id="methodology" class="py-28 max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-12 gap-8 items-end mb-16 reveal-up">
+        <div class="lg:col-span-7">
+          <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">01 — The Manifesto</span>
+          <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.04]">
+            Why 92% of traders lose.<br>
+            And why <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">patience</span> wins.
+          </h2>
+        </div>
+        <div class="lg:col-span-5 text-sm sm:text-base text-[#5C5752] leading-relaxed">
+          Speculative exchanges are engineered like casinos—flashing red and green to provoke impulsive trades. Baskly is engineered like a private wealth endowment: mathematical weights, monthly rebalancing, and calm rupee-cost averaging.
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-7">
+        
+        <div class="tilt-card p-8 sm:p-9 flex flex-col justify-between reveal-up" data-cursor-label="DISCIPLINE">
+          <div class="tilt-card-content">
+            <div class="flex justify-between items-center mb-8">
+              <span class="font-mono text-xs text-[#9A7B56]">/ 01</span>
+              <i data-lucide="compass" class="w-5 h-5 text-[#121110]"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-3">
+              Baskets, <span class="font-serif-italic font-normal text-3xl">Not Bets</span>
+            </h3>
+            <p class="text-sm text-[#5C5752] leading-relaxed">
+              Never guess which token will outperform next quarter. Own the entire digital asset economy through strict market-cap weighted indices that trim winners and accumulate laggards every 30 days.
+            </p>
+          </div>
+          <div class="tilt-card-content mt-10 pt-4 border-t border-[#121110]/10 font-mono text-[11px] uppercase tracking-wider text-[#0F6E56]">
+            ● Zero Emotional Bias
+          </div>
+        </div>
+
+        <div class="tilt-card p-8 sm:p-9 flex flex-col justify-between reveal-up" data-cursor-label="RUPEE NATIVE">
+          <div class="tilt-card-content">
+            <div class="flex justify-between items-center mb-8">
+              <span class="font-mono text-xs text-[#9A7B56]">/ 02</span>
+              <i data-lucide="indian-rupee" class="w-5 h-5 text-[#121110]"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-3">
+              Rupees In, <span class="font-serif-italic font-normal text-3xl">Rupees Out</span>
+            </h3>
+            <p class="text-sm text-[#5C5752] leading-relaxed">
+              Forget shady P2P bank freezes, USDT conversion spreads, or lost seed phrases. Authorize a standard UPI AutoPay mandate from your Indian bank account and redeem directly to INR anytime.
+            </p>
+          </div>
+          <div class="tilt-card-content mt-10 pt-4 border-t border-[#121110]/10 font-mono text-[11px] uppercase tracking-wider text-[#0F6E56]">
+            ● Direct NPCI Banking Rails
+          </div>
+        </div>
+
+        <div class="tilt-card p-8 sm:p-9 flex flex-col justify-between reveal-up" data-cursor-label="FIDUCIARY">
+          <div class="tilt-card-content">
+            <div class="flex justify-between items-center mb-8">
+              <span class="font-mono text-xs text-[#9A7B56]">/ 03</span>
+              <i data-lucide="shield-check" class="w-5 h-5 text-[#121110]"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-3">
+              1:1 Custody & <span class="font-serif-italic font-normal text-3xl">Tax Clarity</span>
+            </h3>
+            <p class="text-sm text-[#5C5752] leading-relaxed">
+              Every basket unit is backed 1:1 in institutional multi-sig cold vaults with zero lending out. Section 194S 1% TDS is automatically filed against your PAN with clean CA-ready annual reports.
+            </p>
+          </div>
+          <div class="tilt-card-content mt-10 pt-4 border-t border-[#121110]/10 font-mono text-[11px] uppercase tracking-wider text-[#0F6E56]">
+            ● Form 26AS Synchronised
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 9. CURATED BASKETS ATELIER ==================== -->
+    <section id="baskets" class="py-28 bg-[#EBE3DA]/45 border-y border-[#121110]/10">
+      <div class="max-w-7xl mx-auto px-6">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
+          <div>
+            <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">02 — Curated Indices</span>
+            <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-none">
+              Six architectural <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">baskets.</span>
+            </h2>
+          </div>
+          <p class="text-sm text-[#5C5752] max-w-md mt-4 md:mt-0">
+            Click any basket to inspect its live underlying asset weights, spot INR prices, rebalancing schedule, and historical CAGR.
+          </p>
+        </div>
+
+        <!-- Dynamic 3D-Tilt Baskets Grid -->
+        <div id="baskets-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+          <!-- Populated by app.js -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 10. INTERACTIVE COMPOUNDING STUDIO (SPLINE CANVAS) ==================== -->
+    <section id="calculator" class="py-28 max-w-7xl mx-auto px-6">
+      <div class="max-w-3xl mb-16 reveal-up">
+        <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">03 — Mathematical Compounding</span>
+        <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.05]">
+          The quiet geometry of <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">time.</span>
+        </h2>
+        <p class="text-base text-[#5C5752] mt-3">
+          Drag the sliders to simulate how systematic monthly Rupee-Cost Averaging performs against traditional Indian asset classes.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+        
+        <!-- Left 5 Cols: Interactive Sliders -->
+        <div class="lg:col-span-5 tilt-card p-8 flex flex-col justify-between reveal-up" data-cursor-label="DRAG ↔">
+          <div class="tilt-card-content space-y-8">
+            
+            <!-- Slider 1: Monthly SIP -->
+            <div>
+              <div class="flex justify-between items-baseline mb-3">
+                <label class="text-xs font-mono uppercase tracking-widest text-[#5C5752]">Monthly SIP Mandate</label>
+                <span id="sip-amount-label" class="font-serif-italic text-4xl text-[#121110]">₹5,000</span>
+              </div>
+              <input id="sip-amount-range" type="range" min="1000" max="50000" step="1000" value="5000">
+              <div class="flex flex-wrap gap-2 mt-3.5">
+                <button onclick="setSIPAmount(1000)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">₹1,000</button>
+                <button onclick="setSIPAmount(5000)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">₹5,000</button>
+                <button onclick="setSIPAmount(10000)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">₹10,000</button>
+                <button onclick="setSIPAmount(25000)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">₹25,000</button>
+              </div>
+            </div>
+
+            <!-- Slider 2: Horizon -->
+            <div>
+              <div class="flex justify-between items-baseline mb-3">
+                <label class="text-xs font-mono uppercase tracking-widest text-[#5C5752]">Compounding Horizon</label>
+                <span id="sip-years-label" class="font-serif-italic text-4xl text-[#121110]">5 Years</span>
+              </div>
+              <input id="sip-years-range" type="range" min="1" max="10" step="1" value="5">
+              <div class="flex gap-2 mt-3.5">
+                <button onclick="setSIPYears(3)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">3 Yrs</button>
+                <button onclick="setSIPYears(5)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">5 Yrs</button>
+                <button onclick="setSIPYears(7)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">7 Yrs</button>
+                <button onclick="setSIPYears(10)" class="text-[11px] font-mono px-3 py-1 rounded-full border border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA] transition">10 Yrs</button>
+              </div>
+            </div>
+
+            <!-- Slider 3: Model CAGR -->
+            <div>
+              <div class="flex justify-between items-baseline mb-3">
+                <div>
+                  <label class="text-xs font-mono uppercase tracking-widest text-[#5C5752]">Basket Target CAGR</label>
+                  <div class="text-[11px] text-[#8C857B]">Crypto+Gold (18%) · Top-5 (28%) · Alpha (40%)</div>
+                </div>
+                <span id="sip-cagr-label" class="font-serif-italic text-4xl text-[#0F6E56]">28% p.a.</span>
+              </div>
+              <input id="sip-cagr-range" type="range" min="12" max="55" step="1" value="28">
+            </div>
+
+          </div>
+
+          <div class="tilt-card-content pt-6 mt-6 border-t border-[#121110]/10">
+            <button onclick="openUPIDrawer()" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-4 text-xs font-semibold uppercase tracking-widest">
+              <span>Lock In This Monthly Habit ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right 7 Cols: Live Bezier Spline Graph & Multi-Asset Output -->
+        <div class="lg:col-span-7 tilt-card p-8 flex flex-col justify-between reveal-up">
+          <div class="tilt-card-content">
+            
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between pb-6 border-b border-[#121110]/10 gap-4">
+              <div>
+                <div class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#8C857B]">Projected Portfolio Value</div>
+                <div id="calc-future-value" class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial font-mono mt-1">
+                  ₹6,24,890
+                </div>
+              </div>
+              <div class="flex gap-6">
+                <div>
+                  <div class="font-mono text-[10px] uppercase tracking-wider text-[#8C857B]">Total Principal</div>
+                  <div id="calc-total-invested" class="text-base font-bold text-[#121110] font-mono">₹3,00,000</div>
+                </div>
+                <div>
+                  <div class="font-mono text-[10px] uppercase tracking-wider text-[#0F6E56]">Compounded Gain</div>
+                  <div id="calc-returns-earned" class="text-base font-bold text-[#0F6E56] font-mono">+₹3,24,890</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live HTML5 Canvas Bezier Spline Trajectory -->
+            <div class="my-6 relative">
+              <div class="flex items-center justify-between text-[11px] font-mono text-[#8C857B] mb-2">
+                <span>Wealth Trajectory Curve</span>
+                <div class="flex items-center gap-4">
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0F6E56]"></span> Baskly SIP</span>
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#9A7B56]"></span> Nifty 50 (12.5%)</span>
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-0.5 bg-[#8C857B]"></span> Principal</span>
+                </div>
+              </div>
+              <canvas id="sip-spline-canvas" class="w-full h-56 rounded-2xl bg-[#F4EFEA]/60 border border-[#121110]/5"></canvas>
+            </div>
+
+            <!-- Benchmark Comparison Strip -->
+            <div class="grid grid-cols-3 gap-4 pt-2">
+              <div class="p-4 rounded-2xl bg-[#0F6E56]/8 border border-[#0F6E56]/20">
+                <div class="font-mono text-[10px] uppercase tracking-wider text-[#0F6E56] font-semibold">Baskly Basket</div>
+                <div id="comp-baskly-val" class="text-lg sm:text-xl font-bold text-[#121110] font-mono mt-1">₹6,24,890</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-[#F4EFEA]/90 border border-[#121110]/10">
+                <div class="font-mono text-[10px] uppercase tracking-wider text-[#5C5752]">Nifty 50 Index</div>
+                <div id="comp-nifty-val" class="text-lg sm:text-xl font-bold text-[#5C5752] font-mono mt-1">₹4,14,200</div>
+              </div>
+              <div class="p-4 rounded-2xl bg-[#F4EFEA]/90 border border-[#121110]/10">
+                <div class="font-mono text-[10px] uppercase tracking-wider text-[#8C857B]">Bank FD (7%)</div>
+                <div id="comp-fd-val" class="text-lg sm:text-xl font-bold text-[#8C857B] font-mono mt-1">₹3,59,800</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 11. INTERACTIVE RISK ATELIER QUIZ ==================== -->
+    <section id="quiz" class="py-28 bg-[#EBE3DA]/45 border-y border-[#121110]/10">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-12 gap-12 items-start">
+          
+          <!-- Left 5 Cols: Live Persona Output Card -->
+          <div class="lg:col-span-5 space-y-6 reveal-up">
+            <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">04 — Risk Calibration</span>
+            <h2 class="text-4xl sm:text-5xl font-semibold text-[#121110] tracking-editorial leading-[1.06]">
+              Discover your <span class="font-serif-italic font-light text-5xl sm:text-6xl text-[#9A7B56]">allocation</span> archetype.
+            </h2>
+            <p class="text-sm text-[#5C5752] leading-relaxed">
+              Answer three questions on the right to calibrate your ideal mix of Gold-backed stability, Bitcoin sovereignty, and DeFi growth.
+            </p>
+
+            <div class="tilt-card p-7 space-y-5 bg-[#FAF8F5]">
+              <div class="tilt-card-content space-y-4">
+                <div class="flex items-center justify-between">
+                  <span id="quiz-profile-badge" class="font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                    Balanced Core
+                  </span>
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Live Calibration</span>
+                </div>
+
+                <h3 id="quiz-profile-title" class="text-2xl font-semibold text-[#121110] tracking-editorial">
+                  Balanced Index <span class="font-serif-italic font-normal text-3xl">Collector</span>
+                </h3>
+                <p id="quiz-profile-desc" class="text-xs text-[#5C5752] leading-relaxed">
+                  You understand market cycles and want institutional exposure to blue-chip digital assets without emotional day-trading.
+                </p>
+
+                <div class="p-4 bg-[#F4EFEA] rounded-2xl border border-[#121110]/10 space-y-1.5">
+                  <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Recommended Mandate Split</div>
+                  <div id="quiz-profile-basket" class="text-sm font-bold text-[#121110]">Top-5 Bluechip Index + Pure Bitcoin</div>
+                  <div id="quiz-profile-split" class="font-mono text-xs text-[#0F6E56] font-medium">70% Top-5 Index · 30% Pure Bitcoin</div>
+                </div>
+
+                <button onclick="openUPIDrawer()" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 text-xs font-semibold uppercase tracking-wider">
+                  <span>Activate Recommended Split ↗</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right 7 Cols: Interactive 3-Step Questionnaire -->
+          <div class="lg:col-span-7 tilt-card p-8 sm:p-10 reveal-up">
+            <div id="quiz-container" class="tilt-card-content">
+              <!-- Populated by app.js -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 12. TRUST, CUSTODY & INDIAN TAX ARCHITECTURE ==================== -->
+    <section id="trust" class="py-28 max-w-7xl mx-auto px-6">
+      <div class="max-w-3xl mb-16 reveal-up">
+        <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">05 — Institutional Architecture</span>
+        <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.05]">
+          Engineered for <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">Indian</span> regulatory peace of mind.
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+        
+        <div class="tilt-card p-7 space-y-4 reveal-up">
+          <div class="tilt-card-content space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-[#0F6E56]/10 text-[#0F6E56] flex items-center justify-center">
+              <i data-lucide="file-check-2" class="w-5 h-5"></i>
+            </div>
+            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Section 194S</div>
+            <h3 class="text-xl font-semibold text-[#121110] tracking-editorial">1% TDS Automated</h3>
+            <p class="text-xs text-[#5C5752] leading-relaxed">
+              Every rebalance or redemption automatically computes and deposits 1% TDS against your PAN. Download ready-to-file Form 26AS & ITR schedules in one click.
+            </p>
+          </div>
+        </div>
+
+        <div class="tilt-card p-7 space-y-4 reveal-up">
+          <div class="tilt-card-content space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-[#9A7B56]/15 text-[#9A7B56] flex items-center justify-center">
+              <i data-lucide="vault" class="w-5 h-5"></i>
+            </div>
+            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Proof of Reserves</div>
+            <h3 class="text-xl font-semibold text-[#121110] tracking-editorial">1:1 Cold Custody</h3>
+            <p class="text-xs text-[#5C5752] leading-relaxed">
+              Your basket units are backed 100% by real underlying coins in segregated multi-signature cold storage. Zero lending, zero leverage, zero commingling.
+            </p>
+          </div>
+        </div>
+
+        <div class="tilt-card p-7 space-y-4 reveal-up">
+          <div class="tilt-card-content space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-[#121110]/8 text-[#121110] flex items-center justify-center">
+              <i data-lucide="smartphone-nfc" class="w-5 h-5"></i>
+            </div>
+            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">NPCI Protocol</div>
+            <h3 class="text-xl font-semibold text-[#121110] tracking-editorial">Native UPI AutoPay</h3>
+            <p class="text-xs text-[#5C5752] leading-relaxed">
+              Works seamlessly with Google Pay, PhonePe, Paytm, and BHIM. Pause, skip a month, or revoke your mandate directly from your UPI app in 5 seconds.
+            </p>
+          </div>
+        </div>
+
+        <div class="tilt-card p-7 space-y-4 reveal-up">
+          <div class="tilt-card-content space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-[#0F6E56]/10 text-[#0F6E56] flex items-center justify-center">
+              <i data-lucide="landmark" class="w-5 h-5"></i>
+            </div>
+            <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Zero Lock-In</div>
+            <h3 class="text-xl font-semibold text-[#121110] tracking-editorial">T+1 INR Liquidity</h3>
+            <p class="text-xs text-[#5C5752] leading-relaxed">
+              Redeem partial or full units anytime at live NAV. Funds settle straight to your verified Indian bank account via IMPS/NEFT with zero P2P intermediary risk.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Frequently Asked Questions -->
+      <div class="max-w-3xl mx-auto space-y-4 reveal-up">
+        <div class="text-center mb-10">
+          <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">Clarity First</span>
+          <h3 class="text-3xl sm:text-4xl font-semibold text-[#121110] tracking-editorial mt-2">
+            Questions Indian <span class="font-serif-italic font-normal text-4xl sm:text-5xl text-[#9A7B56]">investors</span> ask.
+          </h3>
+        </div>
+
+        <details class="tilt-card p-6 cursor-pointer group" open>
+          <summary class="tilt-card-content font-semibold text-[#121110] text-base list-none flex justify-between items-center">
+            <span>Is a monthly crypto SIP legal under Indian regulations?</span>
+            <span class="font-mono text-xs text-[#9A7B56] group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="tilt-card-content text-sm text-[#5C5752] mt-3 leading-relaxed">
+            Yes. Virtual Digital Assets (VDAs) are regulated and taxed under the Finance Act 2022 (Section 115BBH & Section 194S). Baskly operates with full PAN/Aadhaar KYC verification, direct Indian bank settlement, and automated TDS reporting.
+          </p>
+        </details>
+
+        <details class="tilt-card p-6 cursor-pointer group">
+          <summary class="tilt-card-content font-semibold text-[#121110] text-base list-none flex justify-between items-center">
+            <span>Why choose a basket over buying Bitcoin or Solana on an exchange?</span>
+            <span class="font-mono text-xs text-[#9A7B56] group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="tilt-card-content text-sm text-[#5C5752] mt-3 leading-relaxed">
+            Individual tokens go through extreme boom-and-bust cycles. A rule-based basket automatically rebalances monthly—trimming assets that have become overvalued and buying quality assets while they are undervalued—giving you smoother risk-adjusted compounding.
+          </p>
+        </details>
+
+        <details class="tilt-card p-6 cursor-pointer group">
+          <summary class="tilt-card-content font-semibold text-[#121110] text-base list-none flex justify-between items-center">
+            <span>Can I pause or cancel my UPI AutoPay mandate anytime?</span>
+            <span class="font-mono text-xs text-[#9A7B56] group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="tilt-card-content text-sm text-[#5C5752] mt-3 leading-relaxed">
+            Yes, with zero penalty. You are in complete control of your mandate both inside Baskly and inside your Google Pay / PhonePe / Paytm Autopay settings.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ==================== 13. MONUMENTAL EDITORIAL FOOTER CTA ==================== -->
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+      <div class="rounded-[32px] bg-[#121110] text-[#F4EFEA] p-10 sm:p-20 text-center relative overflow-hidden reveal-up">
+        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[550px] h-[250px] bg-[#9A7B56]/25 blur-3xl pointer-events-none rounded-full"></div>
+
+        <div class="relative z-10 max-w-2xl mx-auto space-y-6">
+          <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9A7B56]">Begin Your Habit</span>
+          <h2 class="text-4xl sm:text-7xl font-light tracking-editorial leading-[1.02]">
+            ₹1,000 a month.<br>
+            <span class="font-serif-italic text-5xl sm:text-8xl text-[#E8DFD5]">Zero</span> chart noise.
+          </h2>
+          <p class="text-sm sm:text-base text-[#F4EFEA]/70 max-w-lg mx-auto leading-relaxed">
+            Set your mandate once in 3 minutes. Let mathematical rebalancing and multi-year Rupee-Cost Averaging do the rest.
+          </p>
+
+          <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button onclick="openUPIDrawer()" class="btn-unseen bg-[#F4EFEA] text-[#121110] px-9 py-4 text-xs font-bold uppercase tracking-widest hover:text-[#F4EFEA]" data-magnetic>
+              <span>Start Your ₹1,000 SIP ↗</span>
+            </button>
+            <a href="#baskets" class="px-8 py-4 rounded-full border border-[#F4EFEA]/20 text-xs font-mono uppercase tracking-widest hover:border-[#F4EFEA] transition" data-magnetic>
+              Inspect All 06 Baskets
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="relative z-10 border-t border-[#121110]/10 py-14 text-xs text-[#5C5752]">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <span class="font-semibold text-base text-[#121110] tracking-editorial">
+          baskly<span class="font-serif-italic font-normal text-lg text-[#9A7B56]">.money</span>®
+        </span>
+        <p class="text-[11px] text-[#8C857B] mt-1">
+          Crypto products and VDAs are unregulated and can be highly risky. 30% capital gains tax & 1% TDS apply under Indian law.
+        </p>
+      </div>
+      <div class="font-mono text-[11px] uppercase tracking-widest text-[#8C857B]">
+        © 2026 Baskly Technologies · Crafted with Unseen Motion
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL 1: BASKET INSPECTOR ==================== -->
+  <div id="basket-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="tilt-card bg-[#FAF8F5] max-w-lg w-full max-h-[90vh] overflow-y-auto p-7 sm:p-9 space-y-6">
+      <div class="tilt-card-content space-y-6">
+        
+        <div class="flex items-start justify-between pb-4 border-b border-[#121110]/10">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#9A7B56]">Basket Specification</span>
+            <h3 id="modal-basket-name" class="text-2xl sm:text-3xl font-semibold text-[#121110] tracking-editorial mt-1">Top-5 Bluechip Index</h3>
+            <p id="modal-basket-tagline" class="text-xs text-[#5C5752] mt-1"></p>
+          </div>
+          <button onclick="closeBasketModal()" class="w-9 h-9 rounded-full border border-[#121110]/15 flex items-center justify-center text-sm hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+            ✕
+          </button>
+        </div>
+
+        <p id="modal-basket-desc" class="text-xs text-[#5C5752] leading-relaxed bg-[#F4EFEA] p-4 rounded-2xl border border-[#121110]/8"></p>
+
+        <div class="grid grid-cols-4 gap-2.5 text-center">
+          <div class="bg-[#F4EFEA] p-3 rounded-xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase text-[#8C857B]">Unit NAV</div>
+            <div id="modal-basket-nav" class="text-xs font-bold text-[#121110] font-mono mt-0.5">₹63.09</div>
+          </div>
+          <div class="bg-[#F4EFEA] p-3 rounded-xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase text-[#8C857B]">Rebalance</div>
+            <div class="text-xs font-bold text-[#121110] mt-0.5">Monthly</div>
+          </div>
+          <div class="bg-[#F4EFEA] p-3 rounded-xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase text-[#8C857B]">Expense</div>
+            <div id="modal-basket-fee" class="text-xs font-bold text-[#121110] font-mono mt-0.5">1.25%</div>
+          </div>
+          <div class="bg-[#F4EFEA] p-3 rounded-xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase text-[#8C857B]">Hist. CAGR</div>
+            <div id="modal-basket-cagr" class="text-xs font-bold text-[#0F6E56] font-mono mt-0.5">28.5%</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B] mb-2">Constituent Weights & Live Spot INR</div>
+          <div id="modal-asset-breakdown" class="divide-y divide-[#121110]/10 border border-[#121110]/10 rounded-2xl px-4 bg-[#FAF8F5]"></div>
+        </div>
+
+        <button onclick="closeBasketModal(); openUPIDrawer();" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-4 text-xs font-semibold uppercase tracking-widest">
+          <span>Start SIP in This Basket (<span id="modal-basket-min">₹1,000/mo</span>) ↗</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: UPI AUTOPAY MANDATE SIMULATOR ==================== -->
+  <div id="upi-simulation-drawer" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="tilt-card bg-[#FAF8F5] max-w-md w-full p-7 sm:p-9 space-y-6">
+      <div class="tilt-card-content space-y-6">
+        
+        <div class="flex items-start justify-between pb-4 border-b border-[#121110]/10">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#0F6E56]">NPCI e-Mandate Atelier</span>
+            <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mt-1">
+              Configure <span class="font-serif-italic font-normal text-3xl">AutoPay</span>
+            </h3>
+          </div>
+          <button onclick="closeUPIDrawer()" class="w-9 h-9 rounded-full border border-[#121110]/15 flex items-center justify-center text-sm hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+            ✕
+          </button>
+        </div>
+
+        <div id="upi-step-content">
+          <form onsubmit="submitUPISimulation(event)" class="space-y-4">
+            <div>
+              <label class="block font-mono text-[10px] uppercase tracking-widest text-[#5C5752] mb-1.5">Select Curated Basket</label>
+              <select class="w-full text-xs font-medium border border-[#121110]/15 rounded-xl px-3.5 py-3 bg-[#F4EFEA] focus:outline-none focus:border-[#121110]">
+                <option>01 / Top-5 Bluechip Index (Core)</option>
+                <option>02 / Crypto + Gold Reserve (Conservative)</option>
+                <option>03 / Pure Bitcoin Sovereign</option>
+                <option>04 / Ethereum Settlement Layer</option>
+                <option>05 / DeFi Protocol Architects</option>
+                <option>06 / High-Beta Cultural Index</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#5C5752] mb-1.5">Monthly Debit</label>
+                <select id="sim-amount-select" class="w-full text-xs font-mono font-semibold border border-[#121110]/15 rounded-xl px-3 py-3 bg-[#F4EFEA]">
+                  <option value="1000">₹1,000 / mo</option>
+                  <option value="2500">₹2,500 / mo</option>
+                  <option value="5000" selected>₹5,000 / mo</option>
+                  <option value="10000">₹10,000 / mo</option>
+                  <option value="25000">₹25,000 / mo</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-[#5C5752] mb-1.5">Schedule Date</label>
+                <select id="sim-date-select" class="w-full text-xs font-medium border border-[#121110]/15 rounded-xl px-3 py-3 bg-[#F4EFEA]">
+                  <option value="1st">1st of month</option>
+                  <option value="5th" selected>5th of month</option>
+                  <option value="10th">10th of month</option>
+                  <option value="15th">15th of month</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-mono text-[10px] uppercase tracking-widest text-[#5C5752] mb-1.5">Verified UPI Handle (VPA)</label>
+              <input id="sim-upi-input" type="text" value="investor@okhdfcbank" class="w-full text-xs font-mono border border-[#121110]/15 rounded-xl px-3.5 py-3 bg-[#F4EFEA] focus:outline-none focus:border-[#121110]">
+            </div>
+
+            <div class="p-3.5 bg-[#F4EFEA] rounded-xl border border-[#121110]/8 text-[11px] text-[#5C5752]">
+              ✓ Zero lock-in. Pause or revoke anytime from GPay, PhonePe, or Paytm.
+            </div>
+
+            <button type="submit" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-4 text-xs font-semibold uppercase tracking-widest">
+              <span>Authorize NPCI e-Mandate ↗</span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Engine -->
+  <script src="app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
