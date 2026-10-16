@@ -734,7 +734,7 @@
 
   <!-- ==================== MODAL 1: BASKET INSPECTOR ==================== -->
   <div id="basket-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
-    <div class="tilt-card bg-[#FAF8F5] max-w-lg w-full max-h-[90vh] overflow-y-auto p-7 sm:p-9 space-y-6">
+    <div class="tilt-card bg-[#FAF8F5] max-w-2xl w-full max-h-[92vh] overflow-y-auto p-7 sm:p-9 space-y-6">
       <div class="tilt-card-content space-y-6">
         
         <div class="flex items-start justify-between pb-4 border-b border-[#121110]/10">
@@ -750,6 +750,7 @@
 
         <p id="modal-basket-desc" class="text-xs text-[#5C5752] leading-relaxed bg-[#F4EFEA] p-4 rounded-2xl border border-[#121110]/8"></p>
 
+        <!-- Key Metrics Strip -->
         <div class="grid grid-cols-4 gap-2.5 text-center">
           <div class="bg-[#F4EFEA] p-3 rounded-xl border border-[#121110]/8">
             <div class="font-mono text-[9px] uppercase text-[#8C857B]">Unit NAV</div>
@@ -766,6 +767,56 @@
           <div class="bg-[#F4EFEA] p-3 rounded-xl border border-[#121110]/8">
             <div class="font-mono text-[9px] uppercase text-[#8C857B]">Hist. CAGR</div>
             <div id="modal-basket-cagr" class="text-xs font-bold text-[#0F6E56] font-mono mt-0.5">28.5%</div>
+          </div>
+        </div>
+
+        <!-- ==================== FUND PRO PERFORMANCE CHART ==================== -->
+        <div class="p-4 rounded-2xl bg-[#F4EFEA] border border-[#121110]/8 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <div class="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">Interactive Fund Trajectory</div>
+              <div id="chart-hover-display" class="font-mono text-xs font-semibold text-[#121110] mt-0.5">
+                Current NAV: <span id="chart-hover-nav" class="text-[#0F6E56] font-bold">₹63.09</span> 
+                <span id="chart-hover-return" class="text-[11px] text-[#0F6E56] bg-[#0F6E56]/10 px-1.5 py-0.5 rounded ml-1">+58.5% Total</span>
+              </div>
+            </div>
+
+            <!-- Timeframe Controls -->
+            <div class="flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-full border border-[#121110]/10 font-mono text-[10px]">
+              <button onclick="setModalChartTimeframe('1M')" id="tf-1M" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">1M</button>
+              <button onclick="setModalChartTimeframe('6M')" id="tf-6M" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">6M</button>
+              <button onclick="setModalChartTimeframe('1Y')" id="tf-1Y" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">1Y</button>
+              <button onclick="setModalChartTimeframe('3Y')" id="tf-3Y" class="px-2.5 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-bold shadow-xs">3Y</button>
+              <button onclick="setModalChartTimeframe('ALL')" id="tf-ALL" class="px-2.5 py-1 rounded-full text-[#5C5752] hover:text-[#121110] transition">ALL</button>
+            </div>
+          </div>
+
+          <!-- HTML5 Canvas for Interactive Chart -->
+          <div class="relative">
+            <canvas id="modal-fund-chart" class="w-full h-56 rounded-xl bg-[#FAF8F5] border border-[#121110]/5 cursor-crosshair"></canvas>
+            <div id="chart-tooltip-badge" class="absolute hidden pointer-events-none -translate-x-1/2 -translate-y-full mb-2 bg-[#121110] text-[#F4EFEA] font-mono text-[10px] py-1 px-2.5 rounded-lg shadow-md whitespace-nowrap">
+              ₹63.09 · +58.5%
+            </div>
+          </div>
+
+          <!-- Key Statistics Grid -->
+          <div class="grid grid-cols-4 gap-2 pt-1 text-center font-mono text-[10px]">
+            <div class="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
+              <div class="text-[#8C857B] text-[9px] uppercase">52W High</div>
+              <div id="modal-stat-52h" class="font-bold text-[#121110] mt-0.5">₹78.40</div>
+            </div>
+            <div class="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
+              <div class="text-[#8C857B] text-[9px] uppercase">52W Low</div>
+              <div id="modal-stat-52l" class="font-bold text-[#121110] mt-0.5">₹38.20</div>
+            </div>
+            <div class="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
+              <div class="text-[#8C857B] text-[9px] uppercase">Max Drawdown</div>
+              <div id="modal-stat-dd" class="font-bold text-rose-700 mt-0.5">-24.2%</div>
+            </div>
+            <div class="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
+              <div class="text-[#8C857B] text-[9px] uppercase">Sharpe Ratio</div>
+              <div id="modal-stat-sharpe" class="font-bold text-[#0F6E56] mt-0.5">1.94</div>
+            </div>
           </div>
         </div>
 
