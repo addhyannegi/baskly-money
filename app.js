@@ -666,13 +666,15 @@ function renderBaskets() {
             ${basket.tagline}
           </p>
 
-          <!-- Fund Performance Sparkline Chart on Card -->
+          <!-- Fund Performance Sparkline Chart on Card (Embedded Native Vector Curve) -->
           <div class="my-3 p-3 rounded-2xl bg-[#121110]/[0.02] border border-[#121110]/6">
             <div class="flex items-center justify-between text-[10px] font-mono mb-1.5">
               <span class="text-[#8C857B] uppercase tracking-wider">NAV Trajectory</span>
-              <span class="text-[#0F6E56] font-semibold">${basket.expected_cagr}% CAGR ↗</span>
+              <span class="text-[#0F6E56] font-semibold font-mono">${basket.expected_cagr}% CAGR ↗</span>
             </div>
-            <canvas id="card-chart-${basket.id}" class="w-full h-14 rounded-lg block"></canvas>
+            <div id="card-chart-wrap-${basket.id}" class="w-full h-14 relative flex items-center justify-center">
+              ${generateCardSparklineSVG(basket.id, basket.nav)}
+            </div>
           </div>
 
           <!-- Allocation Visual Bar -->
@@ -708,9 +710,62 @@ function renderBaskets() {
 
   initTiltCards();
   bindCursorHoverTargets();
+}
 
-  // Draw sparkline charts on all 6 cards
-  setTimeout(drawAllCardSparklines, 50);
+// Generate Native Vector SVG Sparkline for Instant High-Res Visuals
+function generateCardSparklineSVG(basketId, liveNav) {
+  const hist = BASKET_HISTORICAL_DATA[basketId];
+  if (!hist || !hist.monthlySeries) return '';
+
+  const data = hist.monthlySeries.slice(-14);
+  const vals = data.map(d => d.nav);
+  if (liveNav) vals[vals.length - 1] = liveNav;
+
+  const minVal = Math.min(...vals) * 0.98;
+  const maxVal = Math.max(...vals) * 1.02;
+  const range = (maxVal - minVal) || 1;
+
+  const w = 300;
+  const h = 56;
+  const padX = 6;
+  const padY = 6;
+  const plotW = w - padX * 2;
+  const plotH = h - padY * 2;
+
+  const pts = vals.map((v, i) => {
+    const x = padX + (i / (vals.length - 1)) * plotW;
+    const y = padY + plotH - ((v - minVal) / range) * plotH;
+    return { x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) };
+  });
+
+  let pathD = `M ${pts[0].x} ${pts[0].y}`;
+  for (let i = 1; i < pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const midX = ((prev.x + curr.x) / 2).toFixed(1);
+    const midY = ((prev.y + curr.y) / 2).toFixed(1);
+    pathD += ` Q ${prev.x} ${prev.y} ${midX} ${midY}`;
+  }
+  const last = pts[pts.length - 1];
+  pathD += ` T ${last.x} ${last.y}`;
+
+  const areaD = `${pathD} L ${last.x} ${h} L ${pts[0].x} ${h} Z`;
+  const gradId = `card-grad-${basketId.replace(/[^a-zA-Z0-9]/g, '-')}`;
+
+  return `
+    <svg viewBox="0 0 ${w} ${h}" class="w-full h-full overflow-visible" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${hist.color}" stop-opacity="0.28" />
+          <stop offset="100%" stop-color="${hist.color}" stop-opacity="0.0" />
+        </linearGradient>
+      </defs>
+      <path d="${areaD}" fill="url(#${gradId})" />
+      <path d="${pathD}" fill="none" stroke="${hist.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="${last.x}" cy="${last.y}" r="6" fill="${hist.color}" opacity="0.25" class="animate-ping" />
+      <circle cx="${last.x}" cy="${last.y}" r="3.5" fill="${hist.color}" stroke="#FAF8F5" stroke-width="1.5" />
+    </svg>
+  `;
 }
 
 // Draw Sparkline on individual card
@@ -805,6 +860,76 @@ function drawAllCardSparklines() {
 let currentlyInspectedBasketId = null;
 let currentModalTimeframe = "3Y";
 
+// Generate Instant Vector SVG for Modal Performance Chart
+function generateModalChartSVG(basketId, tf, liveNav) {
+  const hist = BASKET_HISTORICAL_DATA[basketId];
+  if (!hist || !hist.monthlySeries) return '';
+
+  let series = hist.monthlySeries;
+  if (tf === '1M') series = hist.monthlySeries.slice(-4);
+  else if (tf === '6M') series = hist.monthlySeries.slice(-7);
+  else if (tf === '1Y') series = hist.monthlySeries.slice(-13);
+  else if (tf === '3Y') series = hist.monthlySeries.slice(-30);
+
+  const vals = series.map(d => d.nav);
+  if (liveNav) vals[vals.length - 1] = liveNav;
+
+  const minVal = Math.min(...vals) * 0.95;
+  const maxVal = Math.max(...vals) * 1.05;
+  const range = (maxVal - minVal) || 1;
+
+  const w = 600;
+  const h = 224;
+  const padX = 24;
+  const padY = 20;
+  const plotW = w - padX * 2;
+  const plotH = h - padY * 2;
+
+  const pts = vals.map((v, i) => {
+    const x = padX + (i / (vals.length - 1)) * plotW;
+    const y = padY + plotH - ((v - minVal) / range) * plotH;
+    return { x: Number(x.toFixed(1)), y: Number(y.toFixed(1)) };
+  });
+
+  let pathD = `M ${pts[0].x} ${pts[0].y}`;
+  for (let i = 1; i < pts.length; i++) {
+    const prev = pts[i - 1];
+    const curr = pts[i];
+    const midX = ((prev.x + curr.x) / 2).toFixed(1);
+    const midY = ((prev.y + curr.y) / 2).toFixed(1);
+    pathD += ` Q ${prev.x} ${prev.y} ${midX} ${midY}`;
+  }
+  const last = pts[pts.length - 1];
+  pathD += ` T ${last.x} ${last.y}`;
+
+  const areaD = `${pathD} L ${last.x} ${h - padY} L ${pts[0].x} ${h - padY} Z`;
+  const gradId = `modal-grad-${basketId.replace(/[^a-zA-Z0-9]/g, '-')}`;
+
+  let gridMarkup = '';
+  for (let r = 1; r <= 3; r++) {
+    const gy = (padY + (plotH / 4) * r).toFixed(1);
+    const valAt = (maxVal - (range / 4) * r).toFixed(1);
+    gridMarkup += `
+      <line x1="${padX}" y1="${gy}" x2="${w - padX}" y2="${gy}" stroke="#121110" stroke-opacity="0.06" stroke-dasharray="3 3"/>
+      <text x="${padX}" y="${gy - 4}" fill="#8C857B" font-size="9" font-family="JetBrains Mono, monospace">₹${valAt}</text>
+    `;
+  }
+
+  return `
+    <defs>
+      <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${hist.color}" stop-opacity="0.25" />
+        <stop offset="100%" stop-color="${hist.color}" stop-opacity="0.0" />
+      </linearGradient>
+    </defs>
+    ${gridMarkup}
+    <path d="${areaD}" fill="url(#${gradId})" />
+    <path d="${pathD}" fill="none" stroke="${hist.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="${last.x}" cy="${last.y}" r="8" fill="${hist.color}" opacity="0.25" class="animate-ping" />
+    <circle cx="${last.x}" cy="${last.y}" r="4.5" fill="${hist.color}" stroke="#FAF8F5" stroke-width="2" />
+  `;
+}
+
 function openBasketModal(id) {
   const basket = basketsData.find(b => b.id === id);
   const hist = BASKET_HISTORICAL_DATA[id];
@@ -830,13 +955,38 @@ function openBasketModal(id) {
 
   renderModalAssetBreakdown(basket);
 
+  // Instantly paint SVG fallback chart
+  const svgFallback = document.getElementById('modal-fund-svg-fallback');
+  if (svgFallback) {
+    svgFallback.innerHTML = generateModalChartSVG(id, currentModalTimeframe, basket.nav);
+  }
+
   const modal = document.getElementById('basket-detail-modal');
   modal.classList.remove('hidden');
   modal.classList.add('flex');
 
-  // Draw Pro Chart with active timeframe
-  setModalChartTimeframe(currentModalTimeframe);
-  attachModalChartScrubbing();
+  // Let browser layout complete reflow, then draw interactive pro chart
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      setModalChartTimeframe(currentModalTimeframe);
+      attachModalChartScrubbing();
+      initModalChartResizeObserver();
+    }, 40);
+  });
+}
+
+function initModalChartResizeObserver() {
+  if (window._modalResizeObserverBound) return;
+  const container = document.getElementById('modal-chart-container');
+  if (container && window.ResizeObserver) {
+    window._modalResizeObserverBound = true;
+    const ro = new ResizeObserver(() => {
+      if (currentlyInspectedBasketId) {
+        drawModalProChart(currentlyInspectedBasketId, currentModalTimeframe);
+      }
+    });
+    ro.observe(container);
+  }
 }
 
 function setModalChartTimeframe(tf) {
@@ -853,6 +1003,12 @@ function setModalChartTimeframe(tf) {
     }
   });
 
+  const basket = basketsData.find(b => b.id === currentlyInspectedBasketId);
+  const svgFallback = document.getElementById('modal-fund-svg-fallback');
+  if (svgFallback && basket) {
+    svgFallback.innerHTML = generateModalChartSVG(currentlyInspectedBasketId, tf, basket.nav);
+  }
+
   drawModalProChart(currentlyInspectedBasketId, tf);
 }
 
@@ -865,11 +1021,16 @@ function drawModalProChart(basketId, tf) {
 
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  const w = rect.width || 600;
-  const h = rect.height || 224;
-  canvas.width = w * dpr;
-  canvas.height = h * dpr;
+  const container = document.getElementById('modal-chart-container');
+  const rect = container ? container.getBoundingClientRect() : canvas.getBoundingClientRect();
+  const w = Math.round(rect.width > 50 ? rect.width : (canvas.parentElement ? canvas.parentElement.clientWidth : 0)) || 620;
+  const h = Math.round(rect.height > 50 ? rect.height : 224);
+
+  canvas.width = Math.floor(w * dpr);
+  canvas.height = Math.floor(h * dpr);
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, w, h);
 
@@ -907,6 +1068,7 @@ function drawModalProChart(basketId, tf) {
   // Grid lines
   ctx.strokeStyle = 'rgba(18, 17, 16, 0.06)';
   ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
   for (let r = 1; r <= 3; r++) {
     const y = padY + (plotH / 4) * r;
     ctx.beginPath();
@@ -915,10 +1077,11 @@ function drawModalProChart(basketId, tf) {
     ctx.stroke();
 
     const priceLabel = maxVal - ((maxVal - minVal) / 4) * r;
-    ctx.fillStyle = 'rgba(140, 133, 123, 0.6)';
+    ctx.fillStyle = 'rgba(140, 133, 123, 0.65)';
     ctx.font = '10px JetBrains Mono, monospace';
     ctx.fillText(`₹${priceLabel.toFixed(1)}`, padX, y - 4);
   }
+  ctx.setLineDash([]);
 
   const pts = vals.map((v, idx) => ({
     x: padX + (idx / (vals.length - 1)) * plotW,
@@ -1697,8 +1860,11 @@ function recalculateAllBasketNAVs(updatedSymbol) {
     }
 
     // Live update the card sparkline chart and modal chart
-    drawCardSparkline(basket.id);
+    const wrap = document.getElementById(`card-chart-wrap-${basket.id}`);
+    if (wrap) wrap.innerHTML = generateCardSparklineSVG(basket.id, basket.nav);
     if (currentlyInspectedBasketId === basket.id) {
+      const svgFallback = document.getElementById('modal-fund-svg-fallback');
+      if (svgFallback) svgFallback.innerHTML = generateModalChartSVG(basket.id, currentModalTimeframe, basket.nav);
       drawModalProChart(basket.id, currentModalTimeframe);
     }
   });
