@@ -96,8 +96,17 @@
         </a>
       </nav>
 
-      <!-- Right Controls: Unseen 3D Wave Toggle + Magnetic CTA -->
-      <div class="flex items-center gap-3">
+      <!-- Right Controls: Oracle Telemetry Pill + 3D Wave Toggle + Magnetic CTA -->
+      <div class="flex items-center gap-2.5">
+        <button 
+          onclick="openOracleModal()" 
+          title="Inspect Live Pricing Oracle & Feed Health"
+          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all"
+          data-magnetic>
+          <span class="oracle-pulse-live"></span>
+          <span id="oracle-nav-badge">ORACLE LIVE · USDT: ₹100.16</span>
+        </button>
+
         <button 
           onclick="toggleAmbientMotion()" 
           title="Toggle 3D WebGL Sculpture Motion"
@@ -211,11 +220,15 @@
               <div class="grid grid-cols-2 gap-4 bg-[#F4EFEA]/80 p-4 rounded-2xl border border-[#121110]/8">
                 <div>
                   <div class="font-mono text-[10px] uppercase tracking-wider text-[#8C857B]">Current NAV Value</div>
-                  <div class="text-2xl font-bold text-[#121110] font-mono mt-1">₹2,84,650</div>
+                  <div id="hero-folio-valuation" class="text-2xl font-bold text-[#121110] font-mono mt-1 transition-colors">₹2,84,650</div>
+                  <div id="hero-folio-nav" class="text-[10px] text-[#5C5752] font-mono mt-0.5">Top-5 NAV: ₹63.09</div>
                 </div>
                 <div class="text-right">
                   <div class="font-mono text-[10px] uppercase tracking-wider text-[#8C857B]">Net XIRR Return</div>
-                  <div class="text-2xl font-bold text-[#0F6E56] font-mono mt-1">+31.4%</div>
+                  <div id="hero-folio-xirr" class="text-2xl font-bold text-[#0F6E56] font-mono mt-1 transition-colors">+31.4%</div>
+                  <div class="text-[10px] text-[#0F6E56] font-mono mt-0.5 flex items-center justify-end gap-1">
+                    <span class="oracle-pulse-live" style="width: 5px; height: 5px;"></span> Streaming
+                  </div>
                 </div>
               </div>
 
@@ -836,6 +849,90 @@
             </button>
           </form>
         </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: PRICING ORACLE & NAV ENGINE TELEMETRY ==================== -->
+  <div id="oracle-telemetry-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="tilt-card bg-[#FAF8F5] max-w-2xl w-full max-h-[92vh] overflow-y-auto p-7 sm:p-9 space-y-6">
+      <div class="tilt-card-content space-y-6">
+        
+        <div class="flex items-start justify-between pb-4 border-b border-[#121110]/10">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="oracle-pulse-live"></span>
+              <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-[#0F6E56] font-semibold">Pricing Oracle Service · Real-Time</span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-semibold text-[#121110] tracking-editorial mt-1">
+              Multi-Source Feed & <span class="font-serif-italic font-normal text-3xl">NAV Engine</span>
+            </h3>
+            <p class="text-xs text-[#5C5752] mt-0.5">Binance WebSocket + CoinDCX USDT/INR + CoinGecko Fallback</p>
+          </div>
+          <button onclick="closeOracleModal()" class="w-9 h-9 rounded-full border border-[#121110]/15 flex items-center justify-center text-sm hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+            ✕
+          </button>
+        </div>
+
+        <!-- System Architecture Status -->
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-[#F4EFEA] p-3 rounded-2xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase tracking-wider text-[#8C857B]">Primary Feed</div>
+            <div class="text-xs font-bold text-[#121110] mt-1 flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-[#0F6E56]"></span> Binance WS
+            </div>
+            <div class="text-[10px] text-[#5C5752] mt-0.5 font-mono">Stream Active</div>
+          </div>
+          <div class="bg-[#F4EFEA] p-3 rounded-2xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase tracking-wider text-[#8C857B]">Indian Exchange Rate</div>
+            <div id="modal-usdt-rate" class="text-xs font-bold text-[#0F6E56] mt-1 font-mono">₹100.16</div>
+            <div class="text-[10px] text-[#5C5752] mt-0.5">CoinDCX Poller (15s)</div>
+          </div>
+          <div class="bg-[#F4EFEA] p-3 rounded-2xl border border-[#121110]/8">
+            <div class="font-mono text-[9px] uppercase tracking-wider text-[#8C857B]">Validator / Median</div>
+            <div class="text-xs font-bold text-[#0F6E56] mt-1">±5% Outlier Rejection</div>
+            <div class="text-[10px] text-[#5C5752] mt-0.5 font-mono">Stale cutoff: 60s</div>
+          </div>
+        </div>
+
+        <!-- Live Asset Price Table -->
+        <div>
+          <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#8C857B] mb-2">
+            <span>Validated Constituent Assets (16)</span>
+            <span id="oracle-tick-counter">Real-Time Ticks</span>
+          </div>
+          <div class="max-h-64 overflow-y-auto border border-[#121110]/10 rounded-2xl bg-[#FAF8F5]">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#F4EFEA] border-b border-[#121110]/10 text-[10px] font-mono text-[#8C857B] uppercase tracking-wider sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">Asset</th>
+                  <th class="py-2.5 px-3">USD Price</th>
+                  <th class="py-2.5 px-3">Spot INR Price</th>
+                  <th class="py-2.5 px-3">Source</th>
+                  <th class="py-2.5 px-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="oracle-prices-table-body" class="divide-y divide-[#121110]/5 font-mono text-[11px]">
+                <!-- Populated live by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Stale Protection Notice per spec -->
+        <div class="p-3.5 bg-[#F4EFEA] rounded-2xl border border-[#121110]/8 text-xs text-[#5C5752] space-y-1">
+          <div class="font-semibold text-[#121110] flex items-center gap-1.5">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-[#0F6E56]"></i> Failover & Freeze Circuit Breaker
+          </div>
+          <p class="text-[11px] leading-relaxed">
+            If an asset has no fresh price for 120s or feeds diverge, the engine displays <strong>"Price Delayed"</strong> and freezes official NAV rather than publishing incorrect valuations.
+          </p>
+        </div>
+
+        <button onclick="closeOracleModal()" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 text-xs font-semibold uppercase tracking-widest">
+          <span>Close Telemetry Monitor ↗</span>
+        </button>
 
       </div>
     </div>
