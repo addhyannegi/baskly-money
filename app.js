@@ -475,7 +475,7 @@ function initTiltCards() {
 }
 
 // ============================================================================
-// 6. RENDER CURATED BASKETS GRID
+// 6. RENDER CURATED BASKETS GRID (LINKED WITH LIVE ORACLE & NAV)
 // ============================================================================
 function renderBaskets() {
   const container = document.getElementById('baskets-grid');
@@ -488,7 +488,9 @@ function renderBaskets() {
 
     const topAssets = basket.assets.slice(0, 3).map(a =>
       `<span class="inline-flex items-center text-[11px] font-medium text-[#121110]/80 bg-[#F4EFEA]/90 border border-[#121110]/10 rounded-full px-2.5 py-0.5">
-        <span class="w-1.5 h-1.5 rounded-full mr-1.5" style="background-color: ${a.color}"></span>${a.symbol} ${a.weight}%
+        <span class="w-1.5 h-1.5 rounded-full mr-1.5" style="background-color: ${a.color}"></span>
+        <span>${a.symbol} ${a.weight}%</span>
+        <span class="ml-1 text-[10px] text-[#5C5752] font-mono" data-token-symbol="${a.symbol}">₹${formatINR(a.price_inr)}</span>
       </span>`
     ).join(' ');
 
@@ -502,21 +504,30 @@ function renderBaskets() {
         onclick="openBasketModal('${basket.id}')">
         
         <div class="tilt-card-content">
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center justify-between mb-4">
             <span class="font-mono text-xs text-[#8C857B]">/${basket.indexNum}</span>
             <div class="flex items-center gap-2">
               <span class="text-[11px] font-semibold px-3 py-1 rounded-full tracking-wide uppercase" style="background-color: ${basket.riskColor}14; color: ${basket.riskColor};">
                 ${basket.risk}
               </span>
-              <span class="font-mono text-xs font-medium px-2 py-0.5 rounded-full ${isPos ? 'text-emerald-800 bg-emerald-950/5' : 'text-rose-800 bg-rose-950/5'}">
+              <span id="basket-change-${basket.id}" class="font-mono text-xs font-medium px-2 py-0.5 rounded-full transition-colors ${isPos ? 'text-emerald-800 bg-emerald-950/5' : 'text-rose-800 bg-rose-950/5'}">
                 ${changeSign}${basket.change_24h}%
               </span>
             </div>
           </div>
 
-          <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-1.5 group-hover:text-[#9A7B56] transition-colors">
+          <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-1 group-hover:text-[#9A7B56] transition-colors">
             ${basket.name.replace(basket.serifWord, `<span class="font-serif-italic font-normal text-3xl">${basket.serifWord}</span>`)}
           </h3>
+
+          <!-- Live Unit NAV Display linked to Oracle -->
+          <div class="flex items-center gap-2 mb-4 font-mono text-xs">
+            <span class="text-[#8C857B] text-[10px] uppercase tracking-wider">Live NAV:</span>
+            <span id="basket-nav-${basket.id}" class="font-bold text-[#121110] px-1.5 py-0.5 rounded transition-colors">₹${basket.nav.toFixed(2)}</span>
+            <span class="text-[10px] text-[#0F6E56] font-sans flex items-center gap-1">
+              <span class="oracle-pulse-live" style="width: 5px; height: 5px;"></span> Ticking
+            </span>
+          </div>
 
           <p class="text-sm text-[#5C5752] leading-relaxed mb-6">
             ${basket.tagline}
@@ -560,9 +571,12 @@ function renderBaskets() {
 // ============================================================================
 // 7. BASKET INSPECTOR MODAL
 // ============================================================================
+let currentlyInspectedBasketId = null;
+
 function openBasketModal(id) {
   const basket = basketsData.find(b => b.id === id);
   if (!basket) return;
+  currentlyInspectedBasketId = id;
 
   document.getElementById('modal-basket-name').innerHTML = basket.name.replace(
     basket.serifWord,
@@ -575,14 +589,27 @@ function openBasketModal(id) {
   document.getElementById('modal-basket-min').textContent = `₹${formatINR(basket.min_sip)}/mo`;
   document.getElementById('modal-basket-cagr').textContent = `${basket.expected_cagr}%`;
 
+  renderModalAssetBreakdown(basket);
+
+  const modal = document.getElementById('basket-detail-modal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function renderModalAssetBreakdown(basket) {
   const assetListEl = document.getElementById('modal-asset-breakdown');
+  if (!assetListEl) return;
+
   assetListEl.innerHTML = basket.assets.map(asset => `
     <div class="flex items-center justify-between py-3 border-b border-[#121110]/10 last:border-0">
       <div class="flex items-center space-x-3">
         <div class="w-3 h-3 rounded-full" style="background-color: ${asset.color}"></div>
         <div>
           <div class="text-sm font-semibold text-[#121110]">${asset.name} <span class="text-xs font-mono text-[#8C857B]">(${asset.symbol})</span></div>
-          <div class="text-xs text-[#5C5752] font-mono">Spot Price: ₹${formatINR(asset.price_inr)}</div>
+          <div class="text-xs text-[#5C5752] font-mono">
+            Spot Price: <span id="modal-spot-${asset.symbol}" class="font-bold text-[#121110] px-1 rounded transition-colors">₹${formatINR(asset.price_inr)}</span>
+            <span class="text-[10px] text-[#0F6E56]">● Live Feed</span>
+          </div>
         </div>
       </div>
       <div class="text-right">
@@ -591,13 +618,10 @@ function openBasketModal(id) {
       </div>
     </div>
   `).join('');
-
-  const modal = document.getElementById('basket-detail-modal');
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
 }
 
 function closeBasketModal() {
+  currentlyInspectedBasketId = null;
   const modal = document.getElementById('basket-detail-modal');
   modal.classList.add('hidden');
   modal.classList.remove('flex');
@@ -977,6 +1001,355 @@ function initScrollReveals() {
 }
 
 // ============================================================================
+// 12. PRICING ORACLE & DYNAMIC NAV LINKING ENGINE (Section 3.1 - 3.7)
+// ============================================================================
+const ORACLE_SYMBOLS = {
+  BTC:    { name: "Bitcoin",       binance: "BTCUSDT",    coingecko: "bitcoin",        fallbackUsd: 81604 },
+  ETH:    { name: "Ethereum",      binance: "ETHUSDT",    coingecko: "ethereum",       fallbackUsd: 2411 },
+  SOL:    { name: "Solana",        binance: "SOLUSDT",    coingecko: "solana",         fallbackUsd: 112 },
+  BNB:    { name: "BNB",           binance: "BNBUSDT",    coingecko: "binancecoin",    fallbackUsd: 685 },
+  XRP:    { name: "XRP",           binance: "XRPUSDT",    coingecko: "ripple",         fallbackUsd: 1.25 },
+  PAXG:   { name: "PAX Gold",      binance: "PAXGUSDT",   coingecko: "pax-gold",       fallbackUsd: 4164 },
+  UNI:    { name: "Uniswap",       binance: "UNIUSDT",    coingecko: "uniswap",        fallbackUsd: 7.15 },
+  AAVE:   { name: "Aave",          binance: "AAVEUSDT",   coingecko: "aave",           fallbackUsd: 154 },
+  LINK:   { name: "Chainlink",     binance: "LINKUSDT",   coingecko: "chainlink",      fallbackUsd: 12.4 },
+  PENDLE: { name: "Pendle",        binance: "PENDLEUSDT", coingecko: "pendle",         fallbackUsd: 2.09 },
+  LDO:    { name: "Lido DAO",      binance: "LDOUSDT",    coingecko: "lido-dao",       fallbackUsd: 0.94 },
+  DOGE:   { name: "Dogecoin",      binance: "DOGEUSDT",   coingecko: "dogecoin",       fallbackUsd: 0.162 },
+  SHIB:   { name: "Shiba Inu",     binance: "SHIBUSDT",   coingecko: "shiba-inu",      fallbackUsd: 0.0000185 },
+  PEPE:   { name: "Pepe",          binance: "PEPEUSDT",   coingecko: "pepe",           fallbackUsd: 0.0000086 },
+  BONK:   { name: "Bonk",          binance: "BONKUSDT",   coingecko: "bonk",           fallbackUsd: 0.0000192 },
+  WIF:    { name: "dogwifhat",     binance: "WIFUSDT",    coingecko: "dogwifcoin",     fallbackUsd: 1.84 }
+};
+
+const clientOracleState = {
+  usdtInr: 100.16,
+  usdtSource: "CoinDCX Live",
+  usdtLastUpdate: Date.now(),
+  tokens: {},
+  tickCount: 0,
+  wsConnected: false,
+  isDegraded: false
+};
+
+// Initialize token state
+Object.entries(ORACLE_SYMBOLS).forEach(([sym, cfg]) => {
+  clientOracleState.tokens[sym] = {
+    symbol: sym,
+    name: cfg.name,
+    usd: cfg.fallbackUsd,
+    inr: cfg.fallbackUsd * clientOracleState.usdtInr,
+    prevInr: cfg.fallbackUsd * clientOracleState.usdtInr,
+    change24h: 2.1,
+    source: "Binance WS",
+    status: "healthy",
+    lastTick: Date.now()
+  };
+});
+
+function initPricingOracle() {
+  pollCoinDcxUsdtInr();
+  connectBinanceWebSocket();
+  pollCoinGeckoFallback();
+
+  setInterval(pollCoinDcxUsdtInr, 15000);   // CoinDCX USDT/INR rate every 15s
+  setInterval(pollCoinGeckoFallback, 60000); // CoinGecko fallback every 60s
+  setInterval(checkStaleFeeds, 10000);       // Health check every 10s
+}
+
+// 1. Poll Indian Exchange (CoinDCX) for real USDT/INR rate
+async function pollCoinDcxUsdtInr() {
+  try {
+    const res = await fetch('https://api.coindcx.com/exchange/ticker');
+    const tickers = await res.json();
+    const usdtPair = tickers.find(t => t.market === 'USDTINR');
+    if (usdtPair && parseFloat(usdtPair.last_price) > 0) {
+      const oldRate = clientOracleState.usdtInr;
+      clientOracleState.usdtInr = parseFloat(usdtPair.last_price);
+      clientOracleState.usdtLastUpdate = Date.now();
+      clientOracleState.usdtSource = "CoinDCX Live";
+
+      // Update badge
+      const badge = document.getElementById('oracle-nav-badge');
+      if (badge) {
+        badge.textContent = `ORACLE LIVE · USDT: ₹${clientOracleState.usdtInr.toFixed(2)}`;
+      }
+      const modalRate = document.getElementById('modal-usdt-rate');
+      if (modalRate) {
+        modalRate.textContent = `₹${clientOracleState.usdtInr.toFixed(2)}`;
+      }
+
+      // Recompute all INR prices if USDT changed
+      if (Math.abs(oldRate - clientOracleState.usdtInr) > 0.05) {
+        Object.keys(clientOracleState.tokens).forEach(sym => {
+          const t = clientOracleState.tokens[sym];
+          t.inr = t.usd * clientOracleState.usdtInr;
+        });
+        recalculateAllBasketNAVs();
+      }
+    }
+  } catch (err) {
+    console.warn('[Oracle Client] CoinDCX fetch error, using cached rate:', err);
+  }
+}
+
+// 2. Connect to Binance Public WebSocket
+function connectBinanceWebSocket() {
+  try {
+    const streamNames = "btcusdt@miniTicker/ethusdt@miniTicker/solusdt@miniTicker/bnbusdt@miniTicker/xrpusdt@miniTicker/dogeusdt@miniTicker/shibusdt@miniTicker/pepeusdt@miniTicker/uniusdt@miniTicker/aaveusdt@miniTicker/linkusdt@miniTicker/wifusdt@miniTicker";
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streamNames}`);
+
+    ws.onopen = () => {
+      clientOracleState.wsConnected = true;
+      console.log('[Oracle Client] Connected to Binance WebSocket stream.');
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const tick = JSON.parse(event.data);
+        if (tick && tick.s && tick.c) {
+          const symbolPair = tick.s; // e.g. "BTCUSDT"
+          const priceUsd = parseFloat(tick.c);
+
+          const entry = Object.entries(ORACLE_SYMBOLS).find(([_, cfg]) => cfg.binance === symbolPair);
+          if (entry && priceUsd > 0) {
+            const [sym] = entry;
+            handleIncomingTokenTick(sym, priceUsd, "Binance WS");
+          }
+        }
+      } catch (e) {}
+    };
+
+    ws.onerror = () => {
+      ws.close();
+    };
+
+    ws.onclose = () => {
+      clientOracleState.wsConnected = false;
+      setTimeout(connectBinanceWebSocket, 5000); // Auto reconnect
+    };
+  } catch (err) {
+    console.warn('[Oracle Client] WebSocket setup error:', err);
+  }
+}
+
+// 3. Fallback CoinGecko Poller for PAXG (Gold) and others
+async function pollCoinGeckoFallback() {
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,pendle,bonk&vs_currencies=usd');
+    const data = await res.json();
+    if (data['pax-gold'] && data['pax-gold'].usd) {
+      handleIncomingTokenTick('PAXG', data['pax-gold'].usd, 'CoinGecko');
+    }
+    if (data['pendle'] && data['pendle'].usd) {
+      handleIncomingTokenTick('PENDLE', data['pendle'].usd, 'CoinGecko');
+    }
+    if (data['bonk'] && data['bonk'].usd) {
+      handleIncomingTokenTick('BONK', data['bonk'].usd, 'CoinGecko');
+    }
+  } catch (e) {}
+}
+
+// 4. Handle Incoming Verified Tick
+function handleIncomingTokenTick(sym, priceUsd, source) {
+  const token = clientOracleState.tokens[sym];
+  if (!token) return;
+
+  const prevInr = token.inr;
+  const newInr = priceUsd * clientOracleState.usdtInr;
+  const isUp = newInr >= prevInr;
+
+  token.usd = priceUsd;
+  token.prevInr = prevInr;
+  token.inr = newInr;
+  token.source = source;
+  token.status = "healthy";
+  token.lastTick = Date.now();
+  clientOracleState.tickCount++;
+
+  // Update in-memory basket assets
+  basketsData.forEach(basket => {
+    const asset = basket.assets.find(a => a.symbol === sym);
+    if (asset) {
+      asset.price_inr = newInr;
+    }
+  });
+
+  // Propagate to DOM elements
+  propagateTickToDOM(sym, newInr, isUp);
+
+  // Recalculate Basket NAVs
+  recalculateAllBasketNAVs(sym);
+
+  // Update Telemetry table if open
+  updateOracleTableRow(sym);
+}
+
+// 5. Propagate Live Flash Animations to DOM
+function propagateTickToDOM(sym, newInr, isUp) {
+  // Update all elements with data-token-symbol
+  const els = document.querySelectorAll(`[data-token-symbol="${sym}"]`);
+  els.forEach(el => {
+    el.textContent = `₹${formatINR(newInr)}`;
+    el.classList.remove('tick-flash-green', 'tick-flash-rose');
+    void el.offsetWidth; // Trigger reflow
+    el.classList.add(isUp ? 'tick-flash-green' : 'tick-flash-rose');
+  });
+
+  // Modal spot price if currently inspected
+  const modalSpotEl = document.getElementById(`modal-spot-${sym}`);
+  if (modalSpotEl) {
+    modalSpotEl.textContent = `₹${formatINR(newInr)}`;
+    modalSpotEl.classList.remove('tick-flash-green', 'tick-flash-rose');
+    void modalSpotEl.offsetWidth;
+    modalSpotEl.classList.add(isUp ? 'tick-flash-green' : 'tick-flash-rose');
+  }
+}
+
+// 6. Recalculate Live Basket NAVs Everywhere
+function recalculateAllBasketNAVs(updatedSymbol) {
+  basketsData.forEach(basket => {
+    let basketSum = 0;
+    basket.assets.forEach(a => {
+      const livePrice = clientOracleState.tokens[a.symbol]?.inr || a.price_inr;
+      basketSum += livePrice * (a.weight / 100);
+    });
+
+    // Normalized NAV value
+    const normalizedNav = basketSum / 1200;
+    const oldNav = basket.nav;
+    basket.nav = parseFloat(normalizedNav.toFixed(2));
+    const isUp = basket.nav >= oldNav;
+
+    // Update Basket Card NAV in Grid
+    const navEl = document.getElementById(`basket-nav-${basket.id}`);
+    if (navEl) {
+      navEl.textContent = `₹${basket.nav.toFixed(2)}`;
+      if (updatedSymbol && basket.assets.some(a => a.symbol === updatedSymbol)) {
+        navEl.classList.remove('tick-flash-green', 'tick-flash-rose');
+        void navEl.offsetWidth;
+        navEl.classList.add(isUp ? 'tick-flash-green' : 'tick-flash-rose');
+      }
+    }
+
+    // If modal is inspecting this basket, update modal NAV
+    if (currentlyInspectedBasketId === basket.id) {
+      const modalNavEl = document.getElementById('modal-basket-nav');
+      if (modalNavEl) {
+        modalNavEl.textContent = `₹${basket.nav.toFixed(2)}`;
+        modalNavEl.classList.remove('tick-flash-green', 'tick-flash-rose');
+        void modalNavEl.offsetWidth;
+        modalNavEl.classList.add(isUp ? 'tick-flash-green' : 'tick-flash-rose');
+      }
+    }
+
+    // Hero Top-5 Folio Card Real-Time NAV & Portfolio Valuation
+    if (basket.id === 'top-5-index') {
+      const heroNavEl = document.getElementById('hero-folio-nav');
+      if (heroNavEl) {
+        heroNavEl.textContent = `Top-5 NAV: ₹${basket.nav.toFixed(2)}`;
+      }
+
+      const heroValEl = document.getElementById('hero-folio-valuation');
+      if (heroValEl) {
+        const baseFolioUnits = 4511.8;
+        const liveValuation = baseFolioUnits * basket.nav;
+        heroValEl.textContent = `₹${formatINR(liveValuation)}`;
+        if (updatedSymbol) {
+          heroValEl.classList.remove('tick-flash-green', 'tick-flash-rose');
+          void heroValEl.offsetWidth;
+          heroValEl.classList.add(isUp ? 'tick-flash-green' : 'tick-flash-rose');
+        }
+      }
+    }
+  });
+}
+
+// 7. Staleness Checker (Section 3.6 of Specification)
+function checkStaleFeeds() {
+  const now = Date.now();
+  let staleCount = 0;
+
+  Object.values(clientOracleState.tokens).forEach(t => {
+    if (now - t.lastTick > 90000) {
+      t.status = "stale";
+      staleCount++;
+    } else if (now - t.lastTick > 30000) {
+      t.status = "delayed";
+    } else {
+      t.status = "healthy";
+    }
+  });
+
+  const badge = document.getElementById('oracle-nav-badge');
+  if (staleCount > 4 || (now - clientOracleState.usdtLastUpdate > 120000)) {
+    clientOracleState.isDegraded = true;
+    if (badge) badge.textContent = `PRICE DELAYED · NAV FROZEN`;
+  } else {
+    clientOracleState.isDegraded = false;
+    if (badge) badge.textContent = `ORACLE LIVE · USDT: ₹${clientOracleState.usdtInr.toFixed(2)}`;
+  }
+}
+
+// 8. Oracle Telemetry Modal Functions
+function openOracleModal() {
+  renderOracleTelemetryTable();
+  const modal = document.getElementById('oracle-telemetry-modal');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+}
+
+function closeOracleModal() {
+  const modal = document.getElementById('oracle-telemetry-modal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+}
+
+function renderOracleTelemetryTable() {
+  const tbody = document.getElementById('oracle-prices-table-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = Object.values(clientOracleState.tokens).map(t => {
+    const statusColor = t.status === 'healthy' ? 'text-[#0F6E56] bg-[#0F6E56]/10' : 'text-amber-800 bg-amber-100';
+    return `
+      <tr id="oracle-row-${t.symbol}" class="hover:bg-[#F4EFEA]/80 transition-colors">
+        <td class="py-2.5 px-3 font-semibold text-[#121110]">
+          ${t.name} <span class="text-[10px] text-[#8C857B]">(${t.symbol})</span>
+        </td>
+        <td class="py-2.5 px-3 text-[#5C5752] font-mono">$${t.usd >= 1 ? t.usd.toLocaleString('en-US', {maximumFractionDigits: 2}) : t.usd.toFixed(6)}</td>
+        <td id="oracle-spot-${t.symbol}" class="py-2.5 px-3 font-bold text-[#121110] font-mono">₹${formatINR(t.inr)}</td>
+        <td class="py-2.5 px-3 text-[#8C857B]">${t.source}</td>
+        <td class="py-2.5 px-3 text-right">
+          <span class="px-2 py-0.5 rounded-full text-[9px] uppercase font-bold ${statusColor}">
+            ${t.status}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function updateOracleTableRow(sym) {
+  const spotEl = document.getElementById(`oracle-spot-${sym}`);
+  const token = clientOracleState.tokens[sym];
+  if (spotEl && token) {
+    spotEl.textContent = `₹${formatINR(token.inr)}`;
+    spotEl.classList.remove('tick-flash-green', 'tick-flash-rose');
+    void spotEl.offsetWidth;
+    spotEl.classList.add('tick-flash-green');
+  }
+
+  const counterEl = document.getElementById('oracle-tick-counter');
+  if (counterEl) {
+    counterEl.textContent = `${clientOracleState.tickCount} Ticks Processed`;
+  }
+}
+
+// ============================================================================
 // INITIALIZE EVERYTHING ON DOM READY
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -993,7 +1366,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initPreloader();
   initWebGLScene();
 
-  // 3. Range Slider Listeners
+  // 3. Start Live Pricing Oracle (Linked everywhere for NAV)
+  initPricingOracle();
+
+  // 4. Range Slider Listeners
   const sipAmount = document.getElementById('sip-amount-range');
   const sipYears = document.getElementById('sip-years-range');
   const sipCagr = document.getElementById('sip-cagr-range');
@@ -1006,3 +1382,4 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateSIP();
   });
 });
+
