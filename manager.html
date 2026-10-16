@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund Manager Terminal — Baskly.money</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            unseen: {
+              bg: '#F4EFEA',
+              card: '#FAF8F5',
+              dark: '#121110',
+              muted: '#8C857B',
+              border: 'rgba(18, 17, 16, 0.08)',
+              accent: '#9A7B56',
+              pine: '#0F6E56',
+              rose: '#B85D43'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css?v=2.3">
+</head>
+<body class="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
+  <div class="noise-overlay"></div>
+
+  <!-- ==================== HEADER NAVIGATION ==================== -->
+  <header class="sticky top-0 z-40 bg-[#F4EFEA]/85 backdrop-blur-md border-b border-[#121110]/8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="flex items-center space-x-2 group">
+          <div class="w-8 h-8 rounded-full bg-[#121110] flex items-center justify-center text-[#F4EFEA] font-serif font-bold text-lg transition-transform duration-500 group-hover:rotate-12">
+            b
+          </div>
+          <span class="text-xl font-bold tracking-tight text-[#121110]">baskly<span class="font-serif italic font-normal text-xl text-[#9A7B56]">.money</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-2 pl-4 border-l border-[#121110]/10">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#121110] text-[#F4EFEA] font-mono text-xs font-semibold">
+            <i data-lucide="shield-check" class="w-3 h-3 text-[#9A7B56]"></i>
+            CIO & Portfolio Manager Terminal
+          </span>
+          <span class="font-mono text-xs text-[#8C857B]">· SEBI RA / PMS #INP00001842</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="portal.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i>
+          <span>Switch to Retail Portal</span>
+        </a>
+
+        <!-- Manager Profile Pill -->
+        <div class="flex items-center gap-3 bg-[#FAF8F5] border border-[#121110]/10 rounded-full pl-3 pr-1.5 py-1 shadow-xs">
+          <div class="text-right hidden sm:block">
+            <div class="text-xs font-semibold text-[#121110]">Dr. Devika Rao, CFA</div>
+            <div class="text-[10px] text-[#9A7B56] font-mono">Chief Investment Officer</div>
+          </div>
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80" alt="CIO" class="w-8 h-8 rounded-full object-cover border border-[#121110]/15">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Title Banner -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#121110]/10">
+      <div>
+        <div class="font-mono text-xs text-[#8C857B] uppercase tracking-widest mb-1">Fund Management & Algorithmic Desk</div>
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-editorial text-[#121110]">
+          Institutional AUM & <span class="font-serif italic font-normal text-4xl text-[#9A7B56]">Rebalancing Terminal</span>
+        </h1>
+        <p class="text-sm text-[#5C5752] mt-1 max-w-xl">
+          Real-time oversight of ₹48.62 Cr across 6 algorithmic baskets. Autonomous drift detection and execution engine.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="executeAllDriftRebalances()" class="btn-unseen bg-[#121110] text-[#F4EFEA] px-5 py-3 text-xs font-semibold uppercase tracking-widest">
+          <span>Rebalance All Drifted Funds ↗</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== 4 TOP AUM METRICS ==================== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Gross AUM -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
+            <span>Total Gross AUM</span>
+            <span class="oracle-pulse-live" style="width: 6px; height: 6px;"></span>
+          </div>
+          <div id="mgr-total-aum" class="text-3xl font-bold font-mono text-[#121110]">₹4.86 Cr</div>
+          <div class="flex items-center gap-2 mt-2 text-xs font-mono text-[#5C5752]">
+            <span>6 Active Funds</span>
+            <span>·</span>
+            <span class="text-[#0F6E56] font-semibold">+18.4% MoM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 24h Net Inflows -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
+            <span>24h Inflows / Outflows</span>
+            <i data-lucide="arrow-down-up" class="w-4 h-4 text-[#0F6E56]"></i>
+          </div>
+          <div class="text-3xl font-bold font-mono text-[#0F6E56]">+₹11.40 L</div>
+          <div class="flex items-center gap-2 mt-2 text-xs font-mono text-[#5C5752]">
+            <span>+₹14.2L In</span>
+            <span>·</span>
+            <span class="text-[#B85D43]">-₹2.8L Out (1% TDS)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verified Investor Accounts -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
+            <span>Verified Investors</span>
+            <i data-lucide="users" class="w-4 h-4 text-[#121110]"></i>
+          </div>
+          <div class="text-3xl font-bold font-mono text-[#121110]">2,418</div>
+          <div class="flex items-center gap-2 mt-2 text-xs font-mono text-[#5C5752]">
+            <span>Avg Ticket: ₹6,800/mo</span>
+            <span>·</span>
+            <span class="text-[#0F6E56]">94.2% Ret.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annualized Fee Run-Rate -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider mb-2">
+            <span>Fee Run-Rate (1.25% p.a.)</span>
+            <i data-lucide="receipt" class="w-4 h-4 text-[#121110]"></i>
+          </div>
+          <div class="text-3xl font-bold font-mono text-[#121110]">₹60.77 L</div>
+          <div class="flex items-center gap-2 mt-2 text-xs font-mono text-[#0F6E56]">
+            <span>Accrued this month: ₹50,645</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== REBALANCING ATELIER ==================== -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Algorithmic Drift Monitor</div>
+          <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Fund Constituent Weights & Rebalancing</h2>
+        </div>
+        <div class="text-xs font-mono text-[#5C5752]">
+          Rebalance Threshold: <span class="font-bold text-[#121110]">±2.5% Drift</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto bg-[#FAF8F5] rounded-2xl border border-[#121110]/10 shadow-xs">
+        <table class="w-full text-left border-collapse font-mono text-xs">
+          <thead>
+            <tr class="border-b border-[#121110]/10 bg-[#F4EFEA] text-[11px] text-[#8C857B] uppercase tracking-wider">
+              <th class="py-3.5 px-4">Fund Name</th>
+              <th class="py-3.5 px-4">Fund AUM</th>
+              <th class="py-3.5 px-4">Target Allocation</th>
+              <th class="py-3.5 px-4">Current Spot Allocation</th>
+              <th class="py-3.5 px-4">Max Drift</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="manager-baskets-body" class="divide-y divide-[#121110]/6">
+            <!-- Populated dynamically by manager.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== TREASURY & RESERVE AUDIT ==================== -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- CoinDCX Banking Gateway Liquid Pool -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content space-y-3">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider">
+            <span>Liquid INR Gateway</span>
+            <i data-lucide="building" class="w-4 h-4 text-[#0F6E56]"></i>
+          </div>
+          <div class="text-2xl font-bold font-mono text-[#121110]">₹1.45 Crores</div>
+          <p class="text-xs text-[#5C5752] leading-relaxed">
+            Maintained across CoinDCX Indian Banking partner accounts for instant 24/7 IMPS/UPI liquidation requests.
+          </p>
+          <div class="pt-2 border-t border-[#121110]/6 text-[11px] font-mono text-[#0F6E56]">
+            ✓ 100% Solvency Ratio Verified
+          </div>
+        </div>
+      </div>
+
+      <!-- LBMA Physical Gold Bullion Vault -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content space-y-3">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider">
+            <span>Physical Gold Bullion</span>
+            <i data-lucide="shield" class="w-4 h-4 text-[#9A7B56]"></i>
+          </div>
+          <div class="text-2xl font-bold font-mono text-[#9A7B56]">18.4 kg Gold</div>
+          <p class="text-xs text-[#5C5752] leading-relaxed">
+            London Bullion Market Association (LBMA) accredited bars custodied in Brink’s London vault backing PAXG tokens.
+          </p>
+          <div class="pt-2 border-t border-[#121110]/6 text-[11px] font-mono text-[#9A7B56]">
+            ✓ Monthly Grant Thornton Audit Passed
+          </div>
+        </div>
+      </div>
+
+      <!-- Cold Storage Safe -->
+      <div class="tilt-card p-6 bg-[#FAF8F5]">
+        <div class="tilt-card-content space-y-3">
+          <div class="flex items-center justify-between text-[#8C857B] font-mono text-xs uppercase tracking-wider">
+            <span>Multi-Sig Cold Vault</span>
+            <i data-lucide="lock" class="w-4 h-4 text-[#121110]"></i>
+          </div>
+          <div class="text-2xl font-bold font-mono text-[#121110]">3-of-5 Gnosis</div>
+          <p class="text-xs text-[#5C5752] leading-relaxed">
+            Institutional keyholders: 2 SEBI Key Trustees, 1 Hardware Security Module (HSM), 2 Founding Directors.
+          </p>
+          <div class="pt-2 border-t border-[#121110]/6 text-[11px] font-mono text-[#5C5752]">
+            Vault: 0x5b38...99f4
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== REBALANCE EXECUTION LOGS ==================== -->
+    <div class="tilt-card p-7 sm:p-9 bg-[#FAF8F5]">
+      <div class="tilt-card-content space-y-4">
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-mono text-xs uppercase tracking-widest text-[#8C857B]">Immutable Audit Trail</div>
+            <h2 class="text-2xl font-semibold tracking-editorial text-[#121110]">Rebalance Execution History</h2>
+          </div>
+          <div class="text-xs font-mono text-[#5C5752]">SEBI Inspection Ready</div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-[#121110]/10 bg-[#F4EFEA]/40">
+          <table class="w-full text-left font-mono text-xs">
+            <thead>
+              <tr class="border-b border-[#121110]/8 text-[10px] text-[#8C857B] uppercase tracking-wider bg-[#F4EFEA]">
+                <th class="py-3 px-4">Log ID & Timestamp</th>
+                <th class="py-3 px-4">Fund Name</th>
+                <th class="py-3 px-4">Portfolio Manager</th>
+                <th class="py-3 px-4">Trades Executed</th>
+                <th class="py-3 px-4">Observed Slippage</th>
+                <th class="py-3 px-4">Gas & Routing Cost</th>
+                <th class="py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody id="rebalance-logs-body" class="divide-y divide-[#121110]/5 text-[11px]">
+              <!-- Populated dynamically by manager.js -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="baskly-db.js"></script>
+  <script src="manager.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
