@@ -1530,24 +1530,57 @@ function closeUPIDrawer() {
 
 function submitUPISimulation(e) {
   e.preventDefault();
-  const upiId = document.getElementById('sim-upi-input').value || 'investor@okhdfcbank';
-  const amount = document.getElementById('sim-amount-select').value;
-  const date = document.getElementById('sim-date-select').value;
+  const upiId = document.getElementById('sim-upi-input')?.value || 'investor@okhdfcbank';
+  const amount = parseFloat(document.getElementById('sim-amount-select')?.value || '5000');
+  const date = document.getElementById('sim-date-select')?.value || '5th';
+  const basketSelect = document.getElementById('sim-basket-select');
+  const basketId = basketSelect ? basketSelect.value : 'top-5-index';
+  const basketOpt = basketSelect ? basketSelect.options[basketSelect.selectedIndex] : null;
+  const basketName = basketOpt ? basketOpt.text.replace(/^\d+\s*\/\s*/, '').replace(/\s*\(.*?\)/, '').trim() : 'Top-5 Bluechip Index';
+
+  // Persist directly into BasklyDB
+  if (window.BasklyDB) {
+    const liveBasket = basketsData.find(b => b.id === basketId);
+    const nav = liveBasket ? liveBasket.nav : 63.09;
+
+    // 1. Execute initial mandate deposit
+    BasklyDB.buyBasket(basketId, basketName, amount, nav, 'UPI_MANDATE');
+
+    // 2. Add or update mandate in database
+    const existingMandate = BasklyDB.data.retailPortfolio.mandates.find(m => m.basketId === basketId);
+    if (existingMandate) {
+      existingMandate.monthlyAmountINR = amount;
+      existingMandate.status = 'ACTIVE';
+      existingMandate.vpa = upiId;
+    } else {
+      BasklyDB.data.retailPortfolio.mandates.push({
+        id: 'mandate_' + Date.now().toString(36),
+        basketId,
+        basketName,
+        monthlyAmountINR: amount,
+        debitDay: parseInt(date) || 5,
+        status: 'ACTIVE',
+        vpa: upiId,
+        nextDebitDate: '2026-11-05'
+      });
+    }
+    BasklyDB.save();
+  }
 
   const stepContainer = document.getElementById('upi-step-content');
   stepContainer.innerHTML = `
-    <div class="text-center py-8 space-y-5">
-      <div class="w-16 h-16 bg-[#0F6E56]/10 text-[#0F6E56] rounded-full flex items-center justify-center mx-auto text-2xl">
+    <div class="text-center py-6 space-y-4">
+      <div class="w-14 h-14 bg-[#0F6E56]/10 text-[#0F6E56] rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
         ✓
       </div>
       <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial">
-        Mandate <span class="font-serif-italic font-normal text-3xl">Authorized</span>
+        e-Mandate <span class="font-serif-italic font-normal text-3xl">Authorized</span>
       </h3>
-      <p class="text-sm text-[#5C5752] max-w-sm mx-auto leading-relaxed">
-        Your recurring SIP of <strong>₹${formatINR(amount)}</strong> is scheduled for the <strong>${date}</strong> of every month via NPCI UPI AutoPay.
+      <p class="text-xs text-[#5C5752] max-w-sm mx-auto leading-relaxed">
+        Your automated SIP of <strong>₹${formatINR(amount)}</strong> in <strong>${basketName}</strong> is verified with NPCI AutoPay and linked to your portfolio.
       </p>
 
-      <div class="bg-[#F4EFEA] border border-[#121110]/10 rounded-2xl p-4 text-left max-w-sm mx-auto space-y-2.5 text-xs">
+      <div class="bg-[#F4EFEA] border border-[#121110]/10 rounded-2xl p-4 text-left max-w-sm mx-auto space-y-2 text-xs">
         <div class="flex justify-between text-[#5C5752]">
           <span>Verified VPA</span>
           <span class="font-mono font-medium text-[#121110]">${upiId}</span>
@@ -1557,14 +1590,17 @@ function submitUPISimulation(e) {
           <span class="font-mono font-medium text-[#121110]">BASKLY${Math.floor(100000 + Math.random() * 900000)}@npci</span>
         </div>
         <div class="flex justify-between text-[#5C5752]">
-          <span>1% TDS & Custody</span>
-          <span class="text-[#0F6E56] font-semibold">Automated · 1:1 Cold Vault</span>
+          <span>First Purchase</span>
+          <span class="text-[#0F6E56] font-semibold">Credited to Portfolio</span>
         </div>
       </div>
 
-      <div class="pt-3">
-        <button type="button" onclick="closeUPIDrawer()" class="px-7 py-3 rounded-full bg-[#121110] text-[#F4EFEA] text-xs font-semibold tracking-wider uppercase hover:bg-[#9A7B56] transition-all">
-          Return to Experience
+      <div class="pt-2 flex items-center justify-center gap-3">
+        <a href="portal.html" class="px-5 py-2.5 rounded-full bg-[#121110] text-[#F4EFEA] text-xs font-semibold tracking-wider uppercase hover:bg-[#9A7B56] transition-all">
+          View in Portfolio Portal ↗
+        </a>
+        <button type="button" onclick="closeUPIDrawer()" class="px-4 py-2.5 rounded-full border border-[#121110]/15 text-xs text-[#121110] hover:bg-[#121110]/5 transition-all">
+          Close
         </button>
       </div>
     </div>
