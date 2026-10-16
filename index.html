@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>baskly.money® — Quietly Compounding Crypto Wealth in Rupees</title>
   <meta name="description" content="Curated crypto index baskets priced in Rupees. Automated via NPCI UPI AutoPay from ₹1,000/month with 1:1 cold custody and automated 1% TDS.">
+  <link rel="canonical" href="https://addhyannegi.github.io/baskly-money/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="baskly.money® — Quietly Compounding Crypto Wealth in Rupees">
+  <meta property="og:description" content="Curated crypto index baskets priced in Rupees. Automated via NPCI UPI AutoPay from ₹1,000/month with 1:1 cold custody and automated 1% TDS.">
+  <meta property="og:url" content="https://addhyannegi.github.io/baskly-money/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="baskly.money® — Systematic Crypto Baskets">
+  <meta name="twitter:description" content="Curated crypto index baskets priced in Rupees. Automated via NPCI UPI AutoPay from ₹1,000/month.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2248%22 fill=%22%23121110%22/><text y=%2266%22 font-size=%2256%22 font-family=%22Georgia,serif%22 font-style=%22italic%22 text-anchor=%22middle%22 x=%2248%22 fill=%22%23F4EFEA%22>b</text></svg>">
 
   <!-- Tailwind CSS -->
@@ -866,13 +874,13 @@
           <form onsubmit="submitUPISimulation(event)" class="space-y-4">
             <div>
               <label class="block font-mono text-[10px] uppercase tracking-widest text-[#5C5752] mb-1.5">Select Curated Basket</label>
-              <select class="w-full text-xs font-medium border border-[#121110]/15 rounded-xl px-3.5 py-3 bg-[#F4EFEA] focus:outline-none focus:border-[#121110]">
-                <option>01 / Top-5 Bluechip Index (Core)</option>
-                <option>02 / Crypto + Gold Reserve (Conservative)</option>
-                <option>03 / Pure Bitcoin Sovereign</option>
-                <option>04 / Ethereum Settlement Layer</option>
-                <option>05 / DeFi Protocol Architects</option>
-                <option>06 / High-Beta Cultural Index</option>
+              <select id="sim-basket-select" class="w-full text-xs font-medium border border-[#121110]/15 rounded-xl px-3.5 py-3 bg-[#F4EFEA] focus:outline-none focus:border-[#121110]">
+                <option value="top-5-index">01 / Top-5 Bluechip Index (Core)</option>
+                <option value="crypto-gold">02 / Crypto + Gold Reserve (Conservative)</option>
+                <option value="btc-standard">03 / Pure Bitcoin Sovereign</option>
+                <option value="eth-l2">04 / Ethereum Settlement Layer</option>
+                <option value="web3-infra">05 / DeFi Protocol Architects</option>
+                <option value="defi-yield">06 / High-Beta Cultural Index</option>
               </select>
             </div>
 
