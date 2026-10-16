@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Unseen Studio Inspired Luxury Stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2.2">
 </head>
 <body class="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
 
@@ -791,10 +791,11 @@
             </div>
           </div>
 
-          <!-- HTML5 Canvas for Interactive Chart -->
-          <div class="relative">
-            <canvas id="modal-fund-chart" class="w-full h-56 rounded-xl bg-[#FAF8F5] border border-[#121110]/5 cursor-crosshair"></canvas>
-            <div id="chart-tooltip-badge" class="absolute hidden pointer-events-none -translate-x-1/2 -translate-y-full mb-2 bg-[#121110] text-[#F4EFEA] font-mono text-[10px] py-1 px-2.5 rounded-lg shadow-md whitespace-nowrap">
+          <!-- HTML5 Canvas + Instant Vector Overlay for Interactive Chart -->
+          <div id="modal-chart-container" class="relative w-full h-56 rounded-xl bg-[#FAF8F5] border border-[#121110]/5 overflow-hidden">
+            <svg id="modal-fund-svg-fallback" class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 600 224"></svg>
+            <canvas id="modal-fund-chart" class="w-full h-full block cursor-crosshair relative z-10"></canvas>
+            <div id="chart-tooltip-badge" class="absolute hidden pointer-events-none -translate-x-1/2 -translate-y-full mb-2 bg-[#121110] text-[#F4EFEA] font-mono text-[10px] py-1.5 px-3 rounded-xl shadow-xl whitespace-nowrap z-20">
               ₹63.09 · +58.5%
             </div>
           </div>
@@ -990,7 +991,7 @@
   </div>
 
   <!-- Interactive Engine -->
-  <script src="app.js"></script>
+  <script src="app.js?v=2.2"></script>
   <script>
     lucide.createIcons();
   </script>
