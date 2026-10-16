@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Unseen Studio Inspired Luxury Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=2.2">
+  <link rel="stylesheet" href="styles.css?v=2.3">
 </head>
 <body class="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
 
@@ -96,33 +96,44 @@
         </a>
       </nav>
 
-      <!-- Right Controls: Oracle Telemetry Pill + 3D Wave Toggle + Magnetic CTA -->
-      <div class="flex items-center gap-2.5">
+      <!-- Right Controls: Portals + Oracle Telemetry Pill + Sign In With Google -->
+      <div class="flex items-center gap-2">
+        <a href="portal.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Retail Portal</span>
+        </a>
+
+        <a href="manager.html" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#9A7B56]"></i>
+          <span>Fund Manager</span>
+        </a>
+
         <button 
           onclick="openOracleModal()" 
           title="Inspect Live Pricing Oracle & Feed Health"
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all"
-          data-magnetic>
+          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all">
           <span class="oracle-pulse-live"></span>
-          <span id="oracle-nav-badge">ORACLE LIVE · USDT: ₹100.16</span>
+          <span id="oracle-nav-badge" class="hidden sm:inline">ORACLE LIVE</span>
         </button>
 
+        <!-- Google SSO CTA -->
         <button 
-          onclick="toggleAmbientMotion()" 
-          title="Toggle 3D WebGL Sculpture Motion"
-          class="hidden sm:inline-flex items-center gap-2.5 px-3.5 py-2 rounded-full border border-[#121110]/15 text-[11px] font-mono uppercase tracking-wider text-[#121110] hover:border-[#121110] transition-all"
-          data-magnetic>
-          <div id="ambient-wave" class="wave-bars text-[#9A7B56]">
-            <span></span><span></span><span></span><span></span>
-          </div>
-          <span id="ambient-label">3D Live</span>
+          onclick="openGoogleSSOModal()" 
+          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#121110]/15 bg-[#FAF8F5] text-xs font-semibold text-[#121110] hover:border-[#121110] shadow-xs transition">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span class="hidden md:inline">Sign In with Google</span>
+          <span class="md:hidden">Sign In</span>
         </button>
 
         <button 
           onclick="openUPIDrawer()" 
-          class="btn-unseen bg-[#121110] text-[#F4EFEA] px-5 py-2.5 text-xs font-semibold tracking-wide"
-          data-magnetic>
-          <span>Start ₹1,000 SIP ↗</span>
+          class="btn-unseen bg-[#121110] text-[#F4EFEA] px-4 py-2 text-xs font-semibold tracking-wide">
+          <span>Start SIP ↗</span>
         </button>
       </div>
     </div>
@@ -990,10 +1001,97 @@
     </div>
   </div>
 
-  <!-- Interactive Engine -->
-  <script src="app.js?v=2.2"></script>
+  <!-- ==================== MODAL 4: SIGN IN WITH GOOGLE SSO ==================== -->
+  <div id="google-sso-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="tilt-card bg-[#FAF8F5] max-w-md w-full p-7 sm:p-8 space-y-6">
+      <div class="tilt-card-content space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-[#121110]/10">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+            <span class="font-bold text-sm text-[#121110]">Google Identity Services</span>
+          </div>
+          <button onclick="closeGoogleSSOModal()" class="w-7 h-7 rounded-full border border-[#121110]/15 flex items-center justify-center text-xs hover:bg-[#121110] hover:text-[#F4EFEA] transition">
+            ✕
+          </button>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-bold text-[#121110]">Sign in to Baskly.money</h3>
+          <p class="text-xs text-[#5C5752] mt-1">Select an authenticated Google identity to enter the portal</p>
+        </div>
+
+        <!-- Google One Tap Personas -->
+        <div class="space-y-2.5">
+          <!-- Persona 1: Retail -->
+          <div onclick="selectGooglePersonaAndRedirect('retail')" class="p-3.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] hover:bg-[#121110]/5 cursor-pointer flex items-center justify-between transition">
+            <div class="flex items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Arjun" class="w-10 h-10 rounded-full object-cover">
+              <div>
+                <div class="text-xs font-bold text-[#121110]">Arjun Mehta</div>
+                <div class="text-[11px] text-[#5C5752]">investor@gmail.com</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono bg-[#0F6E56]/15 text-[#0F6E56] font-semibold px-2 py-0.5 rounded-full">Retail Investor ↗</span>
+          </div>
+
+          <!-- Persona 2: Fund Manager -->
+          <div onclick="selectGooglePersonaAndRedirect('fund_manager')" class="p-3.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] hover:bg-[#121110]/5 cursor-pointer flex items-center justify-between transition">
+            <div class="flex items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80" alt="Devika" class="w-10 h-10 rounded-full object-cover">
+              <div>
+                <div class="text-xs font-bold text-[#121110]">Dr. Devika Rao, CFA</div>
+                <div class="text-[11px] text-[#5C5752]">manager@baskly.money</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono bg-[#121110] text-[#F4EFEA] font-semibold px-2 py-0.5 rounded-full">Fund Manager ↗</span>
+          </div>
+        </div>
+
+        <div class="text-center text-[11px] text-[#8C857B]">
+          Secured with SHA-256 JWT sessions & SEBI compliant KYC encryption.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Engine & Database -->
+  <script src="baskly-db.js"></script>
+  <script src="app.js?v=2.3"></script>
   <script>
     lucide.createIcons();
+
+    window.openGoogleSSOModal = function() {
+      const modal = document.getElementById('google-sso-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    };
+
+    window.closeGoogleSSOModal = function() {
+      const modal = document.getElementById('google-sso-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    };
+
+    window.selectGooglePersonaAndRedirect = function(role) {
+      if (window.BasklyDB) {
+        window.BasklyDB.loginWithGoogle(role);
+      }
+      closeGoogleSSOModal();
+      if (role === 'fund_manager') {
+        window.location.href = 'manager.html';
+      } else {
+        window.location.href = 'portal.html';
+      }
+    };
   </script>
 </body>
 </html>
