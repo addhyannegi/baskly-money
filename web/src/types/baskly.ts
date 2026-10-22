@@ -1,4 +1,4 @@
-export type UserRole = 'retail' | 'fund_manager';
+export type UserRole = 'CUSTOMER' | 'ADMIN' | 'FUND_MANAGER' | 'SUPPORT' | 'retail' | 'fund_manager';
 
 export interface User {
   id: string;
@@ -10,6 +10,7 @@ export interface User {
   kycStatus: 'VERIFIED' | 'PENDING' | 'REJECTED';
   pan: string;
   signedInAt: string;
+  defaultDashboardPath?: string;
 }
 
 export interface BasketAsset {
