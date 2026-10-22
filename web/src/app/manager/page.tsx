@@ -1,16 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   ShieldAlert, 
   ShieldCheck, 
   RotateCw, 
   Download, 
-  ArrowLeft, 
   CheckCircle2 
 } from "lucide-react";
 import { useBaskly } from "@/context/BasklyContext";
+
+/**
+ * Deterministic timestamp formatter for Baskly.money.
+ * Consistently formats dates in the 'en-IN' locale and 'Asia/Kolkata' timezone.
+ * Gracefully handles null, undefined, or invalid dates.
+ */
+function formatKolkataTimestamp(timestamp?: string | null): string {
+  if (!timestamp) return "—";
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) return "—";
+
+  try {
+    return date.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+  } catch {
+    return "—";
+  }
+}
+
+function FormattedLogTimestamp({ timestamp }: { timestamp?: string | null }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const formatted = formatKolkataTimestamp(timestamp);
+
+  return <span>{formatted}</span>;
+}
 
 export default function ManagerPage() {
   const { 
@@ -100,14 +137,6 @@ export default function ManagerPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link 
-              href="/portal" 
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Retail Investor Portal</span>
-            </Link>
-
             {/* Profile Avatar */}
             <div className="flex items-center gap-2 bg-[#FAF8F5] border border-[#121110]/15 rounded-full px-3 py-1 text-xs font-mono font-bold">
               <span className="w-2 h-2 rounded-full bg-[#0F6E56]" />
@@ -278,7 +307,7 @@ export default function ManagerPage() {
                   {manager.rebalanceLogs.map((log) => (
                     <tr key={log.id} className="hover:bg-[#F4EFEA]/50">
                       <td className="py-2.5 px-3 text-[#5C5752]">
-                        {new Date(log.timestamp).toLocaleString("en-IN")}
+                        <FormattedLogTimestamp timestamp={log.timestamp} />
                       </td>
                       <td className="py-2.5 px-3 font-bold text-[#121110]">{log.basketName}</td>
                       <td className="py-2.5 px-3 text-[#8C857B]">{log.managerName}</td>

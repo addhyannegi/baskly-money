@@ -12,6 +12,7 @@ import {
 } from "@/types/baskly";
 import { BASKETS_DATA } from "@/data/baskets";
 import { pricingOracle, ClientOracleState } from "@/services/pricingOracle";
+import { authApi } from "@/services/authApi";
 
 interface BasklyContextType {
   user: User | null;
@@ -24,6 +25,7 @@ interface BasklyContextType {
   isUPIModalOpen: boolean;
   isOracleModalOpen: boolean;
   isAuthModalOpen: boolean;
+  setUserFromBackend: (user: any) => void;
   login: (name: string, email: string, role?: UserRole) => User;
   logout: () => void;
   buyBasket: (basketId: string, amountINR: number) => Transaction;
@@ -52,7 +54,7 @@ const INITIAL_PORTFOLIO: Portfolio = {
       units: 1500.0,
       avgBuyNav: 100.0,
       investedAmountINR: 150000.0,
-      purchasedDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+      purchasedDate: "2026-10-18T10:00:00.000Z",
     },
     {
       basketId: "crypto-gold",
@@ -60,7 +62,7 @@ const INITIAL_PORTFOLIO: Portfolio = {
       units: 1000.0,
       avgBuyNav: 100.0,
       investedAmountINR: 100000.0,
-      purchasedDate: new Date(Date.now() - 86400000).toISOString(),
+      purchasedDate: "2026-10-19T10:00:00.000Z",
     },
     {
       basketId: "bitcoin",
@@ -68,7 +70,7 @@ const INITIAL_PORTFOLIO: Portfolio = {
       units: 500.0,
       avgBuyNav: 100.0,
       investedAmountINR: 50000.0,
-      purchasedDate: new Date().toISOString(),
+      purchasedDate: "2026-10-20T10:00:00.000Z",
     },
   ],
   mandates: [
@@ -96,7 +98,7 @@ const INITIAL_PORTFOLIO: Portfolio = {
   transactions: [
     {
       id: "tx_init_1",
-      timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
+      timestamp: "2026-10-18T10:00:00.000Z",
       type: "BUY",
       basketId: "top-5-index",
       basketName: "Top-5 Bluechip Index",
@@ -110,7 +112,7 @@ const INITIAL_PORTFOLIO: Portfolio = {
     },
     {
       id: "tx_init_2",
-      timestamp: new Date(Date.now() - 86400000).toISOString(),
+      timestamp: "2026-10-19T10:00:00.000Z",
       type: "BUY",
       basketId: "crypto-gold",
       basketName: "Crypto + Gold Reserve",
@@ -142,7 +144,7 @@ const INITIAL_MANAGER: ManagerSummary = {
       id: "reb_init_01",
       basketId: "top-5-index",
       basketName: "Top-5 Bluechip Index",
-      timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
+      timestamp: "2026-10-17T17:30:00.000Z",
       managerName: "CIO Algorithmic Engine",
       tradesExecuted: 5,
       slippagePct: 0.02,
@@ -241,6 +243,25 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
       pricingOracle.stop();
     };
   }, []);
+
+  const setUserFromBackend = (backendUser: any) => {
+    const formattedUser: User = {
+      id: backendUser.id,
+      name: backendUser.name,
+      email: backendUser.email,
+      avatar: backendUser.avatar,
+      givenName: backendUser.givenName || backendUser.name.split(" ")[0],
+      role: backendUser.role as UserRole,
+      kycStatus: "VERIFIED",
+      pan: backendUser.pan || "ABCDE1234F",
+      signedInAt: backendUser.signedInAt || new Date().toISOString(),
+      defaultDashboardPath: backendUser.defaultDashboardPath,
+    };
+    setUser(formattedUser);
+    try {
+      localStorage.setItem("baskly_user_session", JSON.stringify(formattedUser));
+    } catch {}
+  };
 
   const login = (name: string, email: string, role: UserRole = "retail"): User => {
     const trimmedName = name.trim() || email.split("@")[0];
@@ -454,6 +475,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
         isUPIModalOpen,
         isOracleModalOpen,
         isAuthModalOpen,
+        setUserFromBackend,
         login,
         logout,
         buyBasket,

@@ -86,7 +86,7 @@ const LEGAL_DOCS: Record<string, LegalModalData> = {
       },
       {
         heading: "4. Systematic Mandate & NPCI UPI AutoPay",
-        body: "Recurring investment mandates configured via NPCI UPI AutoPay can be paused, skipped, or revoked at any time directly through your UPI application (Google Pay, PhonePe, Paytm, BHIM) or within the Baskly Investor Portal without penalty or lock-in periods.",
+        body: "Recurring investment mandates configured via NPCI UPI AutoPay can be paused, skipped, or revoked at any time directly through your UPI application (Google Pay, PhonePe, Paytm, BHIM) or within your Baskly account without penalty or lock-in periods.",
       },
       {
         heading: "5. Segregated 1:1 Cold Vault Custody",

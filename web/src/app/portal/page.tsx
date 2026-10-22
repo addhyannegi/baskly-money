@@ -6,7 +6,6 @@ import {
   TrendingUp, 
   Calendar, 
   Wallet, 
-  ShieldCheck, 
   RefreshCw, 
   ArrowUpRight, 
   ArrowDownLeft, 
@@ -102,21 +101,13 @@ export default function PortalPage() {
             <div className="hidden md:flex items-center gap-2 pl-4 border-l border-[#121110]/10">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0F6E56]/10 text-[#0F6E56] font-mono text-xs font-semibold">
                 <span className="oracle-pulse-live" style={{ width: 6, height: 6 }} />
-                Retail Investor Desk
+                Investor Desk
               </span>
               <span className="font-mono text-xs text-[#8C857B]">· Base ₹100.00 Inception NAV</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link 
-              href="/manager" 
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#121110]/15 text-xs font-medium text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Fund Manager Terminal</span>
-            </Link>
-
             {/* User Profile Pill */}
             <div 
               onClick={openAuthModal} 

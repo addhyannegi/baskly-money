@@ -1,69 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Instrument+Serif:ital@0;1&display=swap');
 @import "tailwindcss";
 
 @theme {
   --breakpoint-xs: 420px;
+  --font-sans: var(--font-inter), 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: var(--font-dm-serif), 'DM Serif Display', 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
 }
 
 :root {
---bg-pearl: #F4EFEA;
---bg-alabaster: #FAF8F5;
---bg-champagne: #EBE3DA;
---bg-obsidian: #121110;
+  --bg-pearl: #F4EFEA;
+  --bg-alabaster: #FAF8F5;
+  --bg-champagne: #EBE3DA;
+  --bg-obsidian: #121110;
 
---text-obsidian: #121110;
---text-muted: #5C5752;
---text-subtle: #8C857B;
+  --text-obsidian: #121110;
+  --text-muted: #5C5752;
+  --text-subtle: #8C857B;
 
---accent-bronze: #9A7B56;
---accent-emerald: #0F6E56;
---accent-rose: #B85D43;
+  --accent-bronze: #9A7B56;
+  --accent-emerald: #0F6E56;
+  --accent-rose: #B85D43;
 
---border-hairline: rgba(18, 17, 16, 0.09);
---border-strong: rgba(18, 17, 16, 0.18);
+  --border-hairline: rgba(18, 17, 16, 0.09);
+  --border-strong: rgba(18, 17, 16, 0.18);
 
---ease-unseen: cubic-bezier(0.76, 0, 0.24, 1);
---ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-unseen: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
   box-sizing: border-box;
-  }
+}
 
 html {
-background-color: var(--bg-pearl);
-color: var(--text-obsidian);
-scroll-behavior: smooth;
+  background-color: var(--bg-pearl);
+  color: var(--text-obsidian);
+  scroll-behavior: smooth;
 }
 
 body {
-margin: 0;
-min-height: 100vh;
-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-background-color: var(--bg-pearl);
-color: var(--text-obsidian);
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
-overflow-x: hidden;
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-inter), 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-pearl);
+  color: var(--text-obsidian);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 ::selection {
-background: #121110;
-color: #F4EFEA;
+  background: #121110;
+  color: #F4EFEA;
 }
 
 .font-serif-editorial {
-font-family: 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
-font-weight: 300;
-letter-spacing: -0.02em;
+  font-family: var(--font-dm-serif), 'DM Serif Display', 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 .font-serif-italic {
-font-family: 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
-font-style: italic;
-font-weight: 400;
-letter-spacing: -0.01em;
+  font-family: var(--font-dm-serif), 'DM Serif Display', 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
+
 .tracking-editorial {
-letter-spacing: -0.035em;
+  letter-spacing: -0.035em;
 }

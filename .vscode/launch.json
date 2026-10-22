@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot - BasklyApplication",
+      "request": "launch",
+      "mainClass": "money.baskly.BasklyApplication",
+      "projectName": "baskly-backend"
+    }
+  ]
+}

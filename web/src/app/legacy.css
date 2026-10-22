@@ -34,7 +34,7 @@ html {
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-inter), 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-pearl);
   color: var(--text-obsidian);
   -webkit-font-smoothing: antialiased;

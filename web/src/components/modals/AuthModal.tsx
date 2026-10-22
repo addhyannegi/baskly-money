@@ -1,139 +1,241 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useBaskly } from "@/context/BasklyContext";
-import { UserRole } from "@/types/baskly";
+import { authApi, AuthApiError } from "@/services/authApi";
+import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
+import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2, X } from "lucide-react";
 
 export default function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, login } = useBaskly();
+  const { isAuthModalOpen, closeAuthModal, setUserFromBackend } = useBaskly();
   const router = useRouter();
 
-  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [role, setRole] = useState<UserRole>("retail");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [googleLoading, setGoogleLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isAccountNotFound, setIsAccountNotFound] = useState<boolean>(false);
 
   if (!isAuthModalOpen) return null;
 
-  const handleContinueWithGoogle = () => {
-    const defaultEmail = "investor@gmail.com";
-    const defaultName = "Rohan Investor";
-    const loggedUser = login(defaultName, defaultEmail, "retail");
-    closeAuthModal();
-    router.push(loggedUser.role === "fund_manager" ? "/manager" : "/portal");
+  const handleGoogleCredential = async (credential: string) => {
+    try {
+      setGoogleLoading(true);
+      setErrorMessage(null);
+      setIsAccountNotFound(false);
+
+      const res = await authApi.googleSignIn(credential);
+
+      if (res.user) {
+        setUserFromBackend(res.user);
+        closeAuthModal();
+        router.push(res.user.defaultDashboardPath || "/dashboard/customer");
+      }
+    } catch (err: unknown) {
+      if (err instanceof AuthApiError && (err.code === "ACCOUNT_NOT_FOUND" || err.status === 404)) {
+        setErrorMessage("No account found for this Google account. Please create an account first.");
+        setIsAccountNotFound(true);
+      } else {
+        const msg = err instanceof Error ? err.message : "Unable to complete Google sign-in. Please try again.";
+        setErrorMessage(msg);
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
-  const handleDirectSignIn = (e: React.FormEvent) => {
+  const handlePasswordSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes("@")) {
-      alert("Please enter a valid Google email.");
+    setErrorMessage(null);
+    setIsAccountNotFound(false);
+
+    if (!email || !password) {
+      setErrorMessage("Please enter both your email address and password.");
       return;
     }
 
-    const loggedUser = login(name || email.split("@")[0], email, role);
+    try {
+      setLoading(true);
+      const res = await authApi.login(email, password);
+      if (res.user) {
+        setUserFromBackend(res.user);
+        closeAuthModal();
+        router.push(res.user.defaultDashboardPath || "/dashboard/customer");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Invalid email or password. Please try again.";
+      setErrorMessage(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateAccountClick = () => {
     closeAuthModal();
-    router.push(loggedUser.role === "fund_manager" ? "/manager" : "/portal");
+    router.push("/signup");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
-      <div className="tilt-card bg-[#FAF8F5] max-w-md w-full p-5 sm:p-8 space-y-5 sm:space-y-6">
-        <div className="tilt-card-content space-y-4 sm:space-y-5">
-          
-          <div className="flex items-center justify-between pb-3 border-b border-[#121110]/10 gap-3">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z" />
-                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
-                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
-                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
-              </svg>
-              <span className="font-bold text-xs sm:text-sm text-[#121110]">Google Authentication</span>
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop"
+      onClick={closeAuthModal}
+    >
+      <div 
+        className="bg-white border border-[#121110]/10 rounded-3xl p-6 sm:p-9 shadow-2xl max-w-[420px] w-full space-y-6 relative animate-in fade-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button 
+          type="button"
+          onClick={closeAuthModal} 
+          aria-label="Close sign in modal"
+          className="absolute right-5 top-5 w-8 h-8 rounded-full border border-[#121110]/10 flex items-center justify-center text-[#66615B] hover:text-[#121110] hover:bg-[#FAF8F5] transition cursor-pointer"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        {/* Brand & Heading */}
+        <div className="text-center space-y-2 pt-1">
+          <div className="w-10 h-10 rounded-full bg-[#121110] text-[#F4EFEA] flex items-center justify-center font-serif italic text-lg mx-auto">
+            b
+          </div>
+          <h2 className="text-2xl font-semibold text-[#121110] tracking-tight">
+            Welcome back
+          </h2>
+          <p className="text-sm text-[#66615B] leading-relaxed">
+            Sign in to continue to your Baskly.money account.
+          </p>
+        </div>
+
+        {/* Compact, accessible error / account-not-found alert */}
+        {errorMessage && (
+          <div
+            className={`p-3.5 rounded-xl text-[13px] animate-in fade-in duration-150 ${
+              isAccountNotFound
+                ? "bg-amber-50/90 border border-amber-200/80 text-amber-900"
+                : "bg-red-50/90 border border-red-200/80 text-red-800"
+            }`}
+          >
+            <div className="flex items-start gap-2.5">
+              <AlertCircle
+                className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                  isAccountNotFound ? "text-amber-700" : "text-red-600"
+                }`}
+              />
+              <span className="leading-snug">{errorMessage}</span>
             </div>
-            <button 
-              type="button"
-              onClick={closeAuthModal} 
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#121110]/15 flex items-center justify-center text-xs hover:bg-[#121110] hover:text-[#F4EFEA] transition cursor-pointer flex-shrink-0"
-            >
-              ✕
-            </button>
+            {isAccountNotFound && (
+              <div className="mt-2.5 pt-2 border-t border-amber-200/60 flex items-center justify-between">
+                <span className="text-xs text-amber-800">New to Baskly.money?</span>
+                <button
+                  type="button"
+                  onClick={handleCreateAccountClick}
+                  className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-[#121110] text-[#F4EFEA] text-xs font-medium hover:bg-[#2A2826] transition-colors cursor-pointer"
+                >
+                  Create an account
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Google Sign-in */}
+        <GoogleAuthButton
+          mode="signin"
+          onCredential={handleGoogleCredential}
+          loading={googleLoading}
+        />
+
+        {/* Subtle Divider */}
+        <div className="relative flex items-center justify-center my-3">
+          <div className="border-t border-[#121110]/10 w-full" />
+          <span className="bg-white px-3 text-xs text-[#8C857B]">
+            or continue with email
+          </span>
+          <div className="border-t border-[#121110]/10 w-full" />
+        </div>
+
+        {/* Email & Password Form */}
+        <form onSubmit={handlePasswordSignIn} className="space-y-4">
+          <div>
+            <label className="block text-[13px] font-medium text-[#121110] mb-1.5">
+              Email address
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                className="w-full h-11 sm:h-12 pl-10 pr-4 rounded-xl border border-[#121110]/15 bg-[#FAF8F5] text-sm text-[#121110] placeholder:text-[#8C857B] focus:bg-white focus:outline-none focus:border-[#121110] focus:ring-2 focus:ring-[#121110]/8 transition-all"
+              />
+              <Mail className="w-4 h-4 text-[#8C857B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
 
           <div>
-            <h3 className="text-lg sm:text-xl font-bold text-[#121110]">Sign in to Baskly.money</h3>
-            <p className="text-xs text-[#5C5752] mt-0.5 sm:mt-1">Authenticate directly with your Google account.</p>
-          </div>
-
-          {/* 1. Official Google Button */}
-          <button 
-            type="button" 
-            onClick={handleContinueWithGoogle} 
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-[#121110]/20 bg-white hover:bg-gray-50 text-[#121110] font-semibold text-sm shadow-xs hover:border-[#121110] transition-all cursor-pointer"
-          >
-            <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z" />
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
-            </svg>
-            <span>Continue with Google</span>
-          </button>
-
-          {/* Divider */}
-          <div className="relative flex items-center justify-center my-1">
-            <div className="border-t border-[#121110]/10 w-full" />
-            <span className="bg-[#FAF8F5] px-3 text-[10px] uppercase font-mono text-[#8C857B] whitespace-nowrap">
-              Or enter Google email directly
-            </span>
-            <div className="border-t border-[#121110]/10 w-full" />
-          </div>
-
-          {/* 2. Direct Email Sign-In */}
-          <form onSubmit={handleDirectSignIn} className="space-y-3">
-            <div>
-              <label className="block text-[11px] font-mono text-[#5C5752] mb-1">Your Full Name</label>
-              <input 
-                type="text" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Addhyan Negi" 
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-mono text-[#5C5752] mb-1">Google Email Address</label>
-              <input 
-                type="email" 
-                required 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@gmail.com" 
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-mono text-[#5C5752] mb-1">Destination Desk</label>
-              <select 
-                value={role}
-                onChange={(e) => setRole(e.target.value as UserRole)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#121110]/15 bg-[#F4EFEA] text-xs font-semibold focus:outline-none focus:border-[#121110]"
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="text-[13px] font-medium text-[#121110]">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                onClick={closeAuthModal}
+                className="text-xs font-medium text-[#9A7B56] hover:text-[#7D6242] transition-colors"
               >
-                <option value="retail">Retail Investor Portal (₹3.24L Portfolio)</option>
-                <option value="fund_manager">Fund Manager Terminal (₹48.6Cr AUM Desk)</option>
-              </select>
+                Forgot password?
+              </Link>
             </div>
-            <button 
-              type="submit" 
-              className="w-full py-2.5 rounded-xl bg-[#121110] text-[#F4EFEA] text-xs font-semibold hover:bg-[#9A7B56] transition cursor-pointer"
-            >
-              Sign In & Enter Dashboard ↗
-            </button>
-          </form>
-
-          <div className="text-center text-[10px] text-[#8C857B] font-mono">
-            Instant SHA-256 JWT sessions · Persistent PostgreSQL Ready
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full h-11 sm:h-12 pl-10 pr-10 rounded-xl border border-[#121110]/15 bg-[#FAF8F5] text-sm text-[#121110] placeholder:text-[#8C857B] focus:bg-white focus:outline-none focus:border-[#121110] focus:ring-2 focus:ring-[#121110]/8 transition-all"
+              />
+              <Lock className="w-4 h-4 text-[#8C857B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8C857B] hover:text-[#121110] transition-colors cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-11 sm:h-12 rounded-xl bg-[#121110] hover:bg-[#262422] text-[#F4EFEA] text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-2"
+          >
+            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            <span>Sign in</span>
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="text-center text-sm text-[#66615B] pt-1">
+          New to Baskly.money?{" "}
+          <Link
+            href="/signup"
+            onClick={closeAuthModal}
+            className="font-semibold text-[#121110] hover:text-[#9A7B56] transition-colors"
+          >
+            Create an account
+          </Link>
         </div>
+
       </div>
     </div>
   );

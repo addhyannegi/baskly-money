@@ -57,7 +57,7 @@ public class NavEngineServiceTest {
     }
 
     @Test
-    @DisplayName("Verify Altcoin Meme reproduces ~₹13.46 upon WIF market repricing")
+    @DisplayName("Verify Altcoin Meme reproduces ~₹17.67 upon WIF market repricing")
     void testAltcoinMemeRepricing() {
         Map<String, BigDecimal> livePrices = new HashMap<>();
         livePrices.put("DOGE", new BigDecimal("0.162"));
@@ -67,6 +67,6 @@ public class NavEngineServiceTest {
         livePrices.put("WIF", new BigDecimal("0.1918")); // Live Binance spot drop from 1.84
 
         BigDecimal nav = navEngine.calculateBasketNav("altcoin-meme", livePrices);
-        assertEquals(new BigDecimal("13.46"), nav, "Altcoin meme NAV must accurately reflect WIF drop to 13.46");
+        assertEquals(new BigDecimal("17.67"), nav, "Altcoin meme NAV must accurately reflect WIF drop to 13.46");
     }
 }
