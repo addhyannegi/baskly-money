@@ -475,7 +475,10 @@ export class PricingOracleEngine {
             if (priceUsd > 0) {
               const currentToken = this.state.tokens[sym];
               // Only apply fallback if token doesn't already have a fresh live WebSocket feed (< 30s)
-              const hasFreshLiveFeed = currentToken && currentToken.lastTick > 0 && (now - currentToken.lastTick) < 30000 && currentToken.source === "Binance WebSocket";
+              const hasFreshLiveFeed = currentToken &&
+                currentToken.lastTick > 0 &&
+                (now - currentToken.lastTick) < 30000 &&
+                (currentToken.source === "Binance WS" || currentToken.source === "Binance WebSocket");
               if (!hasFreshLiveFeed) {
                 this.handleIncomingTokenTick(sym, priceUsd, "CoinGecko");
               }

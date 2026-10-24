@@ -421,8 +421,8 @@ describe("Pricing Oracle Engine & Live NAV Test Suite", () => {
       engine.checkStaleFeeds();
       assert.equal(engine.getState().isNavFrozen, true, "Circuit breaker should freeze on startup with unavailable feeds");
 
-      // A single tick arrives for BTC
-      engine.handleIncomingTokenTick("BTC", 82000, "Binance WebSocket");
+      // A single tick arrives for BTC (production uses "Binance WS")
+      engine.handleIncomingTokenTick("BTC", 82000, "Binance WS");
 
       // Other 15 feeds are still unavailable (>4 stale/unavailable), so NAV must remain frozen!
       assert.equal(engine.getState().isNavFrozen, true, "Single tick must NOT unfreeze NAV while feeds are stale");
@@ -431,9 +431,9 @@ describe("Pricing Oracle Engine & Live NAV Test Suite", () => {
     test("CoinGecko fallback poll preserves fresh live Binance WebSocket ticks", async () => {
       const engine = new PricingOracleEngine();
 
-      // Establish live Binance tick for BTC
-      engine.handleIncomingTokenTick("BTC", 85000, "Binance WebSocket");
-      assert.equal(engine.getState().tokens.BTC.source, "Binance WebSocket");
+      // Establish live Binance tick for BTC using production source "Binance WS"
+      engine.handleIncomingTokenTick("BTC", 85000, "Binance WS");
+      assert.equal(engine.getState().tokens.BTC.source, "Binance WS");
       assert.equal(engine.getState().tokens.BTC.usd, 85000);
 
       // Mock fetch returning a stale CoinGecko price of 80000 for bitcoin
@@ -451,9 +451,9 @@ describe("Pricing Oracle Engine & Live NAV Test Suite", () => {
 
         await engine.pollCoinGeckoFallback();
 
-        // BTC should STILL have the live Binance price (85000) and source "Binance WebSocket"
+        // BTC should STILL have the live Binance price (85000) and production source "Binance WS"
         assert.equal(engine.getState().tokens.BTC.usd, 85000, "Live Binance tick must NOT be overwritten by CoinGecko fallback");
-        assert.equal(engine.getState().tokens.BTC.source, "Binance WebSocket");
+        assert.equal(engine.getState().tokens.BTC.source, "Binance WS");
 
         // But SOL (which had no live WebSocket tick) should be updated from CoinGecko
         assert.equal(engine.getState().tokens.SOL.usd, 120, "Missing feed must be updated by CoinGecko fallback");
