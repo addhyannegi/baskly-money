@@ -20,3 +20,8 @@ app:
     dev-mode: true
     jwt-secret: test-baskly-jwt-secret-key-32-chars-minimum-length!
     jwt-validity-seconds: 3600
+  nav:
+    oracle:
+      fetch-live: false
+    scheduler:
+      enabled: false
