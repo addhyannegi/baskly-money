@@ -23,6 +23,9 @@ public class NavEngineService {
     // Fixed Constituent Target Weights (rebalanced monthly)
     public static final Map<String, Map<String, BigDecimal>> BASKET_TARGET_WEIGHTS;
 
+    // Standard Inception Token Prices (USD)
+    public static final Map<String, BigDecimal> FALLBACK_INCEPTION_PRICES;
+
     // Active Mandate #IND-8841 Base Folio Units (Hero Top-5 Card)
     public static final BigDecimal ACTIVE_FOLIO_UNITS = new BigDecimal("4511.8");
 
@@ -79,6 +82,25 @@ public class NavEngineService {
         weightsMap.put("altcoin-meme", Collections.unmodifiableMap(meme));
 
         BASKET_TARGET_WEIGHTS = Collections.unmodifiableMap(weightsMap);
+
+        Map<String, BigDecimal> fallbackPrices = new HashMap<>();
+        fallbackPrices.put("BTC", new BigDecimal("81604"));
+        fallbackPrices.put("ETH", new BigDecimal("2411"));
+        fallbackPrices.put("SOL", new BigDecimal("112"));
+        fallbackPrices.put("BNB", new BigDecimal("685"));
+        fallbackPrices.put("XRP", new BigDecimal("1.25"));
+        fallbackPrices.put("PAXG", new BigDecimal("4164"));
+        fallbackPrices.put("UNI", new BigDecimal("7.15"));
+        fallbackPrices.put("AAVE", new BigDecimal("154"));
+        fallbackPrices.put("LINK", new BigDecimal("12.4"));
+        fallbackPrices.put("PENDLE", new BigDecimal("2.09"));
+        fallbackPrices.put("LDO", new BigDecimal("0.94"));
+        fallbackPrices.put("DOGE", new BigDecimal("0.162"));
+        fallbackPrices.put("SHIB", new BigDecimal("0.0000185"));
+        fallbackPrices.put("PEPE", new BigDecimal("0.0000086"));
+        fallbackPrices.put("BONK", new BigDecimal("0.0000192"));
+        fallbackPrices.put("WIF", new BigDecimal("1.84"));
+        FALLBACK_INCEPTION_PRICES = Collections.unmodifiableMap(fallbackPrices);
     }
 
     /**

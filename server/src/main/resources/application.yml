@@ -46,3 +46,8 @@ app:
     jwt-validity-seconds: ${APP_AUTH_JWT_VALIDITY_SECONDS:86400}
     google:
       client-id: ${APP_AUTH_GOOGLE_CLIENT_ID:}
+  nav:
+    scheduler:
+      enabled: ${APP_NAV_SCHEDULER_ENABLED:true}
+      fixed-rate-ms: ${APP_NAV_SCHEDULER_FIXED_RATE_MS:60000}
+      initial-delay-ms: ${APP_NAV_SCHEDULER_INITIAL_DELAY_MS:5000}

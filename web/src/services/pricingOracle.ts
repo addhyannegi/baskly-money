@@ -3,16 +3,16 @@
  * Migrated directly from oracle/pricing_oracle.js and app.js (lines 1660-1970)
  * 
  * Sources:
- * 1. Binance Public WebSocket (wss://stream.binance.com:9443 - Real-time miniTickers)
+ * 1. Binance Public WebSocket (wss://data-stream.binance.vision/stream?streams=... - Combined miniTickers)
  * 2. CoinDCX Public Ticker (USDT/INR Indian Exchange conversion, 15s poller)
- * 3. CoinGecko REST (Fallback for PAXG physical gold, PENDLE, BONK, 60s poller)
+ * 3. CoinGecko REST (Fallback for all tokens, 60s poller)
  * 
  * NAV Engine:
  * Formula: NAV(t) = (basketSum(t) / initialBaseSum) * 100.00
  * Anchored to Base ₹100.00 NAV at inception.
  */
 
-import { Basket } from "@/types/baskly";
+import type { Basket } from "../types/baskly";
 
 export interface OracleSymbolConfig {
   name: string;
@@ -39,6 +39,29 @@ export const ORACLE_SYMBOLS: Record<string, OracleSymbolConfig> = {
   BONK:   { name: "Bonk",          binance: "BONKUSDT",   coingecko: "bonk",           fallbackUsd: 0.0000192 },
   WIF:    { name: "dogwifhat",     binance: "WIFUSDT",    coingecko: "dogwifcoin",     fallbackUsd: 1.84 }
 };
+
+// Map Binance symbol pairs (e.g. "BTCUSDT") to internal asset symbols ("BTC")
+export const BINANCE_PAIR_TO_SYMBOL: Record<string, string> = {};
+Object.entries(ORACLE_SYMBOLS).forEach(([sym, cfg]) => {
+  if (cfg.binance) {
+    BINANCE_PAIR_TO_SYMBOL[cfg.binance.toUpperCase()] = sym;
+  }
+});
+
+// Map CoinGecko IDs (e.g. "bitcoin") to internal asset symbols ("BTC")
+export const COINGECKO_ID_TO_SYMBOL: Record<string, string> = {};
+Object.entries(ORACLE_SYMBOLS).forEach(([sym, cfg]) => {
+  if (cfg.coingecko) {
+    COINGECKO_ID_TO_SYMBOL[cfg.coingecko.toLowerCase()] = sym;
+  }
+});
+
+// Primary and fallback Binance WebSocket endpoints
+export const BINANCE_WS_HOSTS = [
+  "stream.binance.com:9443",
+  "data-stream.binance.vision",
+  "stream.binance.com"
+];
 
 // Canonical Inception Base Sums from original app.js (lines 15-138)
 export const CANONICAL_BASE_USD_SUMS: Record<string, number> = {
@@ -85,14 +108,84 @@ export interface ClientOracleState {
   isNavFrozen: boolean;
 }
 
-type OracleListener = (state: ClientOracleState, updatedSymbol?: string) => void;
+export interface ParsedBinanceTick {
+  symbolPair: string;
+  priceUsd: number;
+}
 
-class PricingOracleEngine {
+export interface NavResult {
+  nav: number;
+  change24h: number;
+  status?: string;
+  isFrozen?: boolean;
+}
+
+/**
+ * Builds the official Binance combined-stream WebSocket URL.
+ * Uses standard port 443 (default wss) to avoid port 9443 firewall/ISP blocks.
+ */
+export function constructBinanceStreamUrl(
+  symbols: Record<string, OracleSymbolConfig> = ORACLE_SYMBOLS,
+  host: string = BINANCE_WS_HOSTS[0]
+): string {
+  const streamNames = Object.values(symbols)
+    .filter((cfg) => Boolean(cfg.binance))
+    .map((cfg) => `${cfg.binance.toLowerCase()}@miniTicker`)
+    .join("/");
+  return `wss://${host}/stream?streams=${streamNames}`;
+}
+
+/**
+ * Parses raw Binance WebSocket message supporting combined-stream wrapper,
+ * direct miniTicker payloads, and miniTicker payload arrays.
+ */
+export function parseBinanceTickMessage(rawMessage: any): ParsedBinanceTick[] {
+  if (!rawMessage) return [];
+
+  let parsed: any = rawMessage;
+  if (typeof rawMessage === "string") {
+    try {
+      parsed = JSON.parse(rawMessage);
+    } catch {
+      return [];
+    }
+  }
+
+  // Combined stream messages are wrapped in { stream: string, data: any }
+  const payload = (parsed && typeof parsed === "object" && "data" in parsed) ? parsed.data : parsed;
+  if (!payload) return [];
+
+  const ticks: any[] = Array.isArray(payload) ? payload : [payload];
+  const results: ParsedBinanceTick[] = [];
+
+  for (const item of ticks) {
+    if (item && typeof item === "object" && typeof item.s === "string" && item.c !== undefined && item.c !== null) {
+      const price = parseFloat(item.c);
+      if (!isNaN(price) && price > 0 && isFinite(price)) {
+        results.push({
+          symbolPair: item.s.toUpperCase(),
+          priceUsd: price
+        });
+      }
+    }
+  }
+
+  return results;
+}
+
+export type OracleListener = (state: ClientOracleState, updatedSymbol?: string) => void;
+
+export class PricingOracleEngine {
   private state: ClientOracleState;
   private listeners: Set<OracleListener> = new Set();
-  private ws: WebSocket | null = null;
+  private ws: any = null;
   private pollIntervals: any[] = [];
   private isStarted = false;
+  private reconnectTimer: any = null;
+  private reconnectAttempts = 0;
+  private wsHostIndex = 0;
+  private startTime = Date.now();
+  private cachedNavs: Record<string, NavResult> = {};
 
   constructor() {
     const defaultUsdtInr = 100.16;
@@ -108,20 +201,22 @@ class PricingOracleEngine {
         prevInr: inrVal,
         change24h: 0.0,
         source: "Reference Anchor",
-        status: "healthy",
-        lastTick: Date.now()
+        // Crucial fix: initialize as "unavailable" with lastTick = 0 so reference
+        // prices are never mistaken for fresh live market data
+        status: "unavailable",
+        lastTick: 0
       };
     });
 
     this.state = {
       usdtInr: defaultUsdtInr,
-      usdtSource: "CoinDCX Live",
-      usdtLastUpdate: Date.now(),
-      usdtStatus: "healthy",
+      usdtSource: "Reference Benchmark",
+      usdtLastUpdate: 0,
+      usdtStatus: "unavailable",
       tokens: initialTokens,
       tickCount: 0,
       wsConnected: false,
-      isDegraded: false,
+      isDegraded: true,
       isNavFrozen: false
     };
   }
@@ -153,13 +248,14 @@ class PricingOracleEngine {
   public start() {
     if (this.isStarted || typeof window === "undefined") return;
     this.isStarted = true;
+    this.startTime = Date.now();
 
     // 1. Initial Immediate Polls
     this.pollCoinDcxUsdtInr();
     this.connectBinanceWebSocket();
     this.pollCoinGeckoFallback();
 
-    // 2. Scheduled Pollers matching original specification
+    // 2. Scheduled Pollers matching specification
     this.pollIntervals.push(
       setInterval(() => this.pollCoinDcxUsdtInr(), 15000),   // USDT/INR every 15s
       setInterval(() => this.pollCoinGeckoFallback(), 60000), // CoinGecko fallback every 60s
@@ -169,12 +265,33 @@ class PricingOracleEngine {
 
   public stop() {
     this.isStarted = false;
-    if (this.ws) {
-      try { this.ws.close(); } catch {}
-      this.ws = null;
-    }
+    this.cleanupReconnectTimer();
+    this.cleanupWebSocket();
     this.pollIntervals.forEach(clearInterval);
     this.pollIntervals = [];
+    this.state.wsConnected = false;
+    this.notify();
+  }
+
+  private cleanupReconnectTimer() {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+  }
+
+  private cleanupWebSocket() {
+    if (this.ws) {
+      const currentWs = this.ws;
+      this.ws = null;
+      try {
+        currentWs.onopen = null;
+        currentWs.onmessage = null;
+        currentWs.onerror = null;
+        currentWs.onclose = null;
+        currentWs.close();
+      } catch {}
+    }
   }
 
   // 1. Poll CoinDCX for real USDT/INR rate (proxied via /api/oracle/coindcx for zero CORS errors)
@@ -186,7 +303,9 @@ class PricingOracleEngine {
         const localRes = await fetch("/api/oracle/coindcx", { cache: "no-store" });
         if (localRes.ok) {
           const json = await localRes.json();
-          if (json.success && json.rate > 0) rate = json.rate;
+          if (json.success && typeof json.rate === "number" && json.rate > 0) {
+            rate = json.rate;
+          }
         }
       } catch {}
 
@@ -194,10 +313,15 @@ class PricingOracleEngine {
       if (!rate) {
         const directRes = await fetch("https://api.coindcx.com/exchange/ticker", { cache: "no-store" });
         if (directRes.ok) {
-          const tickers: any[] = await directRes.json();
-          const usdtPair = Array.isArray(tickers) ? tickers.find((t: any) => t.market === "USDTINR") : null;
-          if (usdtPair && parseFloat(usdtPair.last_price) > 0) {
-            rate = parseFloat(usdtPair.last_price);
+          const tickers = await directRes.json();
+          if (Array.isArray(tickers)) {
+            const usdtPair = tickers.find((t: any) => t && t.market === "USDTINR");
+            if (usdtPair && usdtPair.last_price) {
+              const parsedPrice = parseFloat(usdtPair.last_price);
+              if (!isNaN(parsedPrice) && parsedPrice > 0) {
+                rate = parsedPrice;
+              }
+            }
           }
         }
       }
@@ -215,70 +339,116 @@ class PricingOracleEngine {
             const t = this.state.tokens[sym];
             t.inr = t.usd * this.state.usdtInr;
           });
+        }
+        this.notify();
+      } else {
+        if (this.state.usdtLastUpdate > 0 && Date.now() - this.state.usdtLastUpdate > 120000) {
+          this.state.usdtStatus = "stale";
           this.notify();
         }
       }
-    } catch (err) {
-      // Retain last known good rate
-      if (Date.now() - this.state.usdtLastUpdate > 120000) {
+    } catch {
+      if (this.state.usdtLastUpdate > 0 && Date.now() - this.state.usdtLastUpdate > 120000) {
         this.state.usdtStatus = "stale";
+        this.notify();
       }
     }
   }
 
   // 2. Connect to Binance Public WebSocket (Streaming miniTickers)
   public connectBinanceWebSocket() {
-    if (typeof window === "undefined" || typeof WebSocket === "undefined") return;
+    if (typeof window === "undefined" && typeof globalThis.WebSocket === "undefined") return;
+
+    // Prevent duplicate simultaneous connections
+    if (this.ws) {
+      const state = this.ws.readyState;
+      if (state === 0 /* CONNECTING */ || state === 1 /* OPEN */) {
+        return;
+      }
+      this.cleanupWebSocket();
+    }
+
+    this.cleanupReconnectTimer();
 
     try {
-      const streamNames = "btcusdt@miniTicker/ethusdt@miniTicker/solusdt@miniTicker/bnbusdt@miniTicker/xrpusdt@miniTicker/dogeusdt@miniTicker/shibusdt@miniTicker/pepeusdt@miniTicker/uniusdt@miniTicker/aaveusdt@miniTicker/linkusdt@miniTicker/wifusdt@miniTicker";
-      const wsUrl = `wss://stream.binance.com:9443/ws/${streamNames}`;
-      this.ws = new WebSocket(wsUrl);
+      const host = BINANCE_WS_HOSTS[this.wsHostIndex % BINANCE_WS_HOSTS.length];
+      const wsUrl = constructBinanceStreamUrl(ORACLE_SYMBOLS, host);
+      const WebSocketClass = typeof window !== "undefined" ? window.WebSocket : (globalThis as any).WebSocket;
+      if (!WebSocketClass) return;
 
-      this.ws.onopen = () => {
+      const ws = new WebSocketClass(wsUrl);
+      this.ws = ws;
+
+      ws.onopen = () => {
+        if (this.ws !== ws) return;
+        this.reconnectAttempts = 0;
         this.state.wsConnected = true;
         this.notify();
       };
 
-      this.ws.onmessage = (event) => {
+      ws.onmessage = (event: any) => {
+        if (this.ws !== ws || !event || !event.data) return;
         try {
-          const tick = JSON.parse(event.data);
-          if (tick && tick.s && tick.c) {
-            const symbolPair = tick.s; // e.g. "BTCUSDT"
-            const priceUsd = parseFloat(tick.c);
-
-            const entry = Object.entries(ORACLE_SYMBOLS).find(([_, cfg]) => cfg.binance === symbolPair);
-            if (entry && priceUsd > 0) {
-              const [sym] = entry;
-              this.handleIncomingTokenTick(sym, priceUsd, "Binance WS");
+          const ticks = parseBinanceTickMessage(event.data);
+          for (const tick of ticks) {
+            const sym = BINANCE_PAIR_TO_SYMBOL[tick.symbolPair];
+            if (sym && tick.priceUsd > 0) {
+              this.handleIncomingTokenTick(sym, tick.priceUsd, "Binance WS");
             }
           }
-        } catch {}
-      };
-
-      this.ws.onerror = () => {
-        if (this.ws) {
-          try { this.ws.close(); } catch {}
+        } catch (err) {
+          console.warn("[PricingOracle] Failed to parse WebSocket message:", err);
         }
       };
 
-      this.ws.onclose = () => {
-        this.state.wsConnected = false;
-        this.notify();
+      ws.onerror = (err: any) => {
+        console.warn(`[PricingOracle] Binance WebSocket error on host ${host}:`, err?.message || err || "Unknown WS error");
+        // On connection failure, rotate to backup host for next attempt
+        this.wsHostIndex++;
+      };
+
+      ws.onclose = () => {
+        if (this.ws === ws) {
+          this.ws = null;
+          this.state.wsConnected = false;
+          this.notify();
+        }
         if (this.isStarted) {
-          setTimeout(() => this.connectBinanceWebSocket(), 5000);
+          this.scheduleReconnect();
         }
       };
     } catch (err) {
       console.warn("[PricingOracle] WebSocket setup error:", err);
+      this.wsHostIndex++;
+      if (this.isStarted) {
+        this.scheduleReconnect();
+      }
     }
   }
 
-  // 3. Fallback CoinGecko Poller for PAXG (Gold), PENDLE, BONK
+  private scheduleReconnect() {
+    if (!this.isStarted) return;
+    this.cleanupReconnectTimer();
+
+    // Exponential backoff with jitter: 1s to 30s
+    const baseDelay = Math.min(1000 * Math.pow(1.5, this.reconnectAttempts), 30000);
+    const jitter = Math.random() * 500;
+    const delay = Math.round(baseDelay + jitter);
+    this.reconnectAttempts++;
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      if (this.isStarted) {
+        this.connectBinanceWebSocket();
+      }
+    }, delay);
+  }
+
+  // 3. Fallback CoinGecko Poller for ALL supported basket tokens
   public async pollCoinGeckoFallback() {
     try {
       let data: any = null;
-      // Try proxy route first
+      // Try local Next.js proxy route first
       try {
         const localRes = await fetch("/api/oracle/coingecko", { cache: "no-store" });
         if (localRes.ok) {
@@ -287,31 +457,47 @@ class PricingOracleEngine {
         }
       } catch {}
 
-      // Fallback direct
+      // Fallback direct query covering all configured tokens
       if (!data) {
-        const url = "https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,pendle,bonk&vs_currencies=usd";
+        const ids = Object.values(ORACLE_SYMBOLS)
+          .map((cfg) => cfg.coingecko)
+          .filter(Boolean)
+          .join(",");
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
         const res = await fetch(url, { cache: "no-store" });
         if (res.ok) data = await res.json();
       }
 
-      if (data) {
-        if (data["pax-gold"]?.usd) {
-          this.handleIncomingTokenTick("PAXG", data["pax-gold"].usd, "CoinGecko");
-        }
-        if (data["pendle"]?.usd) {
-          this.handleIncomingTokenTick("PENDLE", data["pendle"].usd, "CoinGecko");
-        }
-        if (data["bonk"]?.usd) {
-          this.handleIncomingTokenTick("BONK", data["bonk"].usd, "CoinGecko");
+      if (data && typeof data === "object") {
+        for (const [id, priceObj] of Object.entries(data)) {
+          const sym = COINGECKO_ID_TO_SYMBOL[id.toLowerCase()];
+          if (sym && priceObj && typeof (priceObj as any).usd === "number") {
+            const priceUsd = (priceObj as any).usd;
+            if (priceUsd > 0) {
+              this.handleIncomingTokenTick(sym, priceUsd, "CoinGecko");
+            }
+          }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("[PricingOracle] CoinGecko poll error:", e);
+    }
   }
 
-  // 4. Handle Incoming Verified Tick (Directly matching app.js lines 1811-1843)
+  // 4. Handle Incoming Verified Tick (Validates price and rejects anomalous outliers)
   public handleIncomingTokenTick(sym: string, priceUsd: number, source: string) {
     const token = this.state.tokens[sym];
-    if (!token || priceUsd <= 0 || isNaN(priceUsd)) return;
+    if (!token || priceUsd <= 0 || isNaN(priceUsd) || !isFinite(priceUsd)) return;
+
+    // Outlier rejection: if we already have a live verified price (>0 and lastTick > 0),
+    // reject absurd sudden single-tick spikes (> 5x or < 0.2x)
+    if (token.lastTick > 0 && token.usd > 0) {
+      const ratio = priceUsd / token.usd;
+      if (ratio > 5.0 || ratio < 0.2) {
+        console.warn(`[PricingOracle] Outlier price rejected for ${sym}: ${priceUsd} USD (prev: ${token.usd})`);
+        return;
+      }
+    }
 
     const prevInr = token.inr;
     const newInr = priceUsd * this.state.usdtInr;
@@ -324,19 +510,30 @@ class PricingOracleEngine {
     token.lastTick = Date.now();
     this.state.tickCount++;
 
+    // Recover from initial degraded state once multiple live ticks arrive
+    if (this.state.tickCount >= 3) {
+      this.state.isDegraded = false;
+      this.state.isNavFrozen = false;
+    }
+
     this.notify(sym);
   }
 
-  // 5. Staleness Checker (Directly matching app.js lines 1946-1969)
+  // 5. Staleness Checker and Circuit Breaker
   public checkStaleFeeds() {
     const now = Date.now();
-    let staleCount = 0;
+    let staleOrUnavailableCount = 0;
 
     Object.values(this.state.tokens).forEach((t) => {
+      if (t.lastTick === 0) {
+        t.status = "unavailable";
+        staleOrUnavailableCount++;
+        return;
+      }
       const ageMs = now - t.lastTick;
       if (ageMs > 90000) {
         t.status = "stale";
-        staleCount++;
+        staleOrUnavailableCount++;
       } else if (ageMs > 30000) {
         t.status = "delayed";
       } else {
@@ -344,8 +541,19 @@ class PricingOracleEngine {
       }
     });
 
-    const usdtAge = now - this.state.usdtLastUpdate;
-    if (staleCount > 4 || usdtAge > 120000) {
+    const usdtAge = this.state.usdtLastUpdate === 0 ? Infinity : now - this.state.usdtLastUpdate;
+    if (this.state.usdtLastUpdate === 0) {
+      this.state.usdtStatus = "unavailable";
+    } else if (usdtAge > 120000) {
+      this.state.usdtStatus = "stale";
+    } else if (usdtAge > 30000) {
+      this.state.usdtStatus = "delayed";
+    } else {
+      this.state.usdtStatus = "healthy";
+    }
+
+    // Circuit breaker: If > 4 tokens are stale/unavailable or USDT rate is older than 120s
+    if (staleOrUnavailableCount > 4 || usdtAge > 120000) {
       this.state.isDegraded = true;
       this.state.isNavFrozen = true;
     } else {
@@ -356,24 +564,61 @@ class PricingOracleEngine {
     this.notify();
   }
 
-  // 6. Recalculate Live Basket NAV (Exact original implementation from app.js lines 1867-1886)
-  public calculateBasketNav(basket: Basket): { nav: number; change24h: number } {
-    let basketSum = 0;
+  // 6. Recalculate Live Basket NAV with Circuit Breaker and Weight Normalization
+  public calculateBasketNav(basket: Basket): NavResult {
+    if (!basket || !basket.assets || basket.assets.length === 0) {
+      return { nav: 100.00, change24h: 0.0, status: "unavailable", isFrozen: false };
+    }
 
-    basket.assets.forEach((a) => {
-      const livePrice = this.state.tokens[a.symbol]?.inr || a.price_inr || a.basePrice || 0;
-      basketSum += livePrice * (a.weight / 100);
-    });
+    // Circuit breaker: Freeze NAV at last valid calculated value if circuit breaker is triggered
+    if (this.state.isNavFrozen && this.cachedNavs[basket.id]) {
+      const cached = this.cachedNavs[basket.id];
+      return { ...cached, status: "frozen", isFrozen: true };
+    }
+
+    let basketSum = 0;
+    let hasStale = false;
+    let hasUnavailable = false;
+
+    // Detect if weights are percentages (sum ~100) or fractions (sum ~1.0)
+    const totalWeight = basket.assets.reduce((acc, a) => acc + (a.weight || 0), 0);
+    const weightMultiplier = totalWeight > 1.5 ? 0.01 : 1.0;
+
+    for (const a of basket.assets) {
+      const token = this.state.tokens[a.symbol];
+      if (token) {
+        if (token.status === "stale") hasStale = true;
+        if (token.status === "unavailable") hasUnavailable = true;
+      }
+
+      const livePrice = token?.inr ?? (a.price_inr && a.price_inr > 0 ? a.price_inr : (a.basePrice || 0));
+      if (livePrice <= 0) {
+        if (this.cachedNavs[basket.id]) {
+          return { ...this.cachedNavs[basket.id], status: "degraded", isFrozen: false };
+        }
+        return { nav: 100.00, change24h: 0.0, status: "unavailable", isFrozen: false };
+      }
+
+      basketSum += livePrice * (a.weight * weightMultiplier);
+    }
 
     // Use immutable canonical inception base sum in lockstep with current USDT/INR rate
     const baseSumUsd = CANONICAL_BASE_USD_SUMS[basket.id];
     const baseSum = baseSumUsd
       ? (baseSumUsd * this.state.usdtInr)
       : (CANONICAL_BASE_SUMS[basket.id] || basket.initialBaseSum || (basketSum > 0 ? basketSum : 1.0));
+
     const nav = baseSum > 0 ? Number(((basketSum / baseSum) * 100.00).toFixed(2)) : 100.00;
     const change24h = Number((((nav - 100.00) / 100.00) * 100).toFixed(2));
 
-    return { nav, change24h };
+    const status = this.state.isNavFrozen
+      ? "frozen"
+      : (hasStale || hasUnavailable || this.state.isDegraded ? "degraded" : "healthy");
+
+    const result: NavResult = { nav, change24h, status, isFrozen: this.state.isNavFrozen };
+    this.cachedNavs[basket.id] = result;
+
+    return result;
   }
 }
 

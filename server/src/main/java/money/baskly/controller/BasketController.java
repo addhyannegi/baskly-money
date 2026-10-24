@@ -2,6 +2,7 @@ package money.baskly.controller;
 
 import money.baskly.dto.ApiResponse;
 import money.baskly.dto.BasketDto;
+import money.baskly.dto.NavSnapshotDto;
 import money.baskly.service.BasketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +34,36 @@ public class BasketController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{id}/history")
+    public ResponseEntity<ApiResponse<List<NavSnapshotDto>>> getBasketHistory(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "1D") String interval) {
+        try {
+            List<NavSnapshotDto> history = basketService.getNavHistory(id, interval);
+            return ResponseEntity.ok(ApiResponse.ok(history));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/nav-history")
+    public ResponseEntity<ApiResponse<List<NavSnapshotDto>>> getBasketNavHistory(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "1D") String interval) {
+        return getBasketHistory(id, interval);
+    }
+
     @PostMapping("/{id}/nav")
     public ResponseEntity<ApiResponse<BasketDto>> updateNav(@PathVariable String id, @RequestBody Map<String, BigDecimal> body) {
         BigDecimal newNav = body.get("nav");
         if (newNav == null || newNav.compareTo(BigDecimal.ZERO) <= 0) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Valid positive NAV value is required"));
         }
-        BasketDto updated = basketService.updateNav(id, newNav);
-        return ResponseEntity.ok(ApiResponse.ok("NAV updated successfully", updated));
+        try {
+            BasketDto updated = basketService.updateNav(id, newNav);
+            return ResponseEntity.ok(ApiResponse.ok("NAV updated successfully", updated));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
