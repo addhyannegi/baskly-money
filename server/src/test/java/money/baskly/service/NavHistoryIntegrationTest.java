@@ -57,10 +57,20 @@ public class NavHistoryIntegrationTest {
 
         if (!basketRepository.existsById(TEST_BASKET_1)) {
             basketRepository.save(createTestBasket(TEST_BASKET_1, "Test Bluechip"));
+        } else {
+            BasketEntity b1 = basketRepository.findById(TEST_BASKET_1).orElseThrow();
+            b1.setNav(new BigDecimal("100.0000"));
+            b1.setChange24h(BigDecimal.ZERO);
+            basketRepository.save(b1);
         }
 
         if (!basketRepository.existsById(TEST_BASKET_2)) {
             basketRepository.save(createTestBasket(TEST_BASKET_2, "Test DeFi"));
+        } else {
+            BasketEntity b2 = basketRepository.findById(TEST_BASKET_2).orElseThrow();
+            b2.setNav(new BigDecimal("100.0000"));
+            b2.setChange24h(BigDecimal.ZERO);
+            basketRepository.save(b2);
         }
     }
 
@@ -146,5 +156,34 @@ public class NavHistoryIntegrationTest {
         // System should gracefully return latest available snapshot rather than empty or fabricated synthetic data
         assertFalse(h1d.isEmpty());
         assertEquals(0, new BigDecimal("112.50").compareTo(h1d.get(0).getNav()));
+    }
+
+    @Test
+    @DisplayName("Verify Unsupported interval throws IllegalArgumentException rather than silently defaulting")
+    void testUnsupportedIntervalThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            basketService.getNavHistory(TEST_BASKET_1, "3M");
+        }, "Interval 3M must throw IllegalArgumentException");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            basketService.getNavHistory(TEST_BASKET_1, "ALL");
+        }, "Interval ALL must throw IllegalArgumentException");
+    }
+
+    @Test
+    @DisplayName("Verify 24h Change is calculated against 24h historical snapshot rather than last minute")
+    void test24hChangeCalculatedAgainst24hHistoricalSnapshot() {
+        Instant twentyFiveHoursAgo = Instant.now().minus(25, ChronoUnit.HOURS);
+        navSnapshotRepository.save(new NavSnapshotEntity(TEST_BASKET_1, new BigDecimal("100.0000"), twentyFiveHoursAgo));
+
+        // First update: NAV moves to 105.00 (+5.00%)
+        basketService.updateNav(TEST_BASKET_1, new BigDecimal("105.0000"));
+
+        // Subsequent update 1 minute later: NAV moves to 106.00
+        // Change24h must be (+6.00% against 100.00 from 25h ago), NOT minute-over-minute (+0.95% against 105.00)
+        var updatedDto = basketService.updateNav(TEST_BASKET_1, new BigDecimal("106.0000"));
+
+        assertEquals(0, new BigDecimal("6.00").compareTo(updatedDto.getChange_24h()),
+                "24h change must be measured against the 24h historical snapshot (+6.00%), not the 1-minute previous NAV");
     }
 }

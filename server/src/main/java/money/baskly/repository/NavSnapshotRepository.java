@@ -16,5 +16,7 @@ public interface NavSnapshotRepository extends JpaRepository<NavSnapshotEntity, 
 
     Optional<NavSnapshotEntity> findTopByBasketIdOrderByRecordedAtDesc(String basketId);
 
+    Optional<NavSnapshotEntity> findTopByBasketIdAndRecordedAtLessThanEqualOrderByRecordedAtDesc(String basketId, Instant cutoff);
+
     long countByBasketId(String basketId);
 }

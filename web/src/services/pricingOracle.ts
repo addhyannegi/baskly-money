@@ -184,7 +184,6 @@ export class PricingOracleEngine {
   private reconnectTimer: any = null;
   private reconnectAttempts = 0;
   private wsHostIndex = 0;
-  private startTime = Date.now();
   private cachedNavs: Record<string, NavResult> = {};
 
   constructor() {
@@ -248,7 +247,6 @@ export class PricingOracleEngine {
   public start() {
     if (this.isStarted || typeof window === "undefined") return;
     this.isStarted = true;
-    this.startTime = Date.now();
 
     // 1. Initial Immediate Polls
     this.pollCoinDcxUsdtInr();
@@ -469,12 +467,18 @@ export class PricingOracleEngine {
       }
 
       if (data && typeof data === "object") {
+        const now = Date.now();
         for (const [id, priceObj] of Object.entries(data)) {
           const sym = COINGECKO_ID_TO_SYMBOL[id.toLowerCase()];
           if (sym && priceObj && typeof (priceObj as any).usd === "number") {
             const priceUsd = (priceObj as any).usd;
             if (priceUsd > 0) {
-              this.handleIncomingTokenTick(sym, priceUsd, "CoinGecko");
+              const currentToken = this.state.tokens[sym];
+              // Only apply fallback if token doesn't already have a fresh live WebSocket feed (< 30s)
+              const hasFreshLiveFeed = currentToken && currentToken.lastTick > 0 && (now - currentToken.lastTick) < 30000 && currentToken.source === "Binance WebSocket";
+              if (!hasFreshLiveFeed) {
+                this.handleIncomingTokenTick(sym, priceUsd, "CoinGecko");
+              }
             }
           }
         }
@@ -510,17 +514,15 @@ export class PricingOracleEngine {
     token.lastTick = Date.now();
     this.state.tickCount++;
 
-    // Recover from initial degraded state once multiple live ticks arrive
-    if (this.state.tickCount >= 3) {
-      this.state.isDegraded = false;
-      this.state.isNavFrozen = false;
-    }
+    // Re-evaluate circuit breaker and staleness across all feeds;
+    // do not blindly unfreeze if other feeds are still stale or missing
+    this.checkStaleFeeds(false);
 
     this.notify(sym);
   }
 
   // 5. Staleness Checker and Circuit Breaker
-  public checkStaleFeeds() {
+  public checkStaleFeeds(notify: boolean = true) {
     const now = Date.now();
     let staleOrUnavailableCount = 0;
 
@@ -561,7 +563,9 @@ export class PricingOracleEngine {
       this.state.isNavFrozen = false;
     }
 
-    this.notify();
+    if (notify) {
+      this.notify();
+    }
   }
 
   // 6. Recalculate Live Basket NAV with Circuit Breaker and Weight Normalization

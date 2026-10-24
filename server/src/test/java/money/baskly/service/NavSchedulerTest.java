@@ -142,4 +142,19 @@ public class NavSchedulerTest {
             competingThread.join(2000);
         }
     }
+
+    @Test
+    @DisplayName("Verify PricingOracleService live refresh feeds prices and handles network gracefully")
+    void testLivePriceRefreshGracefulHandling() {
+        // When live fetching is disabled (in test profile), returns 0 safely without error
+        int countDisabled = pricingOracleService.refreshMarketPrices();
+        assertEquals(0, countDisabled);
+
+        // When live fetching is enabled, attempts update and safely catches any network exceptions without throwing
+        pricingOracleService.setFetchLivePrices(true);
+        assertDoesNotThrow(() -> {
+            pricingOracleService.refreshMarketPrices();
+        });
+        pricingOracleService.setFetchLivePrices(false);
+    }
 }

@@ -73,7 +73,14 @@ public class NavPricingScheduler {
                 return false;
             }
 
-            // 2. Obtain current constituent prices
+            // 2. Refresh live market prices from institutional oracles (CoinGecko / CoinDCX)
+            try {
+                pricingOracleService.refreshMarketPrices();
+            } catch (Exception e) {
+                log.warn("[NavPricingScheduler] Live price refresh non-fatal error: {}", e.getMessage());
+            }
+
+            // 3. Obtain current constituent prices
             Map<String, BigDecimal> currentPrices = pricingOracleService.getCurrentPrices();
             if (currentPrices == null || currentPrices.isEmpty()) {
                 log.error("[NavPricingScheduler] No constituent pricing data available. Aborting cycle.");

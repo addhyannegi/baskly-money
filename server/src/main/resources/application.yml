@@ -47,6 +47,8 @@ app:
     google:
       client-id: ${APP_AUTH_GOOGLE_CLIENT_ID:}
   nav:
+    oracle:
+      fetch-live: ${APP_NAV_ORACLE_FETCH_LIVE:true}
     scheduler:
       enabled: ${APP_NAV_SCHEDULER_ENABLED:true}
       fixed-rate-ms: ${APP_NAV_SCHEDULER_FIXED_RATE_MS:60000}

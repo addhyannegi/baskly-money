@@ -4,6 +4,7 @@ import money.baskly.dto.ApiResponse;
 import money.baskly.dto.BasketDto;
 import money.baskly.dto.NavSnapshotDto;
 import money.baskly.service.BasketService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,18 +32,24 @@ public class BasketController {
     public ResponseEntity<ApiResponse<BasketDto>> getBasketById(@PathVariable String id) {
         return basketService.getBasketById(id)
                 .map(b -> ResponseEntity.ok(ApiResponse.ok(b)))
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("Basket not found: " + id)));
     }
 
     @GetMapping("/{id}/history")
     public ResponseEntity<ApiResponse<List<NavSnapshotDto>>> getBasketHistory(
             @PathVariable String id,
             @RequestParam(defaultValue = "1D") String interval) {
+        if (!basketService.basketExists(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error("Basket not found: " + id));
+        }
+
         try {
             List<NavSnapshotDto> history = basketService.getNavHistory(id, interval);
             return ResponseEntity.ok(ApiResponse.ok(history));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }
 
@@ -55,6 +62,11 @@ public class BasketController {
 
     @PostMapping("/{id}/nav")
     public ResponseEntity<ApiResponse<BasketDto>> updateNav(@PathVariable String id, @RequestBody Map<String, BigDecimal> body) {
+        if (!basketService.basketExists(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error("Basket not found: " + id));
+        }
+
         BigDecimal newNav = body.get("nav");
         if (newNav == null || newNav.compareTo(BigDecimal.ZERO) <= 0) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Valid positive NAV value is required"));
@@ -63,7 +75,7 @@ public class BasketController {
             BasketDto updated = basketService.updateNav(id, newNav);
             return ResponseEntity.ok(ApiResponse.ok("NAV updated successfully", updated));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }
 }
