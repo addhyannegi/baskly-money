@@ -1,5 +1,7 @@
 # Baskly.money — Disciplined Crypto Basket SIPs in Rupees
 
+[![CI Pipeline](https://github.com/addhyannegi/baskly-money/actions/workflows/ci.yml/badge.svg)](https://github.com/addhyannegi/baskly-money/actions/workflows/ci.yml)
+
 > A minimalist, Apple-inspired landing page and investment interface for systematic crypto accumulation in India. Built to replace loud, scammy crypto aesthetics with institutional calm, trust, and simplicity.
 
 ---
