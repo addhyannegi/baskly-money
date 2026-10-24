@@ -1,4 +1,3 @@
-```gitignore
 # Backend environment secrets
 server/.env
 server/.env.*
@@ -14,4 +13,7 @@ node_modules/
 .next/
 build/
 target/
-```
+
+# Tooling and IDE files
+*AGENTS.md
+.agents/
