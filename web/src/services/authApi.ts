@@ -82,7 +82,12 @@ export class AuthApiError extends Error {
   }
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+function getAuthBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  return envUrl.replace(/\/api(\/v1)?\/?$/, "").replace(/\/+$/, "");
+}
+
+const API_BASE_URL = getAuthBaseUrl();
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const method = options.method || "GET";

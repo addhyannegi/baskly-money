@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/reports")
+@RequestMapping({"/api/v1/reports", "/api/reports"})
 public class ReportController {
 
     private final TransactionRepository transactionRepository;
