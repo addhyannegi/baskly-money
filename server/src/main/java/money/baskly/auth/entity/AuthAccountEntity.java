@@ -118,7 +118,7 @@ public class AuthAccountEntity {
         e.termsAcceptedAt = a.getTermsAcceptedAt();
         e.passwordHash = a.getPasswordHash();
         e.accountStatus = a.getAccountStatus() != null ? a.getAccountStatus() : AccountStatus.ACTIVE;
-        e.role = a.getRole() != null ? a.getRole() : Role.CUSTOMER;
+        e.role = a.getRole() != null ? a.getRole().toCanonicalRole() : Role.CUSTOMER;
         e.googleId = a.getGoogleId();
         e.avatar = a.getAvatar();
         e.createdAt = a.getCreatedAt() != null ? a.getCreatedAt() : Instant.now();
@@ -135,7 +135,8 @@ public class AuthAccountEntity {
                 this.addressLine1, this.addressLine2,
                 this.city, this.state, this.country,
                 this.gender, this.termsVersion, this.termsAcceptedAt,
-                this.passwordHash, this.accountStatus, this.role,
+                this.passwordHash, this.accountStatus, 
+                this.role != null ? this.role.toCanonicalRole() : Role.CUSTOMER,
                 this.googleId, this.avatar
         );
         a.setCreatedAt(this.createdAt);
@@ -144,7 +145,6 @@ public class AuthAccountEntity {
         return a;
     }
 
-    // Getters and Setters omitted for brevity or generated as standard
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getFirstName() { return firstName; }
@@ -183,8 +183,8 @@ public class AuthAccountEntity {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public AccountStatus getAccountStatus() { return accountStatus; }
     public void setAccountStatus(AccountStatus accountStatus) { this.accountStatus = accountStatus; }
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
+    public Role getRole() { return role != null ? role.toCanonicalRole() : Role.CUSTOMER; }
+    public void setRole(Role role) { this.role = role != null ? role.toCanonicalRole() : Role.CUSTOMER; }
     public String getGoogleId() { return googleId; }
     public void setGoogleId(String googleId) { this.googleId = googleId; }
     public String getAvatar() { return avatar; }

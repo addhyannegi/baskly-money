@@ -28,8 +28,19 @@ public class WithdrawOrderRequest {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
-    public String getBasketId() { return basketId; }
-    public void setBasketId(String basketId) { this.basketId = basketId; }
+    public String getBasketId() { 
+        return basketId; 
+    }
+    public void setBasketId(String basketId) { 
+        this.basketId = basketId; 
+    }
+
+    public String getFundId() { 
+        return basketId; 
+    }
+    public void setFundId(String fundId) { 
+        this.basketId = fundId; 
+    }
 
     public BigDecimal getAmountInr() { return amountInr; }
     public void setAmountInr(BigDecimal amountInr) { this.amountInr = amountInr; }

@@ -7,6 +7,7 @@ public class RebalanceRequest {
     @NotBlank(message = "Basket ID is required")
     private String basketId;
 
+    @NotBlank(message = "Manager name is required")
     private String managerName;
 
     public RebalanceRequest() {}
@@ -18,6 +19,9 @@ public class RebalanceRequest {
 
     public String getBasketId() { return basketId; }
     public void setBasketId(String basketId) { this.basketId = basketId; }
+
+    public String getFundId() { return basketId; }
+    public void setFundId(String fundId) { this.basketId = fundId; }
 
     public String getManagerName() { return managerName; }
     public void setManagerName(String managerName) { this.managerName = managerName; }

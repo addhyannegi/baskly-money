@@ -1,8 +1,11 @@
 package money.baskly.service;
 
+import money.baskly.auth.model.AuthAccount;
+import money.baskly.auth.repository.AuthAccountRepository;
 import money.baskly.dto.*;
 import money.baskly.entity.*;
 import money.baskly.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +15,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,23 +30,64 @@ public class PortfolioService {
     private final PortfolioHoldingRepository holdingRepository;
     private final UpiMandateRepository mandateRepository;
     private final TransactionRepository transactionRepository;
+    private final AuthAccountRepository authAccountRepository;
+
+    @Autowired
+    public PortfolioService(UserRepository userRepository,
+                            BasketRepository basketRepository,
+                            PortfolioHoldingRepository holdingRepository,
+                            UpiMandateRepository mandateRepository,
+                            TransactionRepository transactionRepository,
+                            @Autowired(required = false) AuthAccountRepository authAccountRepository) {
+        this.userRepository = userRepository;
+        this.basketRepository = basketRepository;
+        this.holdingRepository = holdingRepository;
+        this.mandateRepository = mandateRepository;
+        this.transactionRepository = transactionRepository;
+        this.authAccountRepository = authAccountRepository;
+    }
 
     public PortfolioService(UserRepository userRepository,
                             BasketRepository basketRepository,
                             PortfolioHoldingRepository holdingRepository,
                             UpiMandateRepository mandateRepository,
                             TransactionRepository transactionRepository) {
-        this.userRepository = userRepository;
-        this.basketRepository = basketRepository;
-        this.holdingRepository = holdingRepository;
-        this.mandateRepository = mandateRepository;
-        this.transactionRepository = transactionRepository;
+        this(userRepository, basketRepository, holdingRepository, mandateRepository, transactionRepository, null);
+    }
+
+    public UserEntity resolveUser(String userIdOrEmailOrAuthId) {
+        final String lookupKey = (userIdOrEmailOrAuthId == null || userIdOrEmailOrAuthId.isBlank())
+                ? "demo-user"
+                : userIdOrEmailOrAuthId.trim();
+
+        // 1. Direct lookup by users.id
+        Optional<UserEntity> byId = userRepository.findById(lookupKey);
+        if (byId.isPresent()) {
+            return byId.get();
+        }
+
+        // 2. Direct lookup by users.email ONLY when lookupKey is explicitly an email address
+        if (lookupKey.contains("@")) {
+            Optional<UserEntity> byEmail = userRepository.findByEmail(lookupKey.toLowerCase());
+            if (byEmail.isPresent()) {
+                return byEmail.get();
+            }
+        }
+
+        // 3. Fallback for demo users
+        if ("usr_demo_retail".equalsIgnoreCase(lookupKey) || "demo-user".equalsIgnoreCase(lookupKey)) {
+            return userRepository.findById("usr_demo_retail")
+                    .or(() -> userRepository.findById("demo-user"))
+                    .or(() -> userRepository.findByEmail("rohan@baskly.money"))
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + lookupKey));
+        }
+
+        throw new IllegalArgumentException("User not found: " + lookupKey);
     }
 
     @Transactional
     public TransactionDto buyBasket(BuyOrderRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+        UserEntity user = resolveUser(request.getUserId());
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
@@ -74,6 +119,7 @@ public class PortfolioService {
         holding.setUnits(newUnits);
         holding.setInvestedAmountInr(newInvested);
         holding.setAvgBuyNav(weightedAvgNav);
+        holding.setStatus("ACTIVE");
         holding.setUpdatedAt(Instant.now());
         holdingRepository.save(holding);
 
@@ -100,8 +146,7 @@ public class PortfolioService {
 
     @Transactional
     public WithdrawResponseDto withdrawBasket(WithdrawOrderRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+        UserEntity user = resolveUser(request.getUserId());
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
@@ -184,6 +229,8 @@ public class PortfolioService {
 
     @Transactional
     public MandateDto createMandate(MandateCreateRequest request) {
+        UserEntity user = resolveUser(request.getUserId());
+
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
 
@@ -194,7 +241,7 @@ public class PortfolioService {
 
         UpiMandateEntity mandate = new UpiMandateEntity();
         mandate.setId(mandateId);
-        mandate.setUserId(request.getUserId());
+        mandate.setUserId(user.getId());
         mandate.setBasketId(basket.getId());
         mandate.setMonthlyAmountInr(request.getMonthlyAmountInr().setScale(2, RoundingMode.HALF_UP));
         mandate.setDebitDay(request.getDebitDay());
@@ -208,10 +255,9 @@ public class PortfolioService {
 
     @Transactional(readOnly = true)
     public PortfolioDto getPortfolio(String userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        UserEntity user = resolveUser(userId);
 
-        List<PortfolioHoldingEntity> holdings = holdingRepository.findByUserId(userId);
+        List<PortfolioHoldingEntity> holdings = holdingRepository.findByUserId(user.getId());
         List<HoldingDto> holdingDtos = new ArrayList<>();
 
         for (PortfolioHoldingEntity h : holdings) {
@@ -236,17 +282,18 @@ public class PortfolioService {
             dto.setCurrentValueINR(currentValue);
             dto.setProfitINR(profit);
             dto.setReturnPct(returnPct);
+            dto.setStatus(h.getStatus() != null ? h.getStatus() : "ACTIVE");
             holdingDtos.add(dto);
         }
 
-        List<MandateDto> mandateDtos = mandateRepository.findByUserId(userId).stream()
+        List<MandateDto> mandateDtos = mandateRepository.findByUserId(user.getId()).stream()
                 .map(m -> {
                     String bName = basketRepository.findById(m.getBasketId()).map(BasketEntity::getName).orElse(m.getBasketId());
                     return toMandateDto(m, bName);
                 })
                 .collect(Collectors.toList());
 
-        List<TransactionDto> txDtos = transactionRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+        List<TransactionDto> txDtos = transactionRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
                 .map(t -> {
                     String bName = basketRepository.findById(t.getBasketId()).map(BasketEntity::getName).orElse(t.getBasketId());
                     return toTransactionDto(t, bName);

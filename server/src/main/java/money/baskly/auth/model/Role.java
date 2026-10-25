@@ -1,13 +1,16 @@
 package money.baskly.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Centralized Application User Roles.
- * Supported roles: ADMIN, FUND_MANAGER, CUSTOMER, SUPPORT.
+ * Supported roles: ADMIN, FUND_MANAGER, CUSTOMER, RETAIL_USER, SUPPORT.
  */
 public enum Role {
     ADMIN("ADMIN", "System Administrator", "/dashboard/admin"),
     FUND_MANAGER("FUND_MANAGER", "Institutional Fund Manager", "/dashboard/fund-manager"),
     CUSTOMER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
+    RETAIL_USER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
     SUPPORT("SUPPORT", "Customer Support Specialist", "/dashboard/support");
 
     private final String code;
@@ -20,6 +23,7 @@ public enum Role {
         this.defaultDashboardPath = defaultDashboardPath;
     }
 
+    @JsonValue
     public String getCode() {
         return code;
     }
@@ -30,6 +34,22 @@ public enum Role {
 
     public String getDefaultDashboardPath() {
         return defaultDashboardPath;
+    }
+
+    public Role toCanonicalRole() {
+        return (this == RETAIL_USER) ? CUSTOMER : this;
+    }
+
+    public boolean isRetailUser() {
+        return this == CUSTOMER || this == RETAIL_USER;
+    }
+
+    public boolean isManager() {
+        return this == FUND_MANAGER;
+    }
+
+    public boolean isAdmin() {
+        return this == ADMIN;
     }
 
     /**
@@ -47,11 +67,11 @@ public enum Role {
             return CUSTOMER;
         }
         String clean = val.trim().toUpperCase();
-        if ("RETAIL".equals(clean) || "INVESTOR".equals(clean)) {
+        if ("RETAIL".equals(clean) || "INVESTOR".equals(clean) || "USER".equals(clean) || "RETAIL_USER".equals(clean)) {
             return CUSTOMER;
         }
         try {
-            return Role.valueOf(clean);
+            return Role.valueOf(clean).toCanonicalRole();
         } catch (IllegalArgumentException ex) {
             return CUSTOMER;
         }

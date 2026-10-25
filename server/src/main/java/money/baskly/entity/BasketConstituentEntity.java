@@ -29,6 +29,9 @@ public class BasketConstituentEntity {
     @Column(name = "weight", precision = 6, scale = 2, nullable = false)
     private BigDecimal weight;
 
+    @Column(name = "rebalance_drift_threshold", precision = 6, scale = 2, nullable = false)
+    private BigDecimal rebalanceDriftThreshold = new BigDecimal("5.00");
+
     @Column(name = "color", length = 32)
     private String color;
 
@@ -57,6 +60,14 @@ public class BasketConstituentEntity {
 
     public BigDecimal getWeight() { return weight; }
     public void setWeight(BigDecimal weight) { this.weight = weight; }
+
+    public BigDecimal getTargetWeight() { return weight; }
+    public void setTargetWeight(BigDecimal targetWeight) { this.weight = targetWeight; }
+
+    public BigDecimal getRebalanceDriftThreshold() { return rebalanceDriftThreshold; }
+    public void setRebalanceDriftThreshold(BigDecimal rebalanceDriftThreshold) {
+        this.rebalanceDriftThreshold = rebalanceDriftThreshold != null ? rebalanceDriftThreshold : new BigDecimal("5.00");
+    }
 
     public String getColor() { return color; }
     public void setColor(String color) { this.color = color; }

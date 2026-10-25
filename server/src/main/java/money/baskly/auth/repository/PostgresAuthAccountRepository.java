@@ -5,13 +5,17 @@ import money.baskly.auth.entity.AuthAccountEntity;
 import money.baskly.auth.model.AccountStatus;
 import money.baskly.auth.model.AuthAccount;
 import money.baskly.auth.model.Role;
+import money.baskly.entity.UserEntity;
+import money.baskly.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,10 +34,18 @@ public class PostgresAuthAccountRepository implements AuthAccountRepository {
     private static final Logger log = LoggerFactory.getLogger(PostgresAuthAccountRepository.class);
 
     private final SpringDataAuthAccountRepository jpaRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public PostgresAuthAccountRepository(SpringDataAuthAccountRepository jpaRepository) {
+    @Autowired
+    public PostgresAuthAccountRepository(SpringDataAuthAccountRepository jpaRepository,
+                                         @Autowired(required = false) UserRepository userRepository) {
         this.jpaRepository = jpaRepository;
+        this.userRepository = userRepository;
+    }
+
+    public PostgresAuthAccountRepository(SpringDataAuthAccountRepository jpaRepository) {
+        this(jpaRepository, null);
     }
 
     @PostConstruct
@@ -95,6 +107,21 @@ public class PostgresAuthAccountRepository implements AuthAccountRepository {
                 AccountStatus.ACTIVE, Role.CUSTOMER,
                 null, "https://api.dicebear.com/7.x/initials/svg?seed=RohanInvestor"
         );
+
+        // Pre-seed demo retail user so its email and portfolio cannot be hijacked by public registration
+        seedAccountIfMissing(
+                "usr_demo_retail",
+                "Rohan", null, "Verma",
+                LocalDate.of(1996, 5, 20),
+                "rohan@baskly.money", true,
+                "+91", "9876543214",
+                "42 Green Park Residency", null,
+                "Bengaluru", "Karnataka", "India",
+                "Male", "v1.0", Instant.now(),
+                passwordEncoder.encode("CustomerPassword@123"),
+                AccountStatus.ACTIVE, Role.CUSTOMER,
+                null, "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
+        );
     }
 
     private void seedAccountIfMissing(String id, String firstName, String middleName, String lastName,
@@ -114,6 +141,24 @@ public class PostgresAuthAccountRepository implements AuthAccountRepository {
             AuthAccountEntity entity = AuthAccountEntity.fromDomain(account);
             jpaRepository.save(entity);
             log.info("Seeded initial authentication account into PostgreSQL: {} ({})", normalizedEmail, role);
+        }
+
+        if (userRepository != null && !userRepository.existsById(id) && (normalizedEmail == null || !userRepository.existsByEmail(normalizedEmail))) {
+            String fullName = firstName + (middleName != null && !middleName.isBlank() ? " " + middleName : "") +
+                    (lastName != null && !lastName.isBlank() ? " " + lastName : "");
+            UserEntity user = new UserEntity(
+                    id,
+                    fullName,
+                    normalizedEmail != null ? normalizedEmail : id + "@baskly.money",
+                    avatar,
+                    firstName,
+                    role != null ? role.toLegacyPortalRole() : "retail",
+                    "VERIFIED",
+                    null,
+                    new BigDecimal("25000.00")
+            );
+            userRepository.save(user);
+            log.info("Seeded initial user portfolio entity into PostgreSQL: {} ({})", id, normalizedEmail);
         }
     }
 

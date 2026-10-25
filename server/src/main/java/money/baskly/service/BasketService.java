@@ -138,6 +138,7 @@ public class BasketService {
 
     /**
      * Translates standard interval codes into historical cutoff timestamps.
+     * Case-insensitive (e.g. 1w, 1W, 1m, 1M, 1y, 1Y, 5y, 5Y).
      * Throws IllegalArgumentException on invalid or unrecognized intervals.
      */
     public Instant calculateSinceTimestamp(String interval) {
@@ -146,7 +147,7 @@ public class BasketService {
             return now.minus(1, ChronoUnit.DAYS);
         }
 
-        return switch (interval.toUpperCase().trim()) {
+        return switch (interval.trim().toUpperCase()) {
             case "1D", "24H" -> now.minus(1, ChronoUnit.DAYS);
             case "1W", "7D" -> now.minus(7, ChronoUnit.DAYS);
             case "1M", "30D" -> now.minus(30, ChronoUnit.DAYS);
@@ -172,17 +173,22 @@ public class BasketService {
         dto.setExpected_cagr(entity.getExpectedCagr());
         dto.setNav(entity.getNav());
         dto.setChange_24h(entity.getChange24h());
+        dto.setRebalance_drift_threshold(entity.getRebalanceDriftThreshold());
 
-        List<BasketConstituentDto> constituents = new ArrayList<>();
-        if (entity.getConstituents() != null && !entity.getConstituents().isEmpty()) {
-            constituents = entity.getConstituents().stream()
-                    .map(c -> new BasketConstituentDto(c.getSymbol(), c.getName(), c.getWeight(), c.getColor(), c.getPriceInr()))
-                    .collect(Collectors.toList());
-        } else {
-            constituents = constituentRepository.findByBasketId(entity.getId()).stream()
-                    .map(c -> new BasketConstituentDto(c.getSymbol(), c.getName(), c.getWeight(), c.getColor(), c.getPriceInr()))
-                    .collect(Collectors.toList());
-        }
+        List<BasketConstituentEntity> rawList = (entity.getConstituents() != null && !entity.getConstituents().isEmpty())
+                ? entity.getConstituents()
+                : constituentRepository.findByBasketId(entity.getId());
+
+        List<BasketConstituentDto> constituents = rawList.stream()
+                .map(c -> new BasketConstituentDto(
+                        c.getSymbol(), 
+                        c.getName(), 
+                        c.getWeight(), 
+                        c.getRebalanceDriftThreshold(), 
+                        c.getColor(), 
+                        c.getPriceInr()))
+                .collect(Collectors.toList());
+
         dto.setAssets(constituents);
         return dto;
     }

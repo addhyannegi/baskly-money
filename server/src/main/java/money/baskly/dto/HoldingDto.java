@@ -13,11 +13,15 @@ public class HoldingDto {
     private BigDecimal currentValueINR;
     private BigDecimal profitINR;
     private BigDecimal returnPct;
+    private String status = "ACTIVE";
 
     public HoldingDto() {}
 
     public String getBasketId() { return basketId; }
     public void setBasketId(String basketId) { this.basketId = basketId; }
+
+    public String getFundId() { return basketId; }
+    public void setFundId(String fundId) { this.basketId = fundId; }
 
     public String getBasketName() { return basketName; }
     public void setBasketName(String basketName) { this.basketName = basketName; }
@@ -45,4 +49,7 @@ public class HoldingDto {
 
     public BigDecimal getReturnPct() { return returnPct; }
     public void setReturnPct(BigDecimal returnPct) { this.returnPct = returnPct; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status != null ? status : "ACTIVE"; }
 }
