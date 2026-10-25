@@ -1,17 +1,17 @@
 package money.baskly.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Centralized Application User Roles.
- * Supported roles: ADMIN, FUND_MANAGER, CUSTOMER, SUPPORT.
- * RETAIL_USER is an alias for CUSTOMER to ensure full compatibility with retail investor endpoints.
+ * Supported roles: ADMIN, FUND_MANAGER, CUSTOMER, RETAIL_USER, SUPPORT.
  */
 public enum Role {
     ADMIN("ADMIN", "System Administrator", "/dashboard/admin"),
     FUND_MANAGER("FUND_MANAGER", "Institutional Fund Manager", "/dashboard/fund-manager"),
     CUSTOMER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
+    RETAIL_USER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
     SUPPORT("SUPPORT", "Customer Support Specialist", "/dashboard/support");
-
-    public static final Role RETAIL_USER = CUSTOMER;
 
     private final String code;
     private final String description;
@@ -23,6 +23,7 @@ public enum Role {
         this.defaultDashboardPath = defaultDashboardPath;
     }
 
+    @JsonValue
     public String getCode() {
         return code;
     }
@@ -35,8 +36,12 @@ public enum Role {
         return defaultDashboardPath;
     }
 
+    public Role toCanonicalRole() {
+        return (this == RETAIL_USER) ? CUSTOMER : this;
+    }
+
     public boolean isRetailUser() {
-        return this == CUSTOMER;
+        return this == CUSTOMER || this == RETAIL_USER;
     }
 
     public boolean isManager() {
@@ -66,7 +71,7 @@ public enum Role {
             return CUSTOMER;
         }
         try {
-            return Role.valueOf(clean);
+            return Role.valueOf(clean).toCanonicalRole();
         } catch (IllegalArgumentException ex) {
             return CUSTOMER;
         }

@@ -1,8 +1,11 @@
 package money.baskly.service;
 
+import money.baskly.auth.model.AuthAccount;
+import money.baskly.auth.repository.AuthAccountRepository;
 import money.baskly.dto.*;
 import money.baskly.entity.*;
 import money.baskly.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +15,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,24 +30,90 @@ public class PortfolioService {
     private final PortfolioHoldingRepository holdingRepository;
     private final UpiMandateRepository mandateRepository;
     private final TransactionRepository transactionRepository;
+    private final AuthAccountRepository authAccountRepository;
+
+    @Autowired
+    public PortfolioService(UserRepository userRepository,
+                            BasketRepository basketRepository,
+                            PortfolioHoldingRepository holdingRepository,
+                            UpiMandateRepository mandateRepository,
+                            TransactionRepository transactionRepository,
+                            @Autowired(required = false) AuthAccountRepository authAccountRepository) {
+        this.userRepository = userRepository;
+        this.basketRepository = basketRepository;
+        this.holdingRepository = holdingRepository;
+        this.mandateRepository = mandateRepository;
+        this.transactionRepository = transactionRepository;
+        this.authAccountRepository = authAccountRepository;
+    }
 
     public PortfolioService(UserRepository userRepository,
                             BasketRepository basketRepository,
                             PortfolioHoldingRepository holdingRepository,
                             UpiMandateRepository mandateRepository,
                             TransactionRepository transactionRepository) {
-        this.userRepository = userRepository;
-        this.basketRepository = basketRepository;
-        this.holdingRepository = holdingRepository;
-        this.mandateRepository = mandateRepository;
-        this.transactionRepository = transactionRepository;
+        this(userRepository, basketRepository, holdingRepository, mandateRepository, transactionRepository, null);
+    }
+
+    public UserEntity resolveUser(String userIdOrEmailOrAuthId) {
+        final String lookupKey = (userIdOrEmailOrAuthId == null || userIdOrEmailOrAuthId.isBlank())
+                ? "demo-user"
+                : userIdOrEmailOrAuthId;
+
+        // 1. Direct lookup by users.id
+        Optional<UserEntity> byId = userRepository.findById(lookupKey);
+        if (byId.isPresent()) {
+            return byId.get();
+        }
+
+        // 2. Direct lookup by users.email
+        Optional<UserEntity> byEmail = userRepository.findByEmail(lookupKey);
+        if (byEmail.isPresent()) {
+            return byEmail.get();
+        }
+
+        // 3. Lookup in auth_accounts by id or email and synchronize with users table
+        if (authAccountRepository != null) {
+            Optional<AuthAccount> authAccount = authAccountRepository.findById(lookupKey)
+                    .or(() -> authAccountRepository.findByEmail(lookupKey));
+
+            if (authAccount.isPresent()) {
+                AuthAccount acc = authAccount.get();
+                // Check if users table already has a record with this email
+                Optional<UserEntity> existingByEmail = userRepository.findByEmail(acc.getEmail());
+                if (existingByEmail.isPresent()) {
+                    return existingByEmail.get();
+                }
+
+                // If not found in users table, provision a synchronized UserEntity so FK constraints succeed
+                UserEntity syncedUser = new UserEntity(
+                        acc.getId(),
+                        acc.getFullName(),
+                        acc.getEmail(),
+                        acc.getAvatar(),
+                        acc.getFirstName(),
+                        acc.getRole() != null ? acc.getRole().toLegacyPortalRole() : "retail",
+                        "VERIFIED",
+                        null,
+                        new BigDecimal("25000.00")
+                );
+                return userRepository.save(syncedUser);
+            }
+        }
+
+        // 4. Fallback for demo users
+        if ("usr_demo_retail".equalsIgnoreCase(lookupKey)) {
+            return userRepository.findById("demo-user")
+                    .or(() -> userRepository.findByEmail("vikram.m@example.com"))
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + lookupKey));
+        }
+
+        throw new IllegalArgumentException("User not found: " + lookupKey);
     }
 
     @Transactional
     public TransactionDto buyBasket(BuyOrderRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId())
-                .or(() -> userRepository.findByEmail(request.getUserId()))
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+        UserEntity user = resolveUser(request.getUserId());
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
@@ -102,9 +172,7 @@ public class PortfolioService {
 
     @Transactional
     public WithdrawResponseDto withdrawBasket(WithdrawOrderRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId())
-                .or(() -> userRepository.findByEmail(request.getUserId()))
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+        UserEntity user = resolveUser(request.getUserId());
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
@@ -187,9 +255,7 @@ public class PortfolioService {
 
     @Transactional
     public MandateDto createMandate(MandateCreateRequest request) {
-        UserEntity user = userRepository.findById(request.getUserId())
-                .or(() -> userRepository.findByEmail(request.getUserId()))
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+        UserEntity user = resolveUser(request.getUserId());
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
@@ -215,9 +281,7 @@ public class PortfolioService {
 
     @Transactional(readOnly = true)
     public PortfolioDto getPortfolio(String userId) {
-        UserEntity user = userRepository.findById(userId)
-                .or(() -> userRepository.findByEmail(userId))
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        UserEntity user = resolveUser(userId);
 
         List<PortfolioHoldingEntity> holdings = holdingRepository.findByUserId(user.getId());
         List<HoldingDto> holdingDtos = new ArrayList<>();

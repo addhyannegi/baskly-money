@@ -92,7 +92,8 @@ class FundAndRbacCompatibilityTest {
         assertEquals(Role.CUSTOMER, Role.fromString("CUSTOMER"));
         assertEquals(Role.FUND_MANAGER, Role.fromString("FUND_MANAGER"));
         assertEquals(Role.ADMIN, Role.fromString("ADMIN"));
-        assertSame(Role.CUSTOMER, Role.RETAIL_USER);
+        assertEquals(Role.RETAIL_USER, Role.valueOf("RETAIL_USER"));
+        assertEquals(Role.CUSTOMER, Role.RETAIL_USER.toCanonicalRole());
     }
 
     @Test
