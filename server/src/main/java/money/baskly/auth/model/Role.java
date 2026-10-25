@@ -2,14 +2,16 @@ package money.baskly.auth.model;
 
 /**
  * Centralized Application User Roles.
- * Supported roles: ADMIN, FUND_MANAGER, CUSTOMER, RETAIL_USER, SUPPORT.
+ * Supported roles: ADMIN, FUND_MANAGER, CUSTOMER, SUPPORT.
+ * RETAIL_USER is an alias for CUSTOMER to ensure full compatibility with retail investor endpoints.
  */
 public enum Role {
     ADMIN("ADMIN", "System Administrator", "/dashboard/admin"),
     FUND_MANAGER("FUND_MANAGER", "Institutional Fund Manager", "/dashboard/fund-manager"),
     CUSTOMER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
-    RETAIL_USER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
     SUPPORT("SUPPORT", "Customer Support Specialist", "/dashboard/support");
+
+    public static final Role RETAIL_USER = CUSTOMER;
 
     private final String code;
     private final String description;
@@ -33,6 +35,18 @@ public enum Role {
         return defaultDashboardPath;
     }
 
+    public boolean isRetailUser() {
+        return this == CUSTOMER;
+    }
+
+    public boolean isManager() {
+        return this == FUND_MANAGER;
+    }
+
+    public boolean isAdmin() {
+        return this == ADMIN;
+    }
+
     /**
      * Legacy portal compatibility bridge for existing portal routes.
      */
@@ -48,11 +62,8 @@ public enum Role {
             return CUSTOMER;
         }
         String clean = val.trim().toUpperCase();
-        if ("RETAIL".equals(clean) || "INVESTOR".equals(clean) || "USER".equals(clean)) {
+        if ("RETAIL".equals(clean) || "INVESTOR".equals(clean) || "USER".equals(clean) || "RETAIL_USER".equals(clean)) {
             return CUSTOMER;
-        }
-        if ("RETAIL_USER".equals(clean)) {
-            return RETAIL_USER;
         }
         try {
             return Role.valueOf(clean);

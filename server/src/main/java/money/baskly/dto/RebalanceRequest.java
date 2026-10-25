@@ -1,8 +1,13 @@
 package money.baskly.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class RebalanceRequest {
 
+    @NotBlank(message = "Basket ID is required")
     private String basketId;
+
+    @NotBlank(message = "Manager name is required")
     private String managerName;
 
     public RebalanceRequest() {}

@@ -37,9 +37,18 @@ public class NavSnapshotEntity {
     public String getBasketId() { return basketId; }
     public void setBasketId(String basketId) { this.basketId = basketId; }
 
+    public String getFundId() { return basketId; }
+    public void setFundId(String fundId) { this.basketId = fundId; }
+
     public BigDecimal getNav() { return nav; }
     public void setNav(BigDecimal nav) { this.nav = nav; }
 
+    public BigDecimal getNavInr() { return nav; }
+    public void setNavInr(BigDecimal navInr) { this.nav = navInr; }
+
     public Instant getRecordedAt() { return recordedAt; }
     public void setRecordedAt(Instant recordedAt) { this.recordedAt = recordedAt; }
+
+    public Instant getTimestamp() { return recordedAt; }
+    public void setTimestamp(Instant timestamp) { this.recordedAt = timestamp; }
 }

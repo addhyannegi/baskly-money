@@ -45,11 +45,22 @@ public class SecurityConfig {
                         // Public Authentication Endpoints
                         .requestMatchers("/api/auth/**", "/api/v1/auth/**").permitAll()
 
-                        // Public Catalog, Funds & General Data Endpoints
+                        // Public Catalog, Funds & General Data Read Endpoints
                         .requestMatchers(HttpMethod.GET, 
                                 "/api/baskets/**", "/api/v1/baskets/**",
                                 "/api/funds/**", "/api/v1/funds/**",
                                 "/api/reports/**", "/api/v1/reports/**").permitAll()
+
+                        // Write operations on funds/baskets (e.g. updating NAV) require FUND_MANAGER or ADMIN
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/baskets/**", "/api/v1/baskets/**",
+                                "/api/funds/**", "/api/v1/funds/**").hasAnyRole("FUND_MANAGER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/baskets/**", "/api/v1/baskets/**",
+                                "/api/funds/**", "/api/v1/funds/**").hasAnyRole("FUND_MANAGER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/baskets/**", "/api/v1/baskets/**",
+                                "/api/funds/**", "/api/v1/funds/**").hasAnyRole("FUND_MANAGER", "ADMIN")
 
                         // Role-specific authorization
                         .requestMatchers("/api/admin/**", "/api/v1/admin/**").hasRole("ADMIN")
@@ -59,11 +70,12 @@ public class SecurityConfig {
                                 "/api/orders/**", "/api/v1/orders/**",
                                 "/api/mandates/**", "/api/v1/mandates/**").authenticated()
 
-                        // CORS pre-flight
+                        // Error dispatch & CORS pre-flight
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Everything else requires authentication
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -73,10 +85,23 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "https://baskly.money",
+                "https://www.baskly.money"
+        ));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "X-Requested-With",
+                "X-Session-Token",
+                "baggage",
+                "sentry-trace"
+        ));
+        config.setExposedHeaders(List.of("Set-Cookie"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 

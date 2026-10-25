@@ -9,7 +9,10 @@ import java.math.BigDecimal;
 
 public class MandateCreateRequest {
 
+    @NotBlank(message = "User ID is required")
     private String userId;
+
+    @NotBlank(message = "Basket ID is required")
     private String basketId;
 
     @NotNull(message = "Monthly SIP amount is required")

@@ -42,6 +42,7 @@ public class PortfolioService {
     @Transactional
     public TransactionDto buyBasket(BuyOrderRequest request) {
         UserEntity user = userRepository.findById(request.getUserId())
+                .or(() -> userRepository.findByEmail(request.getUserId()))
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
@@ -102,6 +103,7 @@ public class PortfolioService {
     @Transactional
     public WithdrawResponseDto withdrawBasket(WithdrawOrderRequest request) {
         UserEntity user = userRepository.findById(request.getUserId())
+                .or(() -> userRepository.findByEmail(request.getUserId()))
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
 
         BasketEntity basket = basketRepository.findById(request.getBasketId())
@@ -185,6 +187,10 @@ public class PortfolioService {
 
     @Transactional
     public MandateDto createMandate(MandateCreateRequest request) {
+        UserEntity user = userRepository.findById(request.getUserId())
+                .or(() -> userRepository.findByEmail(request.getUserId()))
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.getUserId()));
+
         BasketEntity basket = basketRepository.findById(request.getBasketId())
                 .orElseThrow(() -> new IllegalArgumentException("Basket not found: " + request.getBasketId()));
 
@@ -195,7 +201,7 @@ public class PortfolioService {
 
         UpiMandateEntity mandate = new UpiMandateEntity();
         mandate.setId(mandateId);
-        mandate.setUserId(request.getUserId());
+        mandate.setUserId(user.getId());
         mandate.setBasketId(basket.getId());
         mandate.setMonthlyAmountInr(request.getMonthlyAmountInr().setScale(2, RoundingMode.HALF_UP));
         mandate.setDebitDay(request.getDebitDay());
@@ -210,9 +216,10 @@ public class PortfolioService {
     @Transactional(readOnly = true)
     public PortfolioDto getPortfolio(String userId) {
         UserEntity user = userRepository.findById(userId)
+                .or(() -> userRepository.findByEmail(userId))
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
-        List<PortfolioHoldingEntity> holdings = holdingRepository.findByUserId(userId);
+        List<PortfolioHoldingEntity> holdings = holdingRepository.findByUserId(user.getId());
         List<HoldingDto> holdingDtos = new ArrayList<>();
 
         for (PortfolioHoldingEntity h : holdings) {
@@ -241,14 +248,14 @@ public class PortfolioService {
             holdingDtos.add(dto);
         }
 
-        List<MandateDto> mandateDtos = mandateRepository.findByUserId(userId).stream()
+        List<MandateDto> mandateDtos = mandateRepository.findByUserId(user.getId()).stream()
                 .map(m -> {
                     String bName = basketRepository.findById(m.getBasketId()).map(BasketEntity::getName).orElse(m.getBasketId());
                     return toMandateDto(m, bName);
                 })
                 .collect(Collectors.toList());
 
-        List<TransactionDto> txDtos = transactionRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+        List<TransactionDto> txDtos = transactionRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
                 .map(t -> {
                     String bName = basketRepository.findById(t.getBasketId()).map(BasketEntity::getName).orElse(t.getBasketId());
                     return toTransactionDto(t, bName);

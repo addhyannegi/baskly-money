@@ -6,6 +6,7 @@ import money.baskly.dto.NavSnapshotDto;
 import money.baskly.service.BasketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -53,7 +54,7 @@ public class BasketController {
         }
     }
 
-    @GetMapping({"/{id}/nav-history", "nav", "/{id}/nav"})
+    @GetMapping({"/{id}/nav-history", "/{id}/nav"})
     public ResponseEntity<ApiResponse<List<NavSnapshotDto>>> getBasketNavHistory(
             @PathVariable String id,
             @RequestParam(defaultValue = "1D") String interval) {
@@ -61,6 +62,7 @@ public class BasketController {
     }
 
     @PostMapping("/{id}/nav")
+    @PreAuthorize("hasAnyRole('FUND_MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<BasketDto>> updateNav(@PathVariable String id, @RequestBody Map<String, BigDecimal> body) {
         if (!basketService.basketExists(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
