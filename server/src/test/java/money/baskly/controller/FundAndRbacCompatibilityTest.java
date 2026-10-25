@@ -216,4 +216,42 @@ class FundAndRbacCompatibilityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
     }
+
+    @Test
+    @WithMockUser(username = "demo-user", roles = {"CUSTOMER"})
+    @DisplayName("Authenticated portfolio fetch executes cleanly in read-only transaction")
+    void testAuthenticatedPortfolioFetchRunsInReadOnlyTransaction() throws Exception {
+        mockMvc.perform(get("/api/v1/portfolio"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.cashBalanceINR").isNotEmpty())
+                .andExpect(jsonPath("$.data.holdings").isArray());
+    }
+
+    @Test
+    @DisplayName("Registration rejects signup attempt with email belonging to seeded portfolio user")
+    void testRegistrationRejectsHijackingExistingPortfolioEmail() throws Exception {
+        money.baskly.auth.dto.RegisterRequest req = new money.baskly.auth.dto.RegisterRequest();
+        req.setFirstName("Attacker");
+        req.setLastName("User");
+        req.setDateOfBirth(java.time.LocalDate.now().minusYears(25));
+        req.setEmail("rohan@baskly.money"); // Existing seeded user in users table
+        req.setMobileNumber("9876543210");
+        req.setAddressLine1("123 Street");
+        req.setCity("Mumbai");
+        req.setState("Maharashtra");
+        req.setCountry("India");
+        req.setGender("Male");
+        req.setPassword("AttackerPass@123");
+        req.setConfirmPassword("AttackerPass@123");
+        req.setTermsAccepted(true);
+        req.setEmailVerificationGrant("dummy_grant");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("An account with this email address already exists. Please sign in."));
+    }
 }

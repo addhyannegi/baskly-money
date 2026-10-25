@@ -6,10 +6,15 @@ import money.baskly.auth.model.AuthAccount;
 import money.baskly.auth.model.Role;
 import money.baskly.auth.repository.AuthAccountRepository;
 import money.baskly.auth.security.JwtTokenProvider;
+import money.baskly.entity.UserEntity;
+import money.baskly.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -30,16 +35,27 @@ public class AuthService {
     private final OtpService otpService;
     private final GoogleAuthService googleAuthService;
     private final JwtTokenProvider tokenProvider;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Autowired
+    public AuthService(AuthAccountRepository accountRepository,
+                       OtpService otpService,
+                       GoogleAuthService googleAuthService,
+                       JwtTokenProvider tokenProvider,
+                       @Autowired(required = false) UserRepository userRepository) {
+        this.accountRepository = accountRepository;
+        this.otpService = otpService;
+        this.googleAuthService = googleAuthService;
+        this.tokenProvider = tokenProvider;
+        this.userRepository = userRepository;
+    }
 
     public AuthService(AuthAccountRepository accountRepository,
                        OtpService otpService,
                        GoogleAuthService googleAuthService,
                        JwtTokenProvider tokenProvider) {
-        this.accountRepository = accountRepository;
-        this.otpService = otpService;
-        this.googleAuthService = googleAuthService;
-        this.tokenProvider = tokenProvider;
+        this(accountRepository, otpService, googleAuthService, tokenProvider, null);
     }
 
     /**
@@ -71,8 +87,8 @@ public class AuthService {
             throw new IllegalArgumentException("You must explicitly agree to the Terms and Conditions to register.");
         }
 
-        // 5. Check Email Uniqueness
-        if (accountRepository.existsByEmail(email)) {
+        // 5. Check Email Uniqueness across auth_accounts and users
+        if (accountRepository.existsByEmail(email) || (userRepository != null && userRepository.existsByEmail(email))) {
             throw new IllegalArgumentException("An account with this email address already exists. Please sign in.");
         }
 
@@ -119,6 +135,21 @@ public class AuthService {
 
         AuthAccount saved = accountRepository.save(account);
         log.info("Successfully registered new CUSTOMER account: {}", email);
+
+        if (userRepository != null) {
+            UserEntity userEntity = new UserEntity(
+                    saved.getId(),
+                    saved.getFullName(),
+                    saved.getEmail(),
+                    saved.getAvatar(),
+                    saved.getFirstName(),
+                    saved.getRole() != null ? saved.getRole().toLegacyPortalRole() : "retail",
+                    "VERIFIED",
+                    null,
+                    new BigDecimal("25000.00")
+            );
+            userRepository.save(userEntity);
+        }
 
         String token = tokenProvider.generateToken(saved);
         return AuthResponse.authenticated("Registration successful. Welcome to Baskly.money!", 
@@ -211,7 +242,7 @@ public class AuthService {
             accountOpt = accountRepository.findByEmail(email);
         }
 
-        if (accountOpt.isPresent()) {
+        if (accountOpt.isPresent() || (userRepository != null && userRepository.existsByEmail(email))) {
             return AuthResponse.accountExists("An account already exists for this Google account. Please sign in instead.");
         }
 
@@ -268,8 +299,8 @@ public class AuthService {
             throw new IllegalArgumentException("Email OTP verification token is invalid or has expired. Please verify your email with OTP.");
         }
 
-        // 3. Prevent duplicate account creation
-        if (accountRepository.existsByEmail(email)) {
+        // 3. Prevent duplicate account creation across auth_accounts and users
+        if (accountRepository.existsByEmail(email) || (userRepository != null && userRepository.existsByEmail(email))) {
             throw new IllegalArgumentException("An account with this email already exists. Please sign in instead.");
         }
 
@@ -327,6 +358,21 @@ public class AuthService {
 
         AuthAccount saved = accountRepository.save(account);
         log.info("Successfully registered new Google CUSTOMER: {}", email);
+
+        if (userRepository != null) {
+            UserEntity userEntity = new UserEntity(
+                    saved.getId(),
+                    saved.getFullName(),
+                    saved.getEmail(),
+                    saved.getAvatar(),
+                    saved.getFirstName(),
+                    saved.getRole() != null ? saved.getRole().toLegacyPortalRole() : "retail",
+                    "VERIFIED",
+                    null,
+                    new BigDecimal("25000.00")
+            );
+            userRepository.save(userEntity);
+        }
 
         String token = tokenProvider.generateToken(saved);
         return AuthResponse.authenticated("Registration completed successfully. Welcome to Baskly.money!",

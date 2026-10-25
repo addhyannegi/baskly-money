@@ -58,7 +58,7 @@ public class PortfolioService {
     public UserEntity resolveUser(String userIdOrEmailOrAuthId) {
         final String lookupKey = (userIdOrEmailOrAuthId == null || userIdOrEmailOrAuthId.isBlank())
                 ? "demo-user"
-                : userIdOrEmailOrAuthId;
+                : userIdOrEmailOrAuthId.trim();
 
         // 1. Direct lookup by users.id
         Optional<UserEntity> byId = userRepository.findById(lookupKey);
@@ -66,45 +66,19 @@ public class PortfolioService {
             return byId.get();
         }
 
-        // 2. Direct lookup by users.email
-        Optional<UserEntity> byEmail = userRepository.findByEmail(lookupKey);
-        if (byEmail.isPresent()) {
-            return byEmail.get();
-        }
-
-        // 3. Lookup in auth_accounts by id or email and synchronize with users table
-        if (authAccountRepository != null) {
-            Optional<AuthAccount> authAccount = authAccountRepository.findById(lookupKey)
-                    .or(() -> authAccountRepository.findByEmail(lookupKey));
-
-            if (authAccount.isPresent()) {
-                AuthAccount acc = authAccount.get();
-                // Check if users table already has a record with this email
-                Optional<UserEntity> existingByEmail = userRepository.findByEmail(acc.getEmail());
-                if (existingByEmail.isPresent()) {
-                    return existingByEmail.get();
-                }
-
-                // If not found in users table, provision a synchronized UserEntity so FK constraints succeed
-                UserEntity syncedUser = new UserEntity(
-                        acc.getId(),
-                        acc.getFullName(),
-                        acc.getEmail(),
-                        acc.getAvatar(),
-                        acc.getFirstName(),
-                        acc.getRole() != null ? acc.getRole().toLegacyPortalRole() : "retail",
-                        "VERIFIED",
-                        null,
-                        new BigDecimal("25000.00")
-                );
-                return userRepository.save(syncedUser);
+        // 2. Direct lookup by users.email ONLY when lookupKey is explicitly an email address
+        if (lookupKey.contains("@")) {
+            Optional<UserEntity> byEmail = userRepository.findByEmail(lookupKey.toLowerCase());
+            if (byEmail.isPresent()) {
+                return byEmail.get();
             }
         }
 
-        // 4. Fallback for demo users
-        if ("usr_demo_retail".equalsIgnoreCase(lookupKey)) {
-            return userRepository.findById("demo-user")
-                    .or(() -> userRepository.findByEmail("vikram.m@example.com"))
+        // 3. Fallback for demo users
+        if ("usr_demo_retail".equalsIgnoreCase(lookupKey) || "demo-user".equalsIgnoreCase(lookupKey)) {
+            return userRepository.findById("usr_demo_retail")
+                    .or(() -> userRepository.findById("demo-user"))
+                    .or(() -> userRepository.findByEmail("rohan@baskly.money"))
                     .orElseThrow(() -> new IllegalArgumentException("User not found: " + lookupKey));
         }
 
