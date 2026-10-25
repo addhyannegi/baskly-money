@@ -17,12 +17,16 @@ public class BasketDto {
     private BigDecimal expected_cagr;
     private BigDecimal nav;
     private BigDecimal change_24h;
+    private BigDecimal rebalance_drift_threshold = new BigDecimal("5.00");
     private List<BasketConstituentDto> assets;
 
     public BasketDto() {}
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    public String getFundId() { return id; }
+    public void setFundId(String fundId) { this.id = fundId; }
 
     public String getIndexNum() { return indexNum; }
     public void setIndexNum(String indexNum) { this.indexNum = indexNum; }
@@ -59,6 +63,16 @@ public class BasketDto {
 
     public BigDecimal getChange_24h() { return change_24h; }
     public void setChange_24h(BigDecimal change_24h) { this.change_24h = change_24h; }
+
+    public BigDecimal getRebalance_drift_threshold() { return rebalance_drift_threshold; }
+    public void setRebalance_drift_threshold(BigDecimal rebalance_drift_threshold) {
+        this.rebalance_drift_threshold = rebalance_drift_threshold != null ? rebalance_drift_threshold : new BigDecimal("5.00");
+    }
+
+    public BigDecimal getRebalanceDriftThreshold() { return rebalance_drift_threshold; }
+    public void setRebalanceDriftThreshold(BigDecimal rebalanceDriftThreshold) {
+        this.rebalance_drift_threshold = rebalanceDriftThreshold != null ? rebalanceDriftThreshold : new BigDecimal("5.00");
+    }
 
     public List<BasketConstituentDto> getAssets() { return assets; }
     public void setAssets(List<BasketConstituentDto> assets) { this.assets = assets; }

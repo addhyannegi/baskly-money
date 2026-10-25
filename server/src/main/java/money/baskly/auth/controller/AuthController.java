@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping({"/api/auth", "/api/v1/auth"})
 public class AuthController {
 
     private final AuthService authService;
@@ -172,7 +172,7 @@ public class AuthController {
     /**
      * Request Email Verification OTP.
      */
-    @PostMapping("/email-otp/send")
+    @PostMapping({"/email-otp/send", "/request-otp"})
     public ResponseEntity<OtpService.SendOtpResult> sendOtp(@Valid @RequestBody SendOtpRequest req) {
         OtpService.SendOtpResult result = otpService.sendOtp(req.getEmail());
         if (!result.isSuccess()) {
@@ -184,7 +184,7 @@ public class AuthController {
     /**
      * Verify Email OTP and receive short-lived single-use grant token.
      */
-    @PostMapping("/email-otp/verify")
+    @PostMapping({"/email-otp/verify", "/verify-otp"})
     public ResponseEntity<OtpService.VerifyOtpResult> verifyOtp(@Valid @RequestBody VerifyOtpRequest req) {
         OtpService.VerifyOtpResult result = otpService.verifyOtp(req.getEmail(), req.getOtp());
         if (!result.isVerified()) {

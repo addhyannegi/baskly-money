@@ -75,11 +75,16 @@ public class TransactionEntity {
     public String getBasketId() { return basketId; }
     public void setBasketId(String basketId) { this.basketId = basketId; }
 
+    public String getFundId() { return basketId; }
+    public void setFundId(String fundId) { this.basketId = fundId; }
+
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
     public BigDecimal getAmountInr() { return amountInr; }
     public void setAmountInr(BigDecimal amountInr) { this.amountInr = amountInr; }
+
+    public BigDecimal getInvestedAmountInr() { return amountInr; }
 
     public BigDecimal getUnits() { return units; }
     public void setUnits(BigDecimal units) { this.units = units; }

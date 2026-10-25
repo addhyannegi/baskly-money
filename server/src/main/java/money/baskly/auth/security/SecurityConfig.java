@@ -43,16 +43,21 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Public Authentication Endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/v1/auth/**").permitAll()
 
-                        // Public Catalog & General Data Endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/baskets/**", "/api/reports/**").permitAll()
+                        // Public Catalog, Funds & General Data Endpoints
+                        .requestMatchers(HttpMethod.GET, 
+                                "/api/baskets/**", "/api/v1/baskets/**",
+                                "/api/funds/**", "/api/v1/funds/**",
+                                "/api/reports/**", "/api/v1/reports/**").permitAll()
 
                         // Role-specific authorization
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/manager/**").hasAnyRole("FUND_MANAGER", "ADMIN")
-                        .requestMatchers("/api/support/**").hasAnyRole("SUPPORT", "ADMIN")
-                        .requestMatchers("/api/portfolio/**").authenticated()
+                        .requestMatchers("/api/admin/**", "/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/manager/**", "/api/v1/manager/**").hasAnyRole("FUND_MANAGER", "ADMIN")
+                        .requestMatchers("/api/support/**", "/api/v1/support/**").hasAnyRole("SUPPORT", "ADMIN")
+                        .requestMatchers("/api/portfolio/**", "/api/v1/portfolio/**",
+                                "/api/orders/**", "/api/v1/orders/**",
+                                "/api/mandates/**", "/api/v1/mandates/**").authenticated()
 
                         // CORS pre-flight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()

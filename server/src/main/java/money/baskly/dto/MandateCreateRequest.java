@@ -9,10 +9,7 @@ import java.math.BigDecimal;
 
 public class MandateCreateRequest {
 
-    @NotBlank(message = "User ID is required")
     private String userId;
-
-    @NotBlank(message = "Basket ID is required")
     private String basketId;
 
     @NotNull(message = "Monthly SIP amount is required")
@@ -34,6 +31,9 @@ public class MandateCreateRequest {
 
     public String getBasketId() { return basketId; }
     public void setBasketId(String basketId) { this.basketId = basketId; }
+
+    public String getFundId() { return basketId; }
+    public void setFundId(String fundId) { this.basketId = fundId; }
 
     public BigDecimal getMonthlyAmountInr() { return monthlyAmountInr; }
     public void setMonthlyAmountInr(BigDecimal monthlyAmountInr) { this.monthlyAmountInr = monthlyAmountInr; }

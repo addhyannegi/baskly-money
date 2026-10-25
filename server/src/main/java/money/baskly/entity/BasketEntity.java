@@ -50,6 +50,9 @@ public class BasketEntity {
     @Column(name = "change_24h", precision = 6, scale = 2, nullable = false)
     private BigDecimal change24h = BigDecimal.ZERO;
 
+    @Column(name = "rebalance_drift_threshold", precision = 6, scale = 2, nullable = false)
+    private BigDecimal rebalanceDriftThreshold = new BigDecimal("5.00");
+
     @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<BasketConstituentEntity> constituents = new ArrayList<>();
 
@@ -63,6 +66,9 @@ public class BasketEntity {
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    public String getFundId() { return id; }
+    public void setFundId(String fundId) { this.id = fundId; }
 
     public String getIndexNum() { return indexNum; }
     public void setIndexNum(String indexNum) { this.indexNum = indexNum; }
@@ -99,6 +105,11 @@ public class BasketEntity {
 
     public BigDecimal getChange24h() { return change24h; }
     public void setChange24h(BigDecimal change24h) { this.change24h = change24h; }
+
+    public BigDecimal getRebalanceDriftThreshold() { return rebalanceDriftThreshold; }
+    public void setRebalanceDriftThreshold(BigDecimal rebalanceDriftThreshold) { 
+        this.rebalanceDriftThreshold = rebalanceDriftThreshold != null ? rebalanceDriftThreshold : new BigDecimal("5.00"); 
+    }
 
     public List<BasketConstituentEntity> getConstituents() { return constituents; }
     public void setConstituents(List<BasketConstituentEntity> constituents) { this.constituents = constituents; }

@@ -30,7 +30,7 @@ public class PricingOracleService {
 
     private final Map<String, BigDecimal> currentPrices = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpClient httpClient;
+    private volatile HttpClient httpClient;
 
     @Value("${app.nav.oracle.fetch-live:true}")
     private boolean fetchLivePrices = true;
@@ -59,13 +59,28 @@ public class PricingOracleService {
     }
 
     public PricingOracleService() {
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3))
-                .build();
-
         // Initialize with canonical inception baseline prices
         currentPrices.putAll(NavEngineService.FALLBACK_INCEPTION_PRICES);
         log.info("PricingOracleService initialized with {} baseline token prices", currentPrices.size());
+    }
+
+    public PricingOracleService(HttpClient httpClient) {
+        this.httpClient = httpClient;
+        currentPrices.putAll(NavEngineService.FALLBACK_INCEPTION_PRICES);
+        log.info("PricingOracleService initialized with custom HttpClient and {} baseline token prices", currentPrices.size());
+    }
+
+    private HttpClient getHttpClient() {
+        if (this.httpClient == null) {
+            synchronized (this) {
+                if (this.httpClient == null) {
+                    this.httpClient = HttpClient.newBuilder()
+                            .connectTimeout(Duration.ofSeconds(3))
+                            .build();
+                }
+            }
+        }
+        return this.httpClient;
     }
 
     /**
@@ -99,6 +114,7 @@ public class PricingOracleService {
     }
 
     private int fetchCoinGeckoPrices() throws Exception {
+        HttpClient client = getHttpClient();
         String ids = String.join(",", COINGECKO_ID_TO_SYMBOL.keySet());
         String url = "https://api.coingecko.com/api/v3/simple/price?ids=" + ids + "&vs_currencies=usd";
 
@@ -110,7 +126,7 @@ public class PricingOracleService {
                 .GET()
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
             return 0;
         }
@@ -133,6 +149,7 @@ public class PricingOracleService {
     }
 
     private int fetchCoinDcxPrices() throws Exception {
+        HttpClient client = getHttpClient();
         String url = "https://public.coindcx.com/exchange/ticker";
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -143,7 +160,7 @@ public class PricingOracleService {
                 .GET()
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
             return 0;
         }

@@ -74,6 +74,7 @@ public class PortfolioService {
         holding.setUnits(newUnits);
         holding.setInvestedAmountInr(newInvested);
         holding.setAvgBuyNav(weightedAvgNav);
+        holding.setStatus("ACTIVE");
         holding.setUpdatedAt(Instant.now());
         holdingRepository.save(holding);
 
@@ -236,6 +237,7 @@ public class PortfolioService {
             dto.setCurrentValueINR(currentValue);
             dto.setProfitINR(profit);
             dto.setReturnPct(returnPct);
+            dto.setStatus(h.getStatus() != null ? h.getStatus() : "ACTIVE");
             holdingDtos.add(dto);
         }
 

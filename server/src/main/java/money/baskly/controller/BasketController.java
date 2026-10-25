@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/baskets")
+@RequestMapping({"/api/v1/baskets", "/api/v1/funds", "/api/baskets", "/api/funds"})
 public class BasketController {
 
     private final BasketService basketService;
@@ -53,7 +53,7 @@ public class BasketController {
         }
     }
 
-    @GetMapping("/{id}/nav-history")
+    @GetMapping({"/{id}/nav-history", "nav", "/{id}/nav"})
     public ResponseEntity<ApiResponse<List<NavSnapshotDto>>> getBasketNavHistory(
             @PathVariable String id,
             @RequestParam(defaultValue = "1D") String interval) {
