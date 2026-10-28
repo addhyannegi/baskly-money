@@ -186,17 +186,18 @@ export default function FooterSection() {
             <div className="pt-3 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
               <button 
                 type="button"
+                suppressHydrationWarning
                 onClick={openUPIModal} 
                 className="btn-unseen bg-[#F4EFEA] text-[#121110] px-7 sm:px-9 py-3.5 sm:py-4 text-xs font-bold uppercase tracking-widest hover:text-[#F4EFEA] cursor-pointer text-center justify-center"
               >
                 <span>Start Your ₹1,000 SIP ↗</span>
               </button>
-              <a 
-                href="#baskets" 
+              <Link 
+                href="/#baskets" 
                 className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-[#F4EFEA]/20 text-xs font-mono uppercase tracking-widest hover:border-[#F4EFEA] transition cursor-pointer text-center justify-center"
               >
                 Inspect All 06 Baskets
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -374,12 +375,12 @@ export default function FooterSection() {
                   </Link>
                 </li>
                 <li>
-                  <a
-                    href="#trust"
+                  <Link
+                    href="/#trust"
                     className="hover:text-[#FFFFFF] transition-colors block"
                   >
                     Trust & Security
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a
