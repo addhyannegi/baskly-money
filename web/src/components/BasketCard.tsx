@@ -143,6 +143,7 @@ export default function BasketCard({ basket }: BasketCardProps) {
           </div>
           <button
             type="button"
+            suppressHydrationWarning
             onClick={(e) => {
               e.stopPropagation();
               openBasketInspector(basket.id);
@@ -154,6 +155,7 @@ export default function BasketCard({ basket }: BasketCardProps) {
           </button>
           <button
             type="button"
+            suppressHydrationWarning
             onClick={(e) => {
               e.stopPropagation();
               openUPIModal();
