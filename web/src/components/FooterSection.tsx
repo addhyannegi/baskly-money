@@ -223,13 +223,13 @@ export default function FooterSection() {
 
               {/* Tagline: Target 16–17px, Line-height 24px */}
               <p className="text-[16px] sm:text-[17px] leading-[24px] font-medium text-[#C8A97E] tracking-tight">
-                Lorem. Ipsum. Dolor.
+                Rupee Crypto Basket SIPs
               </p>
 
               {/* Description: Target 15–15.5px, Line-height 26px */}
               <div className="text-[15px] sm:text-[15.5px] leading-[26px] font-normal text-[#BDB5AB] space-y-1 max-w-[380px]">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <p>Sed do eiusmod tempor incididunt ut labore.</p>
+                <p>Disciplined, systematic digital asset accumulation for Indian households.</p>
+                <p>Automated 1% Section 194S TDS, 1:1 cold storage, and native UPI AutoPay.</p>
               </div>
 
               {/* Social Media Circular Outline Placeholders (LinkedIn, X, Instagram, YouTube) */}
@@ -315,12 +315,12 @@ export default function FooterSection() {
               {/* Navigation Options */}
               <ul className="space-y-3 text-[13.5px] leading-[21px] font-normal text-[#BDB5AB]">
                 <li>
-                  <a
-                    href="#trust"
+                  <Link
+                    href="/#faq"
                     className="hover:text-[#FFFFFF] transition-colors block"
                   >
                     FAQ
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <span
@@ -366,12 +366,12 @@ export default function FooterSection() {
               {/* Navigation Options */}
               <ul className="space-y-3 text-[13.5px] leading-[21px] font-normal text-[#BDB5AB]">
                 <li>
-                  <a
-                    href="#methodology"
+                  <Link
+                    href="/about"
                     className="hover:text-[#FFFFFF] transition-colors block"
                   >
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a
