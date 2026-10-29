@@ -47,7 +47,7 @@ export default function FundManagerDashboardPlaceholder() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full bg-[#FAF8F5] border border-[#121110]/10 rounded-3xl p-6 sm:p-8 shadow-sm text-center space-y-6">
-        
+
         <div className="w-14 h-14 mx-auto rounded-2xl bg-[#9A7B56]/15 text-[#9A7B56] flex items-center justify-center">
           <Briefcase className="w-7 h-7" />
         </div>

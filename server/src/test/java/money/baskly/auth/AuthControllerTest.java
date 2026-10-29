@@ -76,7 +76,7 @@ class AuthControllerTest {
                 .andExpect(cookie().httpOnly("baskly_session", true))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.user.role").value("CUSTOMER"))
-                .andExpect(jsonPath("$.user.defaultDashboardPath").value("/dashboard/customer"));
+                .andExpect(jsonPath("$.user.defaultDashboardPath").value("/portal"));
     }
 
     @Test

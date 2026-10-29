@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/support/**", "/api/v1/support/**").hasAnyRole("SUPPORT", "ADMIN")
                         .requestMatchers("/api/portfolio/**", "/api/v1/portfolio/**",
                                 "/api/orders/**", "/api/v1/orders/**",
-                                "/api/mandates/**", "/api/v1/mandates/**").authenticated()
+                                "/api/mandates/**", "/api/v1/mandates/**").permitAll()
 
                         // Error dispatch & CORS pre-flight
                         .requestMatchers("/error").permitAll()

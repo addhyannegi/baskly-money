@@ -36,7 +36,10 @@ export default function SignInPage() {
       const res = await authApi.login(email, password);
       if (res.user) {
         setUserFromBackend(res.user);
-        router.push(res.user.defaultDashboardPath || "/dashboard/customer");
+        const target = res.user.defaultDashboardPath && res.user.defaultDashboardPath !== "/dashboard/customer"
+          ? res.user.defaultDashboardPath
+          : "/portal";
+        router.push(target);
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Invalid email or password. Please try again.";
@@ -57,7 +60,10 @@ export default function SignInPage() {
 
       if (res.user) {
         setUserFromBackend(res.user);
-        router.push(res.user.defaultDashboardPath || "/dashboard/customer");
+        const target = res.user.defaultDashboardPath && res.user.defaultDashboardPath !== "/dashboard/customer"
+          ? res.user.defaultDashboardPath
+          : "/portal";
+        router.push(target);
       }
     } catch (err: unknown) {
       if (err instanceof AuthApiError && (err.code === "ACCOUNT_NOT_FOUND" || err.status === 404)) {

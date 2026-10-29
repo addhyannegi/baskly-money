@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  ShieldAlert, 
-  ShieldCheck, 
-  RotateCw, 
-  Download, 
-  CheckCircle2 
+import {
+  ShieldAlert,
+  ShieldCheck,
+  RotateCw,
+  Download,
+  CheckCircle2
 } from "lucide-react";
 import { useBaskly } from "@/context/BasklyContext";
 
@@ -50,13 +50,13 @@ function FormattedLogTimestamp({ timestamp }: { timestamp?: string | null }) {
 }
 
 export default function ManagerPage() {
-  const { 
-    user, 
-    manager, 
-    baskets, 
-    toggleCircuitBreaker, 
-    executeRebalance, 
-    portfolio 
+  const {
+    user,
+    manager,
+    baskets,
+    toggleCircuitBreaker,
+    executeRebalance,
+    portfolio
   } = useBaskly();
 
   const [lastNotice, setLastNotice] = useState<string | null>(null);
@@ -114,7 +114,7 @@ export default function ManagerPage() {
 
   return (
     <div className="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased">
-      
+
       {/* Header Navigation */}
       <header className="sticky top-0 z-40 bg-[#F4EFEA] border-b border-[#121110]/10 shadow-[0_1px_3px_rgba(18,17,16,0.03)] transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
@@ -148,7 +148,7 @@ export default function ManagerPage() {
 
       {/* Main Terminal Body */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
+
         {/* Banner with Circuit Breaker Switch */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#121110]/10">
           <div>
@@ -164,14 +164,13 @@ export default function ManagerPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <button 
+            <button
               type="button"
               onClick={toggleCircuitBreaker}
-              className={`px-5 py-3 rounded-full text-xs font-mono font-bold tracking-wider uppercase transition flex items-center gap-2 cursor-pointer ${
-                manager.circuitBreakerActive 
-                  ? "bg-rose-700 text-white hover:bg-rose-800" 
+              className={`px-5 py-3 rounded-full text-xs font-mono font-bold tracking-wider uppercase transition flex items-center gap-2 cursor-pointer ${manager.circuitBreakerActive
+                  ? "bg-rose-700 text-white hover:bg-rose-800"
                   : "bg-[#0F6E56]/10 text-[#0F6E56] border border-[#0F6E56]/30 hover:bg-[#0F6E56]/20"
-              }`}
+                }`}
             >
               <ShieldAlert className="w-4 h-4" />
               <span>

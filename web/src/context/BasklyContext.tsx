@@ -1,18 +1,26 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { 
-  User, 
-  UserRole, 
-  Basket, 
-  Portfolio, 
-  ManagerSummary, 
-  Transaction, 
-  RebalanceLog 
+import {
+  User,
+  UserRole,
+  Basket,
+  Portfolio,
+  ManagerSummary,
+  Transaction,
+  Mandate,
+  RebalanceLog
 } from "@/types/baskly";
 import { BASKETS_DATA } from "@/data/baskets";
 import { pricingOracle, ClientOracleState } from "@/services/pricingOracle";
 import { authApi } from "@/services/authApi";
+import {
+  buyBasketApi,
+  withdrawBasketApi,
+  createMandateApi,
+  toggleMandateApi,
+  fetchPortfolioFromBackend
+} from "@/services/api";
 
 interface BasklyContextType {
   user: User | null;
@@ -30,7 +38,9 @@ interface BasklyContextType {
   logout: () => void;
   buyBasket: (basketId: string, amountINR: number) => Transaction;
   withdrawBasket: (basketId: string, amountINR: number) => { gross: number; tds: number; net: number; tx: Transaction };
+  createMandate: (payload: { basketId: string; amountINR: number; debitDay: number; vpa: string; frequency?: 'Daily' | 'Weekly' | 'Monthly'; weeklyDay?: string; nextDebitDate?: string; paymentRail?: 'UPI_AUTOPAY' | 'ENACH' }) => Promise<any>;
   toggleMandate: (mandateId: string) => void;
+  refreshPortfolio: () => Promise<void>;
   toggleCircuitBreaker: () => boolean;
   executeRebalance: (basketId: string, managerName?: string) => RebalanceLog;
   openBasketInspector: (id: string) => void;
@@ -83,16 +93,18 @@ const INITIAL_PORTFOLIO: Portfolio = {
       status: "ACTIVE",
       vpa: "investor@okhdfcbank",
       nextDebitDate: "2026-11-05",
+      frequency: "Monthly",
     },
     {
       id: "mandate_auto_2",
       basketId: "crypto-gold",
       basketName: "Crypto + Gold Reserve",
       monthlyAmountINR: 3000,
-      debitDay: 10,
+      debitDay: 15,
       status: "ACTIVE",
       vpa: "investor@okhdfcbank",
-      nextDebitDate: "2026-11-10",
+      nextDebitDate: "2026-11-15",
+      frequency: "Monthly",
     },
   ],
   transactions: [
@@ -182,7 +194,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
 
       const savedManager = localStorage.getItem("baskly_manager_state");
       if (savedManager) setManager(JSON.parse(savedManager));
-    } catch {}
+    } catch { }
   }, []);
 
   // Start Real-Time Multi-Source Pricing Oracle Engine
@@ -255,16 +267,19 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
       kycStatus: "VERIFIED",
       pan: backendUser.pan || "ABCDE1234F",
       signedInAt: backendUser.signedInAt || new Date().toISOString(),
-      defaultDashboardPath: backendUser.defaultDashboardPath,
+      defaultDashboardPath: backendUser.defaultDashboardPath === "/dashboard/customer" ? "/portal" : (backendUser.defaultDashboardPath || "/portal"),
     };
     setUser(formattedUser);
     try {
       localStorage.setItem("baskly_user_session", JSON.stringify(formattedUser));
-    } catch {}
+    } catch { }
   };
 
   const login = (name: string, email: string, role: UserRole = "retail"): User => {
     const trimmedName = name.trim() || email.split("@")[0];
+    const defaultDashboardPath = role === "fund_manager" || role === "FUND_MANAGER"
+      ? "/dashboard/fund-manager"
+      : "/portal";
     const newUser: User = {
       id: "usr_" + Math.abs(email.split("").reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0)),
       name: trimmedName,
@@ -275,11 +290,12 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
       kycStatus: "VERIFIED",
       pan: "ABCDE" + Math.floor(1000 + Math.random() * 9000) + "F",
       signedInAt: new Date().toISOString(),
+      defaultDashboardPath,
     };
     setUser(newUser);
     try {
       localStorage.setItem("baskly_user_session", JSON.stringify(newUser));
-    } catch {}
+    } catch { }
     return newUser;
   };
 
@@ -287,7 +303,8 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     try {
       localStorage.removeItem("baskly_user_session");
-    } catch {}
+      localStorage.removeItem("baskly_jwt_token");
+    } catch { }
   };
 
   const buyBasket = (basketId: string, amountINR: number): Transaction => {
@@ -347,7 +364,10 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     setPortfolio(updatedPortfolio);
     try {
       localStorage.setItem("baskly_portfolio_state", JSON.stringify(updatedPortfolio));
-    } catch {}
+    } catch { }
+
+    // Async sync with Spring Boot backend
+    buyBasketApi(user?.id || "usr_demo_retail", basketId, amountINR).catch(() => { });
 
     return newTx;
   };
@@ -404,7 +424,10 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     setPortfolio(updatedPortfolio);
     try {
       localStorage.setItem("baskly_portfolio_state", JSON.stringify(updatedPortfolio));
-    } catch {}
+    } catch { }
+
+    // Async sync with Spring Boot backend
+    withdrawBasketApi(user?.id || "usr_demo_retail", basketId, amountINR).catch(() => { });
 
     return { gross: amountINR, tds: tdsINR, net: netPayoutINR, tx: newTx };
   };
@@ -422,7 +445,115 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     setPortfolio(updatedPortfolio);
     try {
       localStorage.setItem("baskly_portfolio_state", JSON.stringify(updatedPortfolio));
-    } catch {}
+    } catch { }
+
+    // Async sync with Spring Boot backend
+    toggleMandateApi(mandateId).catch(() => { });
+  };
+
+  const createMandate = async (payload: {
+    basketId: string;
+    amountINR: number;
+    debitDay: number;
+    vpa: string;
+    frequency?: 'Daily' | 'Weekly' | 'Monthly';
+    weeklyDay?: string;
+    nextDebitDate?: string;
+    paymentRail?: 'UPI_AUTOPAY' | 'ENACH';
+  }) => {
+    const basket = baskets.find((b) => b.id === payload.basketId) || baskets[0];
+
+    // Compute proper upcoming debit date from frequency & debitDay if not explicitly passed
+    const now = new Date();
+    let calculatedDateStr = payload.nextDebitDate || "";
+
+    if (!calculatedDateStr) {
+      if (payload.frequency === "Daily") {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(now.getDate() + 1);
+        calculatedDateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+      } else if (payload.frequency === "Weekly") {
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const targetIdx = payload.weeklyDay ? daysOfWeek.indexOf(payload.weeklyDay) : -1;
+        const currentIdx = now.getDay();
+        let diff = targetIdx >= 0 ? targetIdx - currentIdx : 7;
+        if (diff <= 0) diff += 7;
+        const nextDate = new Date(now);
+        nextDate.setDate(now.getDate() + diff);
+        calculatedDateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, "0")}-${String(nextDate.getDate()).padStart(2, "0")}`;
+      } else {
+        let day = Number(payload.debitDay) || 5;
+        let nextYear = now.getFullYear();
+        let nextMonth = now.getMonth();
+        if (day <= now.getDate()) {
+          nextMonth += 1;
+          if (nextMonth > 11) {
+            nextMonth = 0;
+            nextYear += 1;
+          }
+        }
+        const daysInMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
+        day = Math.min(day, daysInMonth);
+        const d = new Date(nextYear, nextMonth, day);
+        calculatedDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      }
+    }
+
+    const newMandate: Mandate = {
+      id: "mandate_" + Date.now().toString(36),
+      basketId: payload.basketId,
+      basketName: basket.name,
+      monthlyAmountINR: payload.amountINR,
+      debitDay: Number(payload.debitDay) || 5,
+      status: "ACTIVE",
+      vpa: payload.vpa,
+      nextDebitDate: calculatedDateStr,
+      frequency: payload.frequency || "Monthly",
+      weeklyDay: payload.weeklyDay,
+      paymentRail: payload.paymentRail || "UPI_AUTOPAY",
+    };
+
+    try {
+      const res = await createMandateApi({
+        userId: user?.id || "usr_demo_retail",
+        basketId: payload.basketId,
+        monthlyAmountInr: payload.amountINR,
+        debitDay: Number(payload.debitDay) || 5,
+        vpa: payload.vpa,
+      });
+      if (res && res.id) {
+        newMandate.id = res.id;
+        if (res.nextDebitDate) {
+          newMandate.nextDebitDate = res.nextDebitDate;
+        }
+      }
+    } catch { }
+
+    const updatedPortfolio = {
+      ...portfolio,
+      mandates: [newMandate, ...portfolio.mandates],
+    };
+    setPortfolio(updatedPortfolio);
+    try {
+      localStorage.setItem("baskly_portfolio_state", JSON.stringify(updatedPortfolio));
+    } catch { }
+    return newMandate;
+  };
+
+  const refreshPortfolio = async () => {
+    try {
+      const data = await fetchPortfolioFromBackend(user?.id || "usr_demo_retail");
+      if (data) {
+        setPortfolio((prev) => ({
+          ...prev,
+          cashBalanceINR: data.cashBalanceINR ?? prev.cashBalanceINR,
+          holdings: data.holdings && data.holdings.length > 0 ? data.holdings : prev.holdings,
+          mandates: data.mandates && data.mandates.length > 0 ? data.mandates : prev.mandates,
+          transactions: data.transactions && data.transactions.length > 0 ? data.transactions : prev.transactions,
+          growthHistory: data.growthHistory && data.growthHistory.length > 0 ? data.growthHistory : prev.growthHistory,
+        }));
+      }
+    } catch { }
   };
 
   const toggleCircuitBreaker = (): boolean => {
@@ -431,7 +562,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     setManager(updated);
     try {
       localStorage.setItem("baskly_manager_state", JSON.stringify(updated));
-    } catch {}
+    } catch { }
     return nextVal;
   };
 
@@ -457,7 +588,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     setManager(updatedManager);
     try {
       localStorage.setItem("baskly_manager_state", JSON.stringify(updatedManager));
-    } catch {}
+    } catch { }
 
     return log;
   };
@@ -480,7 +611,9 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
         logout,
         buyBasket,
         withdrawBasket,
+        createMandate,
         toggleMandate,
+        refreshPortfolio,
         toggleCircuitBreaker,
         executeRebalance,
         openBasketInspector: (id) => setInspectedBasketId(id),

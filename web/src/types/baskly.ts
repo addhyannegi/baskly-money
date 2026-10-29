@@ -62,6 +62,9 @@ export interface Mandate {
   status: 'ACTIVE' | 'PAUSED' | 'CANCELLED';
   vpa: string;
   nextDebitDate: string;
+  frequency?: 'Daily' | 'Weekly' | 'Monthly';
+  weeklyDay?: string;
+  paymentRail?: 'UPI_AUTOPAY' | 'ENACH';
 }
 
 export interface Transaction {
@@ -75,7 +78,7 @@ export interface Transaction {
   nav: number;
   tdsINR: number; // Statutory 1% Section 194S TDS
   netAmountINR: number;
-  status: 'SETTLED' | 'CREDITED_TO_BANK' | 'PENDING';
+  status: 'SETTLED' | 'CREDITED_TO_BANK' | 'PENDING' | 'COMPLETED';
   bankRef: string;
 }
 
