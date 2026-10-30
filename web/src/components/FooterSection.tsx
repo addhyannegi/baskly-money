@@ -168,18 +168,18 @@ export default function FooterSection() {
     <>
       {/* Monumental Editorial Footer CTA */}
       <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="rounded-[24px] sm:rounded-[32px] bg-[#121110] text-[#F4EFEA] p-6 xs:p-8 sm:p-14 md:p-20 text-center relative overflow-hidden">
-          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[550px] h-[250px] bg-[#9A7B56]/25 blur-3xl pointer-events-none rounded-full" />
+        <div className="rounded-[24px] sm:rounded-[32px] bg-[#13110F]/90 border border-[#F59E0B]/30 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.18)] text-white p-6 xs:p-8 sm:p-14 md:p-20 text-center relative overflow-hidden backdrop-blur-xl">
+          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[550px] h-[250px] bg-[#F59E0B]/25 blur-3xl pointer-events-none rounded-full" />
 
           <div className="relative z-10 max-w-2xl mx-auto space-y-5 sm:space-y-6">
-            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#9A7B56]">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#F59E0B]">
               Begin Your Habit
             </span>
-            <h2 className="text-3xl xs:text-4xl sm:text-6xl lg:text-7xl font-light tracking-editorial leading-[1.04] sm:leading-[1.02]">
+            <h2 className="text-3xl xs:text-4xl sm:text-6xl lg:text-7xl font-light tracking-editorial leading-[1.04] sm:leading-[1.02] text-white">
               ₹1,000 a month.<br />
-              <span className="font-serif-italic text-4xl xs:text-5xl sm:text-7xl lg:text-8xl text-[#E8DFD5]">Zero</span> chart noise.
+              <span className="font-serif-italic text-4xl xs:text-5xl sm:text-7xl lg:text-8xl text-[#F59E0B]">Zero</span> chart noise.
             </h2>
-            <p className="text-xs sm:text-sm md:text-base text-[#F4EFEA]/70 max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-base text-[#A39E93] max-w-lg mx-auto leading-relaxed">
               Set your mandate once in 3 minutes. Let mathematical rebalancing and multi-year Rupee-Cost Averaging do the rest.
             </p>
 
@@ -187,13 +187,13 @@ export default function FooterSection() {
               <button 
                 type="button"
                 onClick={openUPIModal} 
-                className="btn-unseen bg-[#F4EFEA] text-[#121110] px-7 sm:px-9 py-3.5 sm:py-4 text-xs font-bold uppercase tracking-widest hover:text-[#F4EFEA] cursor-pointer text-center justify-center"
+                className="btn-unseen bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] px-7 sm:px-9 py-3.5 sm:py-4 text-xs font-bold uppercase tracking-widest cursor-pointer text-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]"
               >
                 <span>Start Your ₹1,000 SIP ↗</span>
               </button>
               <a 
                 href="#baskets" 
-                className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-[#F4EFEA]/20 text-xs font-mono uppercase tracking-widest hover:border-[#F4EFEA] transition cursor-pointer text-center justify-center"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-white/20 text-white text-xs font-mono uppercase tracking-widest hover:border-[#F59E0B] hover:text-[#F59E0B] transition cursor-pointer text-center justify-center"
               >
                 Inspect All 06 Baskets
               </a>
@@ -203,7 +203,7 @@ export default function FooterSection() {
       </section>
 
       {/* Main Footer: Deep Warm Dark Espresso Palette matching BitSave Structure & Proportions */}
-      <footer className="relative z-10 bg-[#141312] text-[#F4EFEA] border-t border-[#262422] transition-colors">
+      <footer className="relative z-10 bg-[#0A0908] text-[#F4EFEA] border-t border-white/10 transition-colors">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-[90px] pt-12 sm:pt-16 pb-0">
           
           {/* Top 4-Column Layout matching BitSave Proportions */}
@@ -213,7 +213,7 @@ export default function FooterSection() {
             <div className="lg:col-span-4 space-y-4">
               {/* Brand Logo: Prominent, fixed warm off-white brand identity (no hover color change) */}
               <Link href="/" className="inline-flex items-center gap-3">
-                <div className="w-[34px] h-[34px] rounded-full bg-[#FAF8F5] text-[#141312] flex items-center justify-center font-serif italic text-xl font-bold flex-shrink-0">
+                <div className="w-[34px] h-[34px] rounded-full bg-[#F59E0B] text-[#0B0A09] flex items-center justify-center font-serif italic text-xl font-bold flex-shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
                   b
                 </div>
                 <span className="text-[27px] sm:text-[28px] leading-[34px] font-bold tracking-tight text-[#F4EFEA]">

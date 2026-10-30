@@ -8,21 +8,24 @@
 }
 
 :root {
-  --bg-pearl: #F4EFEA;
-  --bg-alabaster: #FAF8F5;
-  --bg-champagne: #EBE3DA;
-  --bg-obsidian: #121110;
+  --bg-canvas: #0B0A09;
+  --bg-surface: #141210;
+  --bg-surface-elevated: #1B1814;
+  --bg-surface-highlight: #221D17;
 
-  --text-obsidian: #121110;
-  --text-muted: #5C5752;
-  --text-subtle: #8C857B;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A39E93;
+  --text-tertiary: #736E65;
 
-  --accent-bronze: #9A7B56;
-  --accent-emerald: #0F6E56;
-  --accent-rose: #B85D43;
+  --accent-amber: #F59E0B;
+  --accent-orange: #EA580C;
+  --accent-copper: #D97706;
+  --accent-emerald: #10B981;
+  --accent-rose: #F43F5E;
 
-  --border-hairline: rgba(18, 17, 16, 0.09);
-  --border-strong: rgba(18, 17, 16, 0.18);
+  --border-glow: rgba(245, 158, 11, 0.18);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
 
   --ease-unseen: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -33,8 +36,8 @@
 }
 
 html {
-  background-color: var(--bg-pearl);
-  color: var(--text-obsidian);
+  background-color: #0B0A09;
+  color: #FFFFFF;
   scroll-behavior: smooth;
 }
 
@@ -42,16 +45,16 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-inter), 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg-pearl);
-  color: var(--text-obsidian);
+  background-color: #0B0A09;
+  color: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: #121110;
-  color: #F4EFEA;
+  background: #F59E0B;
+  color: #0B0A09;
 }
 
 .font-serif-editorial {
@@ -69,4 +72,39 @@ body {
 
 .tracking-editorial {
   letter-spacing: -0.035em;
+}
+
+/* Ambient Amber & Molten Copper Glow Layers */
+.ambient-glow-top {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1400px;
+  height: 720px;
+  pointer-events: none;
+  background: radial-gradient(ellipse 900px 520px at 50% -80px, rgba(234, 138, 56, 0.24) 0%, rgba(245, 158, 11, 0.10) 45%, rgba(11, 10, 9, 0) 75%);
+  z-index: 0;
+}
+
+.ambient-glow-card {
+  box-shadow: 0 0 60px -15px rgba(245, 158, 11, 0.16), 0 20px 40px -15px rgba(0, 0, 0, 0.85);
+}
+
+.ambient-glow-pill {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.20);
+}
+
+/* Technical Subtle Grid Overlay */
+.tech-grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 25%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 25%, #000 30%, transparent 80%);
 }

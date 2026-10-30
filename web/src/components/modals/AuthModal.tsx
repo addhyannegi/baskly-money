@@ -85,7 +85,7 @@ export default function AuthModal() {
       onClick={closeAuthModal}
     >
       <div 
-        className="bg-white border border-[#121110]/10 rounded-3xl p-6 sm:p-9 shadow-2xl max-w-[420px] w-full space-y-6 relative animate-in fade-in zoom-in-95 duration-150"
+        className="bg-[#13110F]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-9 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] max-w-[420px] w-full space-y-6 relative animate-in fade-in zoom-in-95 duration-150 text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -93,20 +93,20 @@ export default function AuthModal() {
           type="button"
           onClick={closeAuthModal} 
           aria-label="Close sign in modal"
-          className="absolute right-5 top-5 w-8 h-8 rounded-full border border-[#121110]/10 flex items-center justify-center text-[#66615B] hover:text-[#121110] hover:bg-[#FAF8F5] transition cursor-pointer"
+          className="absolute right-5 top-5 w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-[#A39E93] hover:text-white hover:bg-white/10 transition cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Brand & Heading */}
         <div className="text-center space-y-2 pt-1">
-          <div className="w-10 h-10 rounded-full bg-[#121110] text-[#F4EFEA] flex items-center justify-center font-serif italic text-lg mx-auto">
+          <div className="w-10 h-10 rounded-full bg-white/10 text-white border border-white/10 flex items-center justify-center font-serif italic text-lg mx-auto">
             b
           </div>
-          <h2 className="text-2xl font-semibold text-[#121110] tracking-tight">
+          <h2 className="text-2xl font-semibold text-white tracking-tight">
             Welcome back
           </h2>
-          <p className="text-sm text-[#66615B] leading-relaxed">
+          <p className="text-sm text-[#A39E93] leading-relaxed">
             Sign in to continue to your Baskly.money account.
           </p>
         </div>
@@ -116,25 +116,25 @@ export default function AuthModal() {
           <div
             className={`p-3.5 rounded-xl text-[13px] animate-in fade-in duration-150 ${
               isAccountNotFound
-                ? "bg-amber-50/90 border border-amber-200/80 text-amber-900"
-                : "bg-red-50/90 border border-red-200/80 text-red-800"
+                ? "bg-amber-950/60 border border-amber-500/30 text-amber-200"
+                : "bg-red-950/60 border border-red-500/30 text-red-200"
             }`}
           >
             <div className="flex items-start gap-2.5">
               <AlertCircle
                 className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
-                  isAccountNotFound ? "text-amber-700" : "text-red-600"
+                  isAccountNotFound ? "text-amber-400" : "text-red-400"
                 }`}
               />
               <span className="leading-snug">{errorMessage}</span>
             </div>
             {isAccountNotFound && (
-              <div className="mt-2.5 pt-2 border-t border-amber-200/60 flex items-center justify-between">
-                <span className="text-xs text-amber-800">New to Baskly.money?</span>
+              <div className="mt-2.5 pt-2 border-t border-amber-500/30 flex items-center justify-between">
+                <span className="text-xs text-amber-300">New to Baskly.money?</span>
                 <button
                   type="button"
                   onClick={handleCreateAccountClick}
-                  className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-[#121110] text-[#F4EFEA] text-xs font-medium hover:bg-[#2A2826] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-white text-[#0B0A09] text-xs font-semibold hover:bg-[#F59E0B] transition-colors cursor-pointer"
                 >
                   Create an account
                 </button>
@@ -152,17 +152,17 @@ export default function AuthModal() {
 
         {/* Subtle Divider */}
         <div className="relative flex items-center justify-center my-3">
-          <div className="border-t border-[#121110]/10 w-full" />
-          <span className="bg-white px-3 text-xs text-[#8C857B]">
+          <div className="border-t border-white/10 w-full" />
+          <span className="bg-[#13110F] px-3 text-xs text-[#A39E93]">
             or continue with email
           </span>
-          <div className="border-t border-[#121110]/10 w-full" />
+          <div className="border-t border-white/10 w-full" />
         </div>
 
         {/* Email & Password Form */}
         <form onSubmit={handlePasswordSignIn} className="space-y-4">
           <div>
-            <label className="block text-[13px] font-medium text-[#121110] mb-1.5">
+            <label className="block text-[13px] font-medium text-[#D4CFC7] mb-1.5">
               Email address
             </label>
             <div className="relative">
@@ -173,21 +173,21 @@ export default function AuthModal() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full h-11 sm:h-12 pl-10 pr-4 rounded-xl border border-[#121110]/15 bg-[#FAF8F5] text-sm text-[#121110] placeholder:text-[#8C857B] focus:bg-white focus:outline-none focus:border-[#121110] focus:ring-2 focus:ring-[#121110]/8 transition-all"
+                className="w-full h-11 sm:h-12 pl-10 pr-4 rounded-xl border border-white/10 bg-[#1A1713] text-sm text-white placeholder:text-[#A39E93]/60 focus:bg-[#1A1713] focus:outline-none focus:border-[#F59E0B] focus:ring-2 focus:ring-[#F59E0B]/15 transition-all"
               />
-              <Mail className="w-4 h-4 text-[#8C857B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Mail className="w-4 h-4 text-[#A39E93] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1.5">
-              <label className="text-[13px] font-medium text-[#121110]">
+              <label className="text-[13px] font-medium text-[#D4CFC7]">
                 Password
               </label>
               <Link
                 href="/forgot-password"
                 onClick={closeAuthModal}
-                className="text-xs font-medium text-[#9A7B56] hover:text-[#7D6242] transition-colors"
+                className="text-xs font-medium text-[#F59E0B] hover:text-amber-400 transition-colors"
               >
                 Forgot password?
               </Link>
@@ -200,14 +200,14 @@ export default function AuthModal() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="w-full h-11 sm:h-12 pl-10 pr-10 rounded-xl border border-[#121110]/15 bg-[#FAF8F5] text-sm text-[#121110] placeholder:text-[#8C857B] focus:bg-white focus:outline-none focus:border-[#121110] focus:ring-2 focus:ring-[#121110]/8 transition-all"
+                className="w-full h-11 sm:h-12 pl-10 pr-10 rounded-xl border border-white/10 bg-[#1A1713] text-sm text-white placeholder:text-[#A39E93]/60 focus:bg-[#1A1713] focus:outline-none focus:border-[#F59E0B] focus:ring-2 focus:ring-[#F59E0B]/15 transition-all"
               />
-              <Lock className="w-4 h-4 text-[#8C857B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Lock className="w-4 h-4 text-[#A39E93] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8C857B] hover:text-[#121110] transition-colors cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#A39E93] hover:text-white transition-colors cursor-pointer"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -217,7 +217,7 @@ export default function AuthModal() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-11 sm:h-12 rounded-xl bg-[#121110] hover:bg-[#262422] text-[#F4EFEA] text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-2"
+            className="w-full h-11 sm:h-12 rounded-xl bg-white hover:bg-[#F59E0B] text-[#0B0A09] text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             <span>Sign in</span>
@@ -225,12 +225,12 @@ export default function AuthModal() {
         </form>
 
         {/* Footer */}
-        <div className="text-center text-sm text-[#66615B] pt-1">
+        <div className="text-center text-sm text-[#A39E93] pt-1">
           New to Baskly.money?{" "}
           <Link
             href="/signup"
             onClick={closeAuthModal}
-            className="font-semibold text-[#121110] hover:text-[#9A7B56] transition-colors"
+            className="font-semibold text-white hover:text-[#F59E0B] transition-colors"
           >
             Create an account
           </Link>

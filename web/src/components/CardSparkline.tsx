@@ -66,7 +66,7 @@ export default function CardSparkline({ basketId, liveNav }: CardSparklineProps)
       <path d={areaD} fill={`url(#${gradId})`} />
       <path d={pathD} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx={last.x} cy={last.y} r="6" fill={color} opacity="0.25" className="animate-ping" />
-      <circle cx={last.x} cy={last.y} r="3.5" fill={color} stroke="#FAF8F5" strokeWidth="1.5" />
+      <circle cx={last.x} cy={last.y} r="3.5" fill={color} stroke="#0B0A09" strokeWidth="1.5" />
     </svg>
   );
 }

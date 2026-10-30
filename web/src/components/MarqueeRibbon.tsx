@@ -11,10 +11,10 @@ export default function MarqueeRibbon() {
   ];
 
   return (
-    <div className="marquee-wrap py-3 sm:py-4">
-      <div className="marquee-track space-x-8 sm:space-x-12 text-[11px] sm:text-xs font-mono uppercase tracking-[0.18em] sm:tracking-[0.22em] text-[#5C5752]">
+    <div className="marquee-wrap py-3 sm:py-4 bg-[#100E0C]/80 border-y border-white/10 backdrop-blur-md">
+      <div className="marquee-track space-x-8 sm:space-x-12 text-[11px] sm:text-xs font-mono uppercase tracking-[0.18em] sm:tracking-[0.22em] text-[#A39E93]">
         {items.concat(items).map((text, idx) => (
-          <span key={idx} className="whitespace-nowrap">{text}</span>
+          <span key={idx} className="whitespace-nowrap transition-colors hover:text-[#F59E0B]">{text}</span>
         ))}
       </div>
     </div>
