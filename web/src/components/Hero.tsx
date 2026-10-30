@@ -55,6 +55,7 @@ export default function Hero() {
 
             <button 
               type="button"
+              suppressHydrationWarning
               onClick={openUPIModal} 
               className="btn-unseen-light px-6 sm:px-7 py-3.5 sm:py-4 text-xs sm:text-sm font-semibold text-[#F59E0B] hover:text-white cursor-pointer text-center justify-center transition-all"
             >
@@ -170,6 +171,7 @@ export default function Hero() {
                 <span className="font-mono text-[10px] sm:text-[11px] truncate text-emerald-400">✓ Section 194S TDS Ready</span>
                 <button 
                   type="button"
+                  suppressHydrationWarning
                   onClick={() => openBasketInspector("top-5-index")} 
                   className="font-semibold text-white underline underline-offset-4 hover:text-[#F59E0B] transition-colors cursor-pointer text-[11px] sm:text-xs whitespace-nowrap"
                 >

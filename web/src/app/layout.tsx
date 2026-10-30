@@ -38,8 +38,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`scroll-smooth ${inter.variable} ${dmSans.variable} ${dmSerif.variable}`}>
-      <body className="min-h-screen bg-[#0B0A09] text-[#FFFFFF] antialiased selection:bg-[#F59E0B] selection:text-[#0B0A09] font-sans relative">
+    <html lang="en" suppressHydrationWarning className={`scroll-smooth ${inter.variable} ${dmSans.variable} ${dmSerif.variable}`}>
+      <body suppressHydrationWarning className="min-h-screen bg-[#0B0A09] text-[#FFFFFF] antialiased selection:bg-[#F59E0B] selection:text-[#0B0A09] font-sans relative">
         <div className="ambient-glow-top" />
         <div className="tech-grid-overlay" />
         <div className="noise-overlay" />

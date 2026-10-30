@@ -68,6 +68,7 @@ export default function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
+                suppressHydrationWarning
                 onClick={() => setAboutOpen((prev) => !prev)}
                 aria-expanded={aboutOpen}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-[#A39E93] hover:text-white transition-colors cursor-pointer select-none"
@@ -83,51 +84,42 @@ export default function Navbar() {
               {/* Dropdown Menu */}
               {aboutOpen && (
                 <div
-                  className="absolute top-full right-0 sm:left-0 mt-2.5 w-44 rounded-2xl bg-[#161412] border border-white/10 shadow-2xl py-2 px-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150 backdrop-blur-xl"
+                  className="absolute top-full right-0 sm:left-0 mt-2.5 w-48 rounded-2xl bg-[#161412] border border-white/10 shadow-2xl py-2 px-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150 backdrop-blur-xl"
                   role="menu"
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAboutOpen(false);
-                      // Placeholder: Route not created yet
-                    }}
+                  <Link
+                    href="/about"
+                    onClick={() => setAboutOpen(false)}
                     className="w-full text-left px-3.5 py-2 rounded-xl text-xs sm:text-[13px] font-medium text-[#A39E93] hover:text-white hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-between group"
                     role="menuitem"
                   >
-                    <span>Our story</span>
+                    <span>Our Philosophy</span>
                     <span className="text-[10px] font-mono text-[#F59E0B] opacity-0 group-hover:opacity-100 transition-opacity">
-                      Soon
+                      Read ↗
                     </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAboutOpen(false);
-                      // Placeholder: Route not created yet
-                    }}
+                  </Link>
+                  <Link
+                    href="/#faq"
+                    onClick={() => setAboutOpen(false)}
                     className="w-full text-left px-3.5 py-2 rounded-xl text-xs sm:text-[13px] font-medium text-[#A39E93] hover:text-white hover:bg-white/5 transition-colors cursor-pointer flex items-center justify-between group"
                     role="menuitem"
                   >
                     <span>FAQ</span>
                     <span className="text-[10px] font-mono text-[#F59E0B] opacity-0 group-hover:opacity-100 transition-opacity">
-                      Soon
+                      View ↗
                     </span>
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
 
             {/* 3. Contact */}
-            <button
-              type="button"
-              onClick={() => {
-                // Placeholder: Route not created yet
-              }}
+            <a
+              href="mailto:support@baskly.money"
               className="text-sm font-medium text-[#A39E93] hover:text-white transition-colors cursor-pointer"
             >
               Contact
-            </button>
+            </a>
           </nav>
 
           {/* Subtle Vertical Divider between Nav links and Action controls */}
@@ -137,6 +129,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 sm:gap-3">
           <button 
             type="button"
+            suppressHydrationWarning
             onClick={openOracleModal} 
             title="Inspect Live Pricing Oracle & Feed Health"
             className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border text-[10px] sm:text-[11px] font-mono transition-all cursor-pointer whitespace-nowrap ${badgeClasses}`}
@@ -167,6 +160,7 @@ export default function Navbar() {
               </Link>
               <button 
                 type="button"
+                suppressHydrationWarning
                 onClick={logout} 
                 title="Sign Out" 
                 className="text-[11px] text-[#A39E93] hover:text-rose-400 ml-1 font-bold cursor-pointer"
@@ -177,6 +171,7 @@ export default function Navbar() {
           ) : (
             <button 
               type="button"
+              suppressHydrationWarning
               onClick={openAuthModal} 
               className="btn-unseen bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] px-3.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider cursor-pointer whitespace-nowrap shadow-[0_0_20px_rgba(245,158,11,0.2)]"
             >
@@ -187,6 +182,7 @@ export default function Navbar() {
           {/* Mobile Menu Toggle Button */}
           <button
             type="button"
+            suppressHydrationWarning
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label="Toggle navigation menu"
             className="md:hidden w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white hover:bg-white/10 transition-colors cursor-pointer flex-shrink-0"
@@ -213,6 +209,7 @@ export default function Navbar() {
           <div className="border-t border-white/10 pt-2">
             <button
               type="button"
+              suppressHydrationWarning
               onClick={() => setMobileAboutOpen((prev) => !prev)}
               className="w-full flex items-center justify-between py-2 text-sm font-medium text-[#A39E93] hover:text-white"
             >
@@ -225,41 +222,32 @@ export default function Navbar() {
             </button>
             {mobileAboutOpen && (
               <div className="pl-4 py-1 space-y-2 border-l border-white/10 ml-2 mt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    // Placeholder: Route not created yet
-                  }}
+                <Link
+                  href="/about"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="block text-xs font-medium text-[#A39E93] hover:text-white py-1 text-left w-full cursor-pointer"
                 >
-                  Our story (Coming Soon)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    // Placeholder: Route not created yet
-                  }}
+                  Our Philosophy
+                </Link>
+                <Link
+                  href="/#faq"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="block text-xs font-medium text-[#A39E93] hover:text-white py-1 text-left w-full cursor-pointer"
                 >
-                  FAQ (Coming Soon)
-                </button>
+                  FAQ
+                </Link>
               </div>
             )}
           </div>
 
           <div className="border-t border-white/10 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                // Placeholder: Route not created yet
-              }}
+            <a
+              href="mailto:support@baskly.money"
+              onClick={() => setMobileMenuOpen(false)}
               className="block py-2 text-sm font-medium text-[#A39E93] hover:text-white text-left w-full cursor-pointer"
             >
               Contact
-            </button>
+            </a>
           </div>
         </div>
       )}
