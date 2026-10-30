@@ -55,7 +55,7 @@ export default function CompoundingCalculator() {
       const maxVal = Math.max(futureValueCrypto, futureValueNifty, futureValueFD, totalInvested) * 1.08;
 
       // Grid lines
-      ctx.strokeStyle = "rgba(18, 17, 16, 0.06)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
       ctx.lineWidth = 1;
       for (let i = 1; i <= 3; i++) {
         const y = padding.top + (chartH / 4) * i;
@@ -65,17 +65,15 @@ export default function CompoundingCalculator() {
         ctx.stroke();
       }
 
-      // Helper to calculate curve points
+      const steps = months;
       const getPoints = (monthlyRate: number, isFlat = false) => {
         const points: { x: number; y: number }[] = [];
-        const steps = 24;
         for (let s = 0; s <= steps; s++) {
-          const m = (months / steps) * s;
           let val = 0;
           if (isFlat) {
-            val = amount * m;
-          } else if (m > 0 && monthlyRate > 0) {
-            val = amount * ((Math.pow(1 + monthlyRate, m) - 1) / monthlyRate) * (1 + monthlyRate);
+            val = amount * s;
+          } else {
+            val = s === 0 ? 0 : amount * ((Math.pow(1 + monthlyRate, s) - 1) / monthlyRate) * (1 + monthlyRate);
           }
           const x = padding.left + (chartW / steps) * s;
           const y = padding.top + chartH - (val / maxVal) * chartH;
@@ -113,8 +111,8 @@ export default function CompoundingCalculator() {
 
       // Gradient fill under Baskly curve
       const gradient = ctx.createLinearGradient(0, padding.top, 0, height);
-      gradient.addColorStop(0, "rgba(15, 110, 86, 0.18)");
-      gradient.addColorStop(1, "rgba(15, 110, 86, 0.0)");
+      gradient.addColorStop(0, "rgba(245, 158, 11, 0.28)");
+      gradient.addColorStop(1, "rgba(245, 158, 11, 0.0)");
 
       ctx.beginPath();
       ctx.moveTo(cryptoPoints[0].x, cryptoPoints[0].y);
@@ -128,17 +126,17 @@ export default function CompoundingCalculator() {
       ctx.fill();
 
       // Render curves
-      drawCurve(principalPoints, "#8C857B", 1.5, true);
-      drawCurve(niftyPoints, "#9A7B56", 2);
-      drawCurve(cryptoPoints, "#0F6E56", 2.5);
+      drawCurve(principalPoints, "#736E65", 1.5, true);
+      drawCurve(niftyPoints, "#94A3B8", 2);
+      drawCurve(cryptoPoints, "#F59E0B", 2.5);
 
       // End pulse dot
       const lastP = cryptoPoints[cryptoPoints.length - 1];
       ctx.beginPath();
       ctx.arc(lastP.x, lastP.y, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = "#0F6E56";
+      ctx.fillStyle = "#F59E0B";
       ctx.fill();
-      ctx.strokeStyle = "#FAF8F5";
+      ctx.strokeStyle = "#0B0A09";
       ctx.lineWidth = 2;
       ctx.stroke();
     };
@@ -151,13 +149,13 @@ export default function CompoundingCalculator() {
   return (
     <section id="calculator" className="py-16 sm:py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6">
       <div className="max-w-3xl mb-10 sm:mb-16">
-        <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#9A7B56]">
+        <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
           03 — Mathematical Compounding
         </span>
-        <h2 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.05]">
-          The quiet geometry of <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl lg:text-7xl text-[#9A7B56]">time.</span>
+        <h2 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-semibold text-white tracking-editorial mt-3 leading-[1.05]">
+          The quiet geometry of <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl lg:text-7xl text-[#F59E0B]">time.</span>
         </h2>
-        <p className="text-xs sm:text-base text-[#5C5752] mt-3 leading-relaxed">
+        <p className="text-xs sm:text-base text-[#A39E93] mt-3 leading-relaxed">
           Drag the sliders to simulate how systematic monthly Rupee-Cost Averaging performs against traditional Indian asset classes.
         </p>
       </div>
@@ -165,16 +163,16 @@ export default function CompoundingCalculator() {
       <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         
         {/* Left 5 Cols: Sliders */}
-        <div className="lg:col-span-5 tilt-card p-5 sm:p-7 md:p-8 flex flex-col justify-between h-full">
+        <div className="lg:col-span-5 tilt-card p-5 sm:p-7 md:p-8 flex flex-col justify-between h-full bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
           <div className="tilt-card-content space-y-6 sm:space-y-8">
             
             {/* Slider 1: Monthly SIP */}
             <div>
               <div className="flex justify-between items-baseline mb-2.5 sm:mb-3">
-                <label className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#5C5752]">
+                <label className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#A39E93]">
                   Monthly SIP Mandate
                 </label>
-                <span className="font-serif-italic text-2xl xs:text-3xl sm:text-4xl text-[#121110]">
+                <span className="font-serif-italic text-2xl xs:text-3xl sm:text-4xl text-white">
                   ₹{formatINR(amount)}
                 </span>
               </div>
@@ -185,7 +183,7 @@ export default function CompoundingCalculator() {
                 step={1000} 
                 value={amount} 
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full cursor-pointer"
+                className="w-full cursor-pointer accent-[#F59E0B]"
               />
               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
                 {[1000, 5000, 10000, 25000].map((val) => (
@@ -195,8 +193,8 @@ export default function CompoundingCalculator() {
                     onClick={() => setAmount(val)}
                     className={`text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full border transition cursor-pointer ${
                       amount === val 
-                        ? "bg-[#121110] text-[#F4EFEA] border-[#121110]" 
-                        : "border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA]"
+                        ? "bg-white text-[#0B0A09] border-white font-semibold" 
+                        : "border-white/15 text-[#A39E93] hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     ₹{formatINR(val)}
@@ -208,10 +206,10 @@ export default function CompoundingCalculator() {
             {/* Slider 2: Horizon */}
             <div>
               <div className="flex justify-between items-baseline mb-2.5 sm:mb-3">
-                <label className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#5C5752]">
+                <label className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#A39E93]">
                   Compounding Horizon
                 </label>
-                <span className="font-serif-italic text-2xl xs:text-3xl sm:text-4xl text-[#121110]">
+                <span className="font-serif-italic text-2xl xs:text-3xl sm:text-4xl text-white">
                   {years} {years > 1 ? "Years" : "Year"}
                 </span>
               </div>
@@ -222,7 +220,7 @@ export default function CompoundingCalculator() {
                 step={1} 
                 value={years} 
                 onChange={(e) => setYears(Number(e.target.value))}
-                className="w-full cursor-pointer"
+                className="w-full cursor-pointer accent-[#F59E0B]"
               />
               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
                 {[3, 5, 7, 10].map((val) => (
@@ -232,8 +230,8 @@ export default function CompoundingCalculator() {
                     onClick={() => setYears(val)}
                     className={`text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full border transition cursor-pointer ${
                       years === val 
-                        ? "bg-[#121110] text-[#F4EFEA] border-[#121110]" 
-                        : "border-[#121110]/15 hover:bg-[#121110] hover:text-[#F4EFEA]"
+                        ? "bg-white text-[#0B0A09] border-white font-semibold" 
+                        : "border-white/15 text-[#A39E93] hover:bg-white/10 hover:text-white"
                     }`}
                   >
                     {val} Yrs
@@ -246,14 +244,14 @@ export default function CompoundingCalculator() {
             <div>
               <div className="flex justify-between items-baseline mb-2.5 sm:mb-3">
                 <div>
-                  <label className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#5C5752]">
+                  <label className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#A39E93]">
                     Basket Target CAGR
                   </label>
-                  <div className="text-[10px] sm:text-[11px] text-[#8C857B]">
+                  <div className="text-[10px] sm:text-[11px] text-[#736E65]">
                     Crypto+Gold (18%) · Top-5 (28%) · Alpha (40%)
                   </div>
                 </div>
-                <span className="font-serif-italic text-2xl xs:text-3xl sm:text-4xl text-[#0F6E56]">
+                <span className="font-serif-italic text-2xl xs:text-3xl sm:text-4xl text-[#F59E0B]">
                   {cagr}% p.a.
                 </span>
               </div>
@@ -264,17 +262,17 @@ export default function CompoundingCalculator() {
                 step={1} 
                 value={cagr} 
                 onChange={(e) => setCagr(Number(e.target.value))}
-                className="w-full cursor-pointer"
+                className="w-full cursor-pointer accent-[#F59E0B]"
               />
             </div>
 
           </div>
 
-          <div className="tilt-card-content pt-6 mt-6 border-t border-[#121110]/10">
+          <div className="tilt-card-content pt-6 mt-6 border-t border-white/10">
             <button 
               type="button"
               onClick={openUPIModal} 
-              className="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 sm:py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+              className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] py-3.5 sm:py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.2)]"
             >
               <span>Lock In This Monthly Habit ↗</span>
             </button>
@@ -282,32 +280,32 @@ export default function CompoundingCalculator() {
         </div>
 
         {/* Right 7 Cols: Canvas Spline Graph & Multi-Asset Benchmarks */}
-        <div className="lg:col-span-7 tilt-card p-5 sm:p-7 md:p-8 flex flex-col justify-between h-full">
+        <div className="lg:col-span-7 tilt-card p-5 sm:p-7 md:p-8 flex flex-col justify-between h-full bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
           <div className="tilt-card-content">
             
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-5 sm:pb-6 border-b border-[#121110]/10 gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-5 sm:pb-6 border-b border-white/10 gap-3 sm:gap-4">
               <div>
-                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#8C857B]">
+                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#736E65]">
                   Projected Portfolio Value
                 </div>
-                <div className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-semibold text-[#121110] tracking-editorial font-mono mt-1">
+                <div className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-semibold text-white tracking-editorial font-mono mt-1">
                   ₹{formatINR(futureValueCrypto)}
                 </div>
               </div>
               <div className="flex flex-wrap gap-4 sm:gap-6 mt-1 sm:mt-0">
                 <div>
-                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#8C857B]">
+                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#736E65]">
                     Total Principal
                   </div>
-                  <div className="text-sm sm:text-base font-bold text-[#121110] font-mono">
+                  <div className="text-sm sm:text-base font-bold text-white font-mono">
                     ₹{formatINR(totalInvested)}
                   </div>
                 </div>
                 <div>
-                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#0F6E56]">
+                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-emerald-400">
                     Compounded Gain
                   </div>
-                  <div className="text-sm sm:text-base font-bold text-[#0F6E56] font-mono">
+                  <div className="text-sm sm:text-base font-bold text-emerald-400 font-mono">
                     +₹{formatINR(returnsEarned)}
                   </div>
                 </div>
@@ -316,49 +314,49 @@ export default function CompoundingCalculator() {
 
             {/* Canvas Curve */}
             <div className="my-5 sm:my-6 relative">
-              <div className="flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] font-mono text-[#8C857B] mb-2 gap-2">
+              <div className="flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] font-mono text-[#736E65] mb-2 gap-2">
                 <span>Wealth Trajectory Curve</span>
                 <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
                   <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#0F6E56]" /> Baskly SIP
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" /> Baskly SIP
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#9A7B56]" /> Nifty 50 (12.5%)
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8]" /> Nifty 50 (12.5%)
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-0.5 bg-[#8C857B]" /> Principal
+                    <span className="w-2.5 h-0.5 bg-[#736E65]" /> Principal
                   </span>
                 </div>
               </div>
               <canvas 
                 ref={canvasRef} 
-                className="w-full h-48 sm:h-56 rounded-2xl bg-[#F4EFEA]/60 border border-[#121110]/5 block"
+                className="w-full h-48 sm:h-56 rounded-2xl bg-[#1A1713] border border-white/10 block"
               />
             </div>
 
             {/* Benchmark Comparison Strip */}
             <div className="grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-4 pt-2">
-              <div className="p-3 sm:p-4 rounded-2xl bg-[#0F6E56]/8 border border-[#0F6E56]/20">
-                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#0F6E56] font-semibold">
+              <div className="p-3 sm:p-4 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30">
+                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#F59E0B] font-semibold">
                   Baskly Basket
                 </div>
-                <div className="text-base sm:text-lg lg:text-xl font-bold text-[#121110] font-mono mt-0.5 sm:mt-1 truncate">
+                <div className="text-base sm:text-lg lg:text-xl font-bold text-white font-mono mt-0.5 sm:mt-1 truncate">
                   ₹{formatINR(futureValueCrypto)}
                 </div>
               </div>
-              <div className="p-3 sm:p-4 rounded-2xl bg-[#F4EFEA]/90 border border-[#121110]/10">
-                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#5C5752]">
+              <div className="p-3 sm:p-4 rounded-2xl bg-[#1A1713] border border-white/10">
+                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#A39E93]">
                   Nifty 50 Index
                 </div>
-                <div className="text-base sm:text-lg lg:text-xl font-bold text-[#5C5752] font-mono mt-0.5 sm:mt-1 truncate">
+                <div className="text-base sm:text-lg lg:text-xl font-bold text-white/90 font-mono mt-0.5 sm:mt-1 truncate">
                   ₹{formatINR(futureValueNifty)}
                 </div>
               </div>
-              <div className="p-3 sm:p-4 rounded-2xl bg-[#F4EFEA]/90 border border-[#121110]/10">
-                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#8C857B]">
+              <div className="p-3 sm:p-4 rounded-2xl bg-[#1A1713] border border-white/10">
+                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#736E65]">
                   Bank FD (7%)
                 </div>
-                <div className="text-base sm:text-lg lg:text-xl font-bold text-[#8C857B] font-mono mt-0.5 sm:mt-1 truncate">
+                <div className="text-base sm:text-lg lg:text-xl font-bold text-white/70 font-mono mt-0.5 sm:mt-1 truncate">
                   ₹{formatINR(futureValueFD)}
                 </div>
               </div>

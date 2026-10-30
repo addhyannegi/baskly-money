@@ -45,29 +45,29 @@ export default function OracleModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
-      <div className="tilt-card bg-[#FAF8F5] max-w-2xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-7 md:p-9 space-y-5 sm:space-y-6">
+      <div className="tilt-card bg-[#13110F]/95 backdrop-blur-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-7 md:p-9 space-y-5 sm:space-y-6 border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] rounded-3xl text-white">
         <div className="tilt-card-content space-y-5 sm:space-y-6">
           
           {/* Header */}
-          <div className="flex items-start justify-between pb-4 border-b border-[#121110]/10 gap-3">
+          <div className="flex items-start justify-between pb-4 border-b border-white/10 gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <span className="oracle-pulse-live flex-shrink-0" />
-                <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#0F6E56] font-semibold">
+                <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#10B981] font-semibold">
                   Pricing Oracle Service · Real-Time
                 </span>
               </div>
-              <h3 className="text-xl sm:text-3xl font-semibold text-[#121110] tracking-editorial mt-1">
-                Multi-Source Feed & <span className="font-serif-italic font-normal text-2xl sm:text-3xl">NAV Engine</span>
+              <h3 className="text-xl sm:text-3xl font-semibold text-white tracking-editorial mt-1">
+                Multi-Source Feed & <span className="font-serif-italic font-normal text-2xl sm:text-3xl text-[#F59E0B]">NAV Engine</span>
               </h3>
-              <p className="text-xs text-[#5C5752] mt-0.5">
+              <p className="text-xs text-[#A39E93] mt-0.5">
                 Binance WebSocket + CoinDCX USDT/INR + CoinGecko Fallback ({tickCount} Ticks Processed)
               </p>
             </div>
             <button 
               type="button"
               onClick={closeOracleModal} 
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#121110]/15 flex items-center justify-center text-sm hover:bg-[#121110] hover:text-[#F4EFEA] transition cursor-pointer flex-shrink-0"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/15 flex items-center justify-center text-sm text-white/80 hover:bg-white hover:text-[#0B0A09] transition cursor-pointer flex-shrink-0"
             >
               ✕
             </button>
@@ -75,36 +75,36 @@ export default function OracleModal() {
 
           {/* System Architecture Status */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-center">
-            <div className="bg-[#F4EFEA] p-3 rounded-2xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase tracking-wider text-[#8C857B]">Primary Feed</div>
-              <div className="text-xs font-bold text-[#121110] mt-1 flex items-center justify-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${isWsConnected ? "bg-[#0F6E56]" : "bg-amber-600 animate-pulse"}`} /> Binance WS
+            <div className="bg-[#1A1713]/80 p-3 rounded-2xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase tracking-wider text-[#A39E93]">Primary Feed</div>
+              <div className="text-xs font-bold text-white mt-1 flex items-center justify-center gap-1.5">
+                <span className={`w-2 h-2 rounded-full ${isWsConnected ? "bg-[#10B981]" : "bg-amber-500 animate-pulse"}`} /> Binance WS
               </div>
-              <div className="text-[10px] text-[#5C5752] mt-0.5 font-mono">
+              <div className="text-[10px] text-[#A39E93] mt-0.5 font-mono">
                 {isWsConnected ? "Stream Connected" : "Connecting..."}
               </div>
             </div>
-            <div className="bg-[#F4EFEA] p-3 rounded-2xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase tracking-wider text-[#8C857B]">Indian Exchange Rate</div>
-              <div id="modal-usdt-rate" className="text-xs font-bold text-[#0F6E56] mt-1 font-mono">₹{usdtRate.toFixed(2)}</div>
-              <div className="text-[10px] text-[#5C5752] mt-0.5">CoinDCX Poller (15s)</div>
+            <div className="bg-[#1A1713]/80 p-3 rounded-2xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase tracking-wider text-[#A39E93]">Indian Exchange Rate</div>
+              <div id="modal-usdt-rate" className="text-xs font-bold text-[#10B981] mt-1 font-mono">₹{usdtRate.toFixed(2)}</div>
+              <div className="text-[10px] text-[#A39E93] mt-0.5">CoinDCX Poller (15s)</div>
             </div>
-            <div className="bg-[#F4EFEA] p-3 rounded-2xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase tracking-wider text-[#8C857B]">Validator / Median</div>
-              <div className="text-xs font-bold text-[#0F6E56] mt-1">±5% Outlier Rejection</div>
-              <div className="text-[10px] text-[#5C5752] mt-0.5 font-mono">Stale cutoff: 60s</div>
+            <div className="bg-[#1A1713]/80 p-3 rounded-2xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase tracking-wider text-[#A39E93]">Validator / Median</div>
+              <div className="text-xs font-bold text-[#10B981] mt-1">±5% Outlier Rejection</div>
+              <div className="text-[10px] text-[#A39E93] mt-0.5 font-mono">Stale cutoff: 60s</div>
             </div>
           </div>
 
           {/* Live Asset Price Table */}
           <div>
-            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#8C857B] mb-2">
+            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-[#A39E93] mb-2">
               <span>Validated Constituent Assets ({tokens.length})</span>
               <span id="oracle-tick-counter">{tickCount} Ticks Live</span>
             </div>
-            <div className="max-h-64 overflow-x-auto overflow-y-auto border border-[#121110]/10 rounded-2xl bg-[#FAF8F5]">
+            <div className="max-h-64 overflow-x-auto overflow-y-auto border border-white/10 rounded-2xl bg-[#100E0C]">
               <table className="w-full min-w-[480px] text-left text-xs">
-                <thead className="bg-[#F4EFEA] border-b border-[#121110]/10 text-[10px] font-mono text-[#8C857B] uppercase tracking-wider sticky top-0">
+                <thead className="bg-[#1A1713] border-b border-white/10 text-[10px] font-mono text-[#A39E93] uppercase tracking-wider sticky top-0">
                   <tr>
                     <th className="py-2.5 px-3">Asset</th>
                     <th className="py-2.5 px-3">USD Price</th>
@@ -113,31 +113,31 @@ export default function OracleModal() {
                     <th className="py-2.5 px-3 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody id="oracle-prices-table-body" className="divide-y divide-[#121110]/5 font-mono text-[11px]">
+                <tbody id="oracle-prices-table-body" className="divide-y divide-white/5 font-mono text-[11px]">
                   {tokens.map((row) => {
                     const isRecentlyUpdated = lastUpdatedSymbol === row.symbol;
                     const statusClass = row.status === "healthy" 
-                      ? "bg-[#0F6E56]/10 text-[#0F6E56]" 
+                      ? "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30" 
                       : row.status === "delayed" 
-                      ? "bg-amber-100 text-amber-800" 
-                      : "bg-[#B85D43]/10 text-[#B85D43]";
+                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/30" 
+                      : "bg-rose-500/15 text-rose-400 border border-rose-500/30";
 
                     return (
                       <tr 
                         key={row.symbol} 
                         id={`oracle-row-${row.symbol}`}
-                        className={`hover:bg-[#F4EFEA]/50 transition-colors ${isRecentlyUpdated ? "bg-[#0F6E56]/5" : ""}`}
+                        className={`hover:bg-white/5 transition-colors ${isRecentlyUpdated ? "bg-[#10B981]/10" : ""}`}
                       >
-                        <td className="py-2 px-3 font-bold text-[#121110]">
-                          {row.name} <span className="text-[10px] font-normal text-[#8C857B]">({row.symbol})</span>
+                        <td className="py-2 px-3 font-bold text-white">
+                          {row.name} <span className="text-[10px] font-normal text-[#A39E93]">({row.symbol})</span>
                         </td>
-                        <td className="py-2 px-3 text-[#5C5752]">
+                        <td className="py-2 px-3 text-[#D4CFC7]">
                           ${row.usd >= 1 ? row.usd.toLocaleString('en-US', { maximumFractionDigits: 2 }) : row.usd.toFixed(6)}
                         </td>
-                        <td id={`oracle-spot-${row.symbol}`} className="py-2 px-3 font-bold text-[#121110]">
+                        <td id={`oracle-spot-${row.symbol}`} className="py-2 px-3 font-bold text-white">
                           ₹{formatINRCurrency(row.inr)}
                         </td>
-                        <td className="py-2 px-3 text-[#8C857B]">{row.source}</td>
+                        <td className="py-2 px-3 text-[#A39E93]">{row.source}</td>
                         <td className="py-2 px-3 text-right">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] uppercase font-bold ${statusClass}`}>
                             {row.status}
@@ -152,9 +152,9 @@ export default function OracleModal() {
           </div>
 
           {/* Circuit Breaker Protection */}
-          <div className="p-3.5 bg-[#F4EFEA] rounded-2xl border border-[#121110]/8 text-xs text-[#5C5752] space-y-1">
-            <div className="font-semibold text-[#121110] flex items-center gap-1.5">
-              <ShieldAlert className="w-3.5 h-3.5 text-[#0F6E56]" />
+          <div className="p-3.5 bg-[#1A1713]/80 rounded-2xl border border-white/5 text-xs text-[#A39E93] space-y-1">
+            <div className="font-semibold text-white flex items-center gap-1.5">
+              <ShieldAlert className="w-3.5 h-3.5 text-[#10B981]" />
               Failover & Freeze Circuit Breaker
             </div>
             <p className="text-[11px] leading-relaxed">
@@ -165,7 +165,7 @@ export default function OracleModal() {
           <button 
             type="button"
             onClick={closeOracleModal} 
-            className="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+            className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] py-3.5 text-xs font-semibold uppercase tracking-widest cursor-pointer"
           >
             <span>Close Telemetry Monitor ↗</span>
           </button>

@@ -56,7 +56,7 @@ export default function RiskQuiz() {
     if (totalScore <= 4) {
       return {
         badge: "Conservative / Capital Preservation",
-        badgeClass: "bg-[#9A7B56]/15 text-[#9A7B56]",
+        badgeClass: "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30",
         title: "Hard Asset",
         serifWord: "Conservator",
         desc: "You prioritize wealth preservation, capital defense against rupee depreciation, and minimal volatility.",
@@ -66,7 +66,7 @@ export default function RiskQuiz() {
     } else if (totalScore <= 7) {
       return {
         badge: "Balanced Core",
-        badgeClass: "bg-[#0F6E56]/15 text-[#0F6E56]",
+        badgeClass: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
         title: "Balanced Index",
         serifWord: "Collector",
         desc: "You understand market cycles and want institutional exposure to blue-chip digital assets without emotional day-trading.",
@@ -76,7 +76,7 @@ export default function RiskQuiz() {
     } else {
       return {
         badge: "Alpha & High Conviction",
-        badgeClass: "bg-[#B85D43]/15 text-[#B85D43]",
+        badgeClass: "bg-rose-500/15 text-rose-400 border border-rose-500/30",
         title: "Sovereign Alpha",
         serifWord: "Stacker",
         desc: "You have multi-year conviction in decentralized computing, Web3 infrastructure, and scarce monetary assets.",
@@ -95,51 +95,51 @@ export default function RiskQuiz() {
   };
 
   return (
-    <section id="quiz" className="py-16 sm:py-20 md:py-28 bg-[#EBE3DA]/45 border-y border-[#121110]/10">
+    <section id="quiz" className="py-16 sm:py-20 md:py-28 bg-[#0E0C0A]/80 border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* Left 5 Cols: Live Archetype Output Card */}
           <div className="lg:col-span-5 space-y-5 sm:space-y-6">
-            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#9A7B56]">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
               04 — Risk Calibration
             </span>
-            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold text-[#121110] tracking-editorial leading-[1.06]">
-              Discover your <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl text-[#9A7B56]">allocation</span> archetype.
+            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold text-white tracking-editorial leading-[1.06]">
+              Discover your <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl text-[#F59E0B]">allocation</span> archetype.
             </h2>
-            <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
               Answer the three questions on the right to calibrate your ideal mix of Gold-backed stability, Bitcoin sovereignty, and DeFi growth.
             </p>
 
-            <div className="tilt-card p-5 sm:p-7 space-y-4 sm:space-y-5 bg-[#FAF8F5]">
+            <div className="tilt-card p-5 sm:p-7 space-y-4 sm:space-y-5 bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
               <div className="tilt-card-content space-y-4">
                 <div className="flex items-center justify-between">
                   <span className={`font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-full ${profile.badgeClass}`}>
                     {profile.badge}
                   </span>
-                  <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#8C857B]">
+                  <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#736E65]">
                     Live Calibration
                   </span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-semibold text-[#121110] tracking-editorial">
+                <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                   {profile.title}{" "}
-                  <span className="font-serif-italic font-normal text-2xl sm:text-3xl">
+                  <span className="font-serif-italic font-normal text-2xl sm:text-3xl text-[#F59E0B]">
                     {profile.serifWord}
                   </span>
                 </h3>
-                <p className="text-xs text-[#5C5752] leading-relaxed">
+                <p className="text-xs text-[#A39E93] leading-relaxed">
                   {profile.desc}
                 </p>
 
-                <div className="p-3.5 sm:p-4 bg-[#F4EFEA] rounded-2xl border border-[#121110]/10 space-y-1 sm:space-y-1.5">
-                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#8C857B]">
+                <div className="p-3.5 sm:p-4 bg-[#1A1713] rounded-2xl border border-white/10 space-y-1 sm:space-y-1.5">
+                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#736E65]">
                     Recommended Mandate Split
                   </div>
-                  <div className="text-xs sm:text-sm font-bold text-[#121110]">
+                  <div className="text-xs sm:text-sm font-bold text-white">
                     {profile.basket}
                   </div>
-                  <div className="font-mono text-[11px] sm:text-xs text-[#0F6E56] font-medium">
+                  <div className="font-mono text-[11px] sm:text-xs text-emerald-400 font-medium">
                     {profile.split}
                   </div>
                 </div>
@@ -147,7 +147,7 @@ export default function RiskQuiz() {
                 <button 
                   type="button"
                   onClick={openUPIModal} 
-                  className="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer"
+                  className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.2)]"
                 >
                   <span>Activate Recommended Split ↗</span>
                 </button>
@@ -156,14 +156,14 @@ export default function RiskQuiz() {
           </div>
 
           {/* Right 7 Cols: 3-Step Questionnaire */}
-          <div className="lg:col-span-7 tilt-card p-5 sm:p-8 md:p-10">
+          <div className="lg:col-span-7 tilt-card p-5 sm:p-8 md:p-10 bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
             <div className="tilt-card-content space-y-6 sm:space-y-8">
               {QUIZ_QUESTIONS.map((q, qIdx) => (
-                <div key={qIdx} className="space-y-3 pb-6 border-b border-[#121110]/10 last:border-b-0 last:pb-0">
-                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#9A7B56]">
+                <div key={qIdx} className="space-y-3 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
+                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-[#F59E0B]">
                     {q.title}
                   </div>
-                  <h4 className="text-base sm:text-lg font-semibold text-[#121110] tracking-editorial">
+                  <h4 className="text-base sm:text-lg font-semibold text-white tracking-editorial">
                     {q.subtitle}
                   </h4>
                   <div className="space-y-2 pt-1">
@@ -176,15 +176,15 @@ export default function RiskQuiz() {
                           onClick={() => handleSelect(qIdx, optIdx)}
                           className={`w-full text-left p-3 sm:p-3.5 rounded-xl border text-[11px] sm:text-xs font-medium transition cursor-pointer flex items-start sm:items-center justify-between gap-3 ${
                             isSelected
-                              ? "bg-[#121110] text-[#F4EFEA] border-[#121110]"
-                              : "bg-[#F4EFEA] text-[#121110] border-[#121110]/10 hover:border-[#121110]/30"
+                              ? "bg-white text-[#0B0A09] border-white font-semibold shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                              : "bg-[#1A1713] text-[#A39E93] border-white/10 hover:border-[#F59E0B]/40 hover:text-white"
                           }`}
                         >
                           <span className="leading-relaxed">{opt.text}</span>
                           <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-0 ${
-                            isSelected ? "border-[#F4EFEA] bg-[#F4EFEA]" : "border-[#121110]/30"
+                            isSelected ? "border-[#0B0A09] bg-[#0B0A09]" : "border-white/30"
                           }`}>
-                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#121110]" />}
+                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </span>
                         </button>
                       );

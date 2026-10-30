@@ -22,39 +22,39 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#F4EFEA] text-[#121110] relative selection:bg-[#9A7B56]/20">
+    <main className="min-h-screen bg-[#0B0A09] text-white relative selection:bg-[#F59E0B] selection:text-[#0B0A09]">
       <Navbar />
 
       {/* Hero Section */}
       <section className="pt-16 sm:pt-24 md:pt-32 pb-16 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EBE3DA] border border-[#121110]/10 text-[#9A7B56] text-xs font-mono uppercase tracking-[0.2em] mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1713] border border-white/10 text-[#F59E0B] text-xs font-mono uppercase tracking-[0.2em] mb-6 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
             <Compass className="w-3.5 h-3.5" />
             <span>01 — Our Mission & Manifesto</span>
           </div>
 
-          <h1 className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-editorial text-[#121110] leading-[1.04] mb-8">
-            Bringing institutional <span className="font-serif-italic font-light text-[#9A7B56]">discipline</span>,
+          <h1 className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-editorial text-white leading-[1.04] mb-8">
+            Bringing institutional <span className="font-serif-italic font-light text-[#F59E0B]">discipline</span>,
             calm design, and regulatory clarity to Indian wealth.
           </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl text-[#5C5752] leading-relaxed max-w-3xl">
+          <p className="text-base sm:text-lg lg:text-xl text-[#A39E93] leading-relaxed max-w-3xl">
             Baskly was engineered to replace speculative, casino-like crypto exchanges with institutional calm, rule-based index baskets, automated monthly rebalancing, and native rupee SIPs.
           </p>
         </div>
       </section>
 
       {/* The Problem We Solve */}
-      <section className="py-16 sm:py-20 border-t border-[#121110]/10 bg-[#FAF8F5]">
+      <section className="py-16 sm:py-20 border-t border-white/10 bg-[#0E0C0A]/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mb-12 sm:mb-16">
-            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#9A7B56]">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
               02 — The Problem We Solve
             </span>
-            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-[#121110] mt-3 leading-tight">
-              Why retail crypto in India was <span className="font-serif-italic font-normal text-[#9A7B56]">broken</span>.
+            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-white mt-3 leading-tight">
+              Why retail crypto in India was <span className="font-serif-italic font-normal text-[#F59E0B]">broken</span>.
             </h2>
-            <p className="text-sm sm:text-base text-[#5C5752] mt-3 leading-relaxed">
+            <p className="text-sm sm:text-base text-[#A39E93] mt-3 leading-relaxed">
               For years, everyday Indian investors navigating digital assets faced four systemic barriers designed against their long-term success.
             </p>
           </div>
@@ -62,52 +62,52 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {/* Problem 1 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-[#B85D43]/10 text-[#B85D43] flex items-center justify-center font-mono text-sm font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
                 01
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[#121110] tracking-editorial">
+              <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 Emotional Speculation & Day-Trading
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Traditional exchanges are structured like casinos—flashing red and green charts to provoke impulsive trades. Statistical studies consistently indicate that over 90% of active retail traders lose capital trying to time short-term momentum.
               </p>
             </div>
 
             {/* Problem 2 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-[#B85D43]/10 text-[#B85D43] flex items-center justify-center font-mono text-sm font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
                 02
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[#121110] tracking-editorial">
+              <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 P2P Bank Freeze Risks & Shady Spreads
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Peer-to-peer (P2P) crypto payments expose Indian bank accounts to unwarranted cybercrime liens, predatory USDT conversion premiums, and opaque settlement counterparties.
               </p>
             </div>
 
             {/* Problem 3 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-[#B85D43]/10 text-[#B85D43] flex items-center justify-center font-mono text-sm font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
                 03
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[#121110] tracking-editorial">
+              <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 Tax & Compliance Anxiety
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 The Indian Finance Act 2022 established flat 30% VDA taxation, zero loss set-off, and mandatory 1% Section 194S TDS. Calculating, recording, and reporting individual trades across exchanges creates immense filing friction for taxpayers and Chartered Accountants.
               </p>
             </div>
 
             {/* Problem 4 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-[#B85D43]/10 text-[#B85D43] flex items-center justify-center font-mono text-sm font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
                 04
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-[#121110] tracking-editorial">
+              <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 Token Picking Fatigue
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 With thousands of speculative digital assets created weekly, guessing which individual coin will survive long-term compounding cycles is nearly impossible. Broad index baskets remove this guesswork entirely.
               </p>
             </div>
@@ -118,13 +118,13 @@ export default function AboutPage() {
       {/* What Baskly Actually Does */}
       <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-3xl mb-12 sm:mb-16">
-          <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#9A7B56]">
+          <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
             03 — The Baskly Solution
           </span>
-          <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-[#121110] mt-3 leading-tight">
-            How Baskly works for <span className="font-serif-italic font-normal text-[#9A7B56]">Indian</span> investors.
+          <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-white mt-3 leading-tight">
+            How Baskly works for <span className="font-serif-italic font-normal text-[#F59E0B]">Indian</span> investors.
           </h2>
-          <p className="text-sm sm:text-base text-[#5C5752] mt-3 leading-relaxed">
+          <p className="text-sm sm:text-base text-[#A39E93] mt-3 leading-relaxed">
             Every feature on Baskly is engineered for long-horizon compounding, absolute liquidity, and peace of mind.
           </p>
         </div>
@@ -133,17 +133,17 @@ export default function AboutPage() {
           {/* Feature 1 */}
           <div className="tilt-card p-6 sm:p-8 flex flex-col justify-between">
             <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#0F6E56]/10 text-[#0F6E56] flex items-center justify-center mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 flex items-center justify-center mb-6">
                 <Layers className="w-5 h-5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#121110] tracking-editorial mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white tracking-editorial mb-2">
                 6 Thematic Baskets
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Market-cap weighted indices ranging from Top-5 Bluechips and Crypto + Gold Reserve to Pure Bitcoin Sovereign, Ethereum Settlement Layer, and DeFi Protocol Architects.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#121110]/10 font-mono text-[11px] text-[#0F6E56]">
+            <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
               ● Diversified Core
             </div>
           </div>
@@ -151,17 +151,17 @@ export default function AboutPage() {
           {/* Feature 2 */}
           <div className="tilt-card p-6 sm:p-8 flex flex-col justify-between">
             <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#9A7B56]/15 text-[#9A7B56] flex items-center justify-center mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 flex items-center justify-center mb-6">
                 <RefreshCw className="w-5 h-5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#121110] tracking-editorial mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white tracking-editorial mb-2">
                 Automated 30-Day Rebalancing
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Our quantitative engine realigns portfolio drift every month—trimming assets that appreciated beyond their allocation to lock in gains and accumulating quality laggards at discount prices.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#121110]/10 font-mono text-[11px] text-[#0F6E56]">
+            <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
               ● Zero Emotional Bias
             </div>
           </div>
@@ -169,17 +169,17 @@ export default function AboutPage() {
           {/* Feature 3 */}
           <div className="tilt-card p-6 sm:p-8 flex flex-col justify-between">
             <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#121110]/8 text-[#121110] flex items-center justify-center mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-white/10 text-white border border-white/10 flex items-center justify-center mb-6">
                 <IndianRupee className="w-5 h-5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#121110] tracking-editorial mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white tracking-editorial mb-2">
                 Native NPCI UPI AutoPay
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Connect your Indian bank account via Google Pay, PhonePe, Paytm, or BHIM. Automated recurring monthly debits with 0% lock-in and 1-click mandate cancellation anytime.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#121110]/10 font-mono text-[11px] text-[#0F6E56]">
+            <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
               ● Direct Banking Rails
             </div>
           </div>
@@ -187,17 +187,17 @@ export default function AboutPage() {
           {/* Feature 4 */}
           <div className="tilt-card p-6 sm:p-8 flex flex-col justify-between">
             <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#0F6E56]/10 text-[#0F6E56] flex items-center justify-center mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 flex items-center justify-center mb-6">
                 <FileCheck2 className="w-5 h-5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#121110] tracking-editorial mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white tracking-editorial mb-2">
                 Section 194S 1% TDS Automated
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Every redemption automatically deducts the statutory 1% TDS and deposits it against your PAN. Instantly download ready-to-file Form 26AS reports for seamless tax compliance.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#121110]/10 font-mono text-[11px] text-[#0F6E56]">
+            <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
               ● CA-Ready Ledger
             </div>
           </div>
@@ -205,17 +205,17 @@ export default function AboutPage() {
           {/* Feature 5 */}
           <div className="tilt-card p-6 sm:p-8 flex flex-col justify-between">
             <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#9A7B56]/15 text-[#9A7B56] flex items-center justify-center mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 flex items-center justify-center mb-6">
                 <Lock className="w-5 h-5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#121110] tracking-editorial mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white tracking-editorial mb-2">
                 1:1 Segregated Cold Custody
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Every unit issued is backed 100% by physical underlying assets held in segregated multi-signature cold vaults. We practice zero lending, zero re-hypothecation, and zero leverage.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#121110]/10 font-mono text-[11px] text-[#0F6E56]">
+            <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
               ● Proof of Reserves
             </div>
           </div>
@@ -223,17 +223,17 @@ export default function AboutPage() {
           {/* Feature 6 */}
           <div className="tilt-card p-6 sm:p-8 flex flex-col justify-between">
             <div>
-              <div className="w-11 h-11 rounded-2xl bg-[#121110]/8 text-[#121110] flex items-center justify-center mb-6">
+              <div className="w-11 h-11 rounded-2xl bg-white/10 text-white border border-white/10 flex items-center justify-center mb-6">
                 <Cpu className="w-5 h-5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-[#121110] tracking-editorial mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white tracking-editorial mb-2">
                 Live Pricing Oracle & Circuit Breaker
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Transparent NAV calculations anchored to ₹100.00 base. Live pricing feeds from Binance WebSocket and CoinDCX INR conversion, with an automated Circuit Breaker that freezes updates during market decoupling.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#121110]/10 font-mono text-[11px] text-[#0F6E56]">
+            <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
               ● Institutional Safeguard
             </div>
           </div>
@@ -241,46 +241,46 @@ export default function AboutPage() {
       </section>
 
       {/* Core Principles */}
-      <section className="py-16 sm:py-24 border-t border-[#121110]/10 bg-[#FAF8F5]">
+      <section className="py-16 sm:py-24 border-t border-white/10 bg-[#0E0C0A]/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mb-12 sm:mb-16">
-            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#9A7B56]">
+            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
               04 — Guiding Principles
             </span>
-            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-[#121110] mt-3 leading-tight">
-              The values that dictate our <span className="font-serif-italic font-normal text-[#9A7B56]">code</span>.
+            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-white mt-3 leading-tight">
+              The values that dictate our <span className="font-serif-italic font-normal text-[#F59E0B]">code</span>.
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-            <div className="p-6 rounded-2xl bg-[#F4EFEA] border border-[#121110]/10 space-y-3">
-              <div className="font-mono text-xs text-[#9A7B56]">01 / METHODOLOGY</div>
-              <h3 className="text-lg font-semibold text-[#121110]">Compounding over Timing</h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+            <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
+              <div className="font-mono text-xs text-[#F59E0B]">01 / METHODOLOGY</div>
+              <h3 className="text-lg font-semibold text-white">Compounding over Timing</h3>
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Rupee-Cost Averaging across market cycles consistently beats emotional market timing for 99% of wealth builders.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#F4EFEA] border border-[#121110]/10 space-y-3">
-              <div className="font-mono text-xs text-[#9A7B56]">02 / COMPLIANCE</div>
-              <h3 className="text-lg font-semibold text-[#121110]">Compliance by Design</h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+            <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
+              <div className="font-mono text-xs text-[#F59E0B]">02 / COMPLIANCE</div>
+              <h3 className="text-lg font-semibold text-white">Compliance by Design</h3>
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 We operate strictly within the legal framework of Indian VDA taxation, PAN verification, and direct banking rails.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#F4EFEA] border border-[#121110]/10 space-y-3">
-              <div className="font-mono text-xs text-[#9A7B56]">03 / INTEGRITY</div>
-              <h3 className="text-lg font-semibold text-[#121110]">Radical Transparency</h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+            <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
+              <div className="font-mono text-xs text-[#F59E0B]">03 / INTEGRITY</div>
+              <h3 className="text-lg font-semibold text-white">Radical Transparency</h3>
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Zero hidden exit loads, zero withdrawal penalties, and 100% public visibility into basket weights and live NAV math.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#F4EFEA] border border-[#121110]/10 space-y-3">
-              <div className="font-mono text-xs text-[#9A7B56]">04 / EXPERIENCE</div>
-              <h3 className="text-lg font-semibold text-[#121110]">Institutional Calm</h3>
-              <p className="text-xs sm:text-sm text-[#5C5752] leading-relaxed">
+            <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
+              <div className="font-mono text-xs text-[#F59E0B]">04 / EXPERIENCE</div>
+              <h3 className="text-lg font-semibold text-white">Institutional Calm</h3>
+              <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 An Apple-minimalist alabaster palette designed to inspire discipline, focus, and peace of mind rather than FOMO.
               </p>
             </div>
@@ -290,28 +290,28 @@ export default function AboutPage() {
 
       {/* CTA Box */}
       <section className="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="rounded-3xl bg-[#121110] text-[#F4EFEA] p-8 sm:p-12 md:p-16 relative overflow-hidden text-center max-w-4xl mx-auto shadow-2xl">
+        <div className="rounded-3xl bg-[#13110F] text-white p-8 sm:p-12 md:p-16 relative overflow-hidden text-center max-w-4xl mx-auto border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)]">
           <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#C8A97E]">
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
               Disciplined Wealth Building
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-editorial leading-tight">
-              Ready to start your systematic <span className="font-serif-italic font-normal text-[#C8A97E]">Rupee SIP</span>?
+              Ready to start your systematic <span className="font-serif-italic font-normal text-[#F59E0B]">Rupee SIP</span>?
             </h2>
-            <p className="text-sm sm:text-base text-[#BDB5AB] leading-relaxed">
+            <p className="text-sm sm:text-base text-[#A39E93] leading-relaxed">
               Explore the 6 curated baskets, calculate your compound returns, or automate your monthly debit via UPI AutoPay in under 3 minutes.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/#baskets"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#FAF8F5] text-[#121110] font-semibold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#EBE3DA] transition-all cursor-pointer"
+                className="btn-unseen w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.2)]"
               >
                 <span>Explore Baskets</span>
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/#calculator"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-[#FAF8F5]/20 text-[#FAF8F5] font-medium text-xs sm:text-sm hover:bg-white/10 transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white hover:border-[#F59E0B] hover:text-[#F59E0B] font-medium text-xs sm:text-sm transition-all cursor-pointer"
               >
                 <span>Run Compounding Calculator</span>
               </Link>

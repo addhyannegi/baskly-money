@@ -235,20 +235,20 @@ export default function BasketInspectorModal() {
     >
       {/* Dialog Card Container - strict flex column with max-h-[92vh] to guarantee full scrollability */}
       <div
-        className="tilt-card bg-[#FAF8F5] max-w-2xl w-full max-h-[92vh] flex flex-col rounded-3xl border border-[#121110]/15 shadow-2xl overflow-hidden"
+        className="tilt-card bg-[#13110F]/95 backdrop-blur-2xl max-w-2xl w-full max-h-[92vh] flex flex-col rounded-3xl border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] overflow-hidden text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Fixed Header (index.html lines 722-731) */}
-        <div className="flex items-start justify-between p-5 sm:p-8 pb-4 border-b border-[#121110]/10 bg-[#FAF8F5] flex-shrink-0 z-10 gap-3">
+        <div className="flex items-start justify-between p-5 sm:p-8 pb-4 border-b border-white/10 bg-[#13110F]/90 flex-shrink-0 z-10 gap-3">
           <div>
-            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#9A7B56]">
+            <span className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#F59E0B]">
               Basket Specification
             </span>
-            <h3 id="modal-basket-name" className="text-xl sm:text-3xl font-semibold text-[#121110] tracking-editorial mt-1">
+            <h3 id="modal-basket-name" className="text-xl sm:text-3xl font-semibold text-white tracking-editorial mt-1">
               {basket.name.includes(basket.serifWord) ? (
                 <>
                   {basket.name.split(basket.serifWord)[0]}
-                  <span className="font-serif-italic font-normal text-2xl sm:text-4xl text-[#121110]">
+                  <span className="font-serif-italic font-normal text-2xl sm:text-4xl text-[#F59E0B]">
                     {basket.serifWord}
                   </span>
                   {basket.name.split(basket.serifWord)[1]}
@@ -257,12 +257,12 @@ export default function BasketInspectorModal() {
                 basket.name
               )}
             </h3>
-            <p id="modal-basket-tagline" className="text-xs text-[#5C5752] mt-0.5 sm:mt-1">{basket.tagline}</p>
+            <p id="modal-basket-tagline" className="text-xs text-[#A39E93] mt-0.5 sm:mt-1">{basket.tagline}</p>
           </div>
           <button
             type="button"
             onClick={handleClose}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#121110]/15 flex items-center justify-center text-sm text-[#121110] hover:bg-[#121110] hover:text-[#F4EFEA] transition cursor-pointer flex-shrink-0"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/15 flex items-center justify-center text-sm text-white/80 hover:bg-white hover:text-[#0B0A09] transition cursor-pointer flex-shrink-0"
             title="Close (Esc)"
           >
             ✕
@@ -272,49 +272,49 @@ export default function BasketInspectorModal() {
         {/* Scrollable Body Content (index.html lines 733-809) */}
         <div className="flex-1 overflow-y-auto overscroll-contain p-5 sm:p-8 pt-4 space-y-5 sm:space-y-6">
           {/* Executive Overview */}
-          <p id="modal-basket-desc" className="text-xs text-[#5C5752] leading-relaxed bg-[#F4EFEA] p-3.5 sm:p-4 rounded-2xl border border-[#121110]/8">
+          <p id="modal-basket-desc" className="text-xs text-[#D4CFC7] leading-relaxed bg-[#1A1713]/80 p-3.5 sm:p-4 rounded-2xl border border-white/5">
             {basket.description}
           </p>
 
           {/* Key Metrics Strip (index.html lines 736-753) */}
           <div className="grid grid-cols-2 xs:grid-cols-4 gap-2 text-center">
-            <div className="bg-[#F4EFEA] p-2.5 sm:p-3 rounded-xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase text-[#8C857B]">Unit NAV</div>
-              <div id="modal-basket-nav" className="text-xs font-bold text-[#121110] font-mono mt-0.5">
+            <div className="bg-[#1A1713]/80 p-2.5 sm:p-3 rounded-xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase text-[#A39E93]">Unit NAV</div>
+              <div id="modal-basket-nav" className="text-xs font-bold text-white font-mono mt-0.5">
                 ₹{basket.nav.toFixed(2)}
               </div>
             </div>
-            <div className="bg-[#F4EFEA] p-2.5 sm:p-3 rounded-xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase text-[#8C857B]">Rebalance</div>
-              <div className="text-xs font-bold text-[#121110] mt-0.5">Monthly</div>
+            <div className="bg-[#1A1713]/80 p-2.5 sm:p-3 rounded-xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase text-[#A39E93]">Rebalance</div>
+              <div className="text-xs font-bold text-white mt-0.5">Monthly</div>
             </div>
-            <div className="bg-[#F4EFEA] p-2.5 sm:p-3 rounded-xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase text-[#8C857B]">Expense</div>
-              <div id="modal-basket-fee" className="text-xs font-bold text-[#121110] font-mono mt-0.5">
+            <div className="bg-[#1A1713]/80 p-2.5 sm:p-3 rounded-xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase text-[#A39E93]">Expense</div>
+              <div id="modal-basket-fee" className="text-xs font-bold text-white font-mono mt-0.5">
                 {basket.fee_pct}% p.a.
               </div>
             </div>
-            <div className="bg-[#F4EFEA] p-2.5 sm:p-3 rounded-xl border border-[#121110]/8">
-              <div className="font-mono text-[9px] uppercase text-[#8C857B]">Hist. CAGR</div>
-              <div id="modal-basket-cagr" className="text-xs font-bold text-[#0F6E56] font-mono mt-0.5">
+            <div className="bg-[#1A1713]/80 p-2.5 sm:p-3 rounded-xl border border-white/5">
+              <div className="font-mono text-[9px] uppercase text-[#A39E93]">Hist. CAGR</div>
+              <div id="modal-basket-cagr" className="text-xs font-bold text-[#10B981] font-mono mt-0.5">
                 {basket.expected_cagr}%
               </div>
             </div>
           </div>
 
           {/* ==================== FUND PRO PERFORMANCE CHART (index.html lines 756-804) ==================== */}
-          <div className="p-4 rounded-2xl bg-[#F4EFEA] border border-[#121110]/8 space-y-3">
+          <div className="p-4 rounded-2xl bg-[#1A1713]/80 border border-white/5 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <div className="font-mono text-[10px] uppercase tracking-widest text-[#8C857B]">
+                <div className="font-mono text-[10px] uppercase tracking-widest text-[#A39E93]">
                   Interactive Fund Trajectory
                 </div>
-                <div id="chart-hover-display" className="font-mono text-xs font-semibold text-[#121110] mt-0.5">
-                  Current NAV: <span id="chart-hover-nav" className="text-[#0F6E56] font-bold">₹{currentNav.toFixed(2)}</span>{" "}
+                <div id="chart-hover-display" className="font-mono text-xs font-semibold text-white mt-0.5">
+                  Current NAV: <span id="chart-hover-nav" className="text-[#10B981] font-bold">₹{currentNav.toFixed(2)}</span>{" "}
                   <span
                     id="chart-hover-return"
-                    className={`text-[11px] font-mono px-1.5 py-0.5 rounded ml-1 ${
-                      isPos ? "text-[#0F6E56] bg-[#0F6E56]/10" : "text-rose-700 bg-rose-100"
+                    className={`text-[11px] font-mono px-1.5 py-0.5 rounded ml-1 border ${
+                      isPos ? "text-[#10B981] bg-[#10B981]/15 border-[#10B981]/30" : "text-rose-400 bg-rose-500/15 border-rose-500/30"
                     }`}
                   >
                     {returnLabel}
@@ -323,7 +323,7 @@ export default function BasketInspectorModal() {
               </div>
 
               {/* Timeframe Controls (1D, 1W, 1M, 1Y, 5Y) */}
-              <div className="flex items-center gap-1 bg-[#FAF8F5] p-1 rounded-full border border-[#121110]/10 font-mono text-[10px]">
+              <div className="flex items-center gap-1 bg-[#100E0C] p-1 rounded-full border border-white/10 font-mono text-[10px]">
                 {(["1D", "1W", "1M", "1Y", "5Y"] as const).map((tf) => (
                   <button
                     key={tf}
@@ -335,8 +335,8 @@ export default function BasketInspectorModal() {
                     }}
                     className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
                       timeframe === tf
-                        ? "bg-[#121110] text-[#F4EFEA] font-bold shadow-xs"
-                        : "text-[#5C5752] hover:text-[#121110]"
+                        ? "bg-white text-[#0B0A09] font-bold shadow-xs"
+                        : "text-[#A39E93] hover:text-white"
                     }`}
                   >
                     {tf}
@@ -348,7 +348,7 @@ export default function BasketInspectorModal() {
             {/* Interactive Vector Trajectory Chart Container (index.html lines 777-783) */}
             <div
               id="modal-chart-container"
-              className="relative w-full h-56 rounded-xl bg-[#FAF8F5] border border-[#121110]/5 overflow-hidden select-none"
+              className="relative w-full h-56 rounded-xl bg-[#0B0A09] border border-white/10 overflow-hidden select-none"
             >
               <svg
                 ref={chartSvgRef}
@@ -360,7 +360,7 @@ export default function BasketInspectorModal() {
               >
                 <defs>
                   <linearGradient id={modalGradId} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={strokeColor} stopOpacity="0.25" />
+                    <stop offset="0%" stopColor={strokeColor} stopOpacity="0.35" />
                     <stop offset="100%" stopColor={strokeColor} stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
@@ -373,14 +373,14 @@ export default function BasketInspectorModal() {
                       y1={gl.y}
                       x2="576"
                       y2={gl.y}
-                      stroke="#121110"
-                      strokeOpacity="0.06"
+                      stroke="#FFFFFF"
+                      strokeOpacity="0.08"
                       strokeDasharray="3 3"
                     />
                     <text
                       x="24"
                       y={gl.y - 4}
-                      fill="#8C857B"
+                      fill="#A39E93"
                       fontSize="9"
                       fontFamily="monospace"
                     >
@@ -416,7 +416,7 @@ export default function BasketInspectorModal() {
                       cy={pts[pts.length - 1].y}
                       r="4.5"
                       fill={strokeColor}
-                      stroke="#FAF8F5"
+                      stroke="#0B0A09"
                       strokeWidth="2"
                     />
                   </g>
@@ -430,17 +430,17 @@ export default function BasketInspectorModal() {
                       y1="20"
                       x2={hoveredPoint.x}
                       y2="204"
-                      stroke="#121110"
+                      stroke="#FFFFFF"
                       strokeWidth="1"
                       strokeDasharray="3 3"
-                      strokeOpacity="0.4"
+                      strokeOpacity="0.3"
                     />
                     <circle
                       cx={hoveredPoint.x}
                       cy={hoveredPoint.y}
                       r="5"
                       fill={strokeColor}
-                      stroke="#FAF8F5"
+                      stroke="#0B0A09"
                       strokeWidth="2"
                     />
                   </g>
@@ -451,7 +451,7 @@ export default function BasketInspectorModal() {
               {hoveredPoint && (
                 <div
                   id="chart-tooltip-badge"
-                  className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 bg-[#121110] text-[#F4EFEA] font-mono text-[10px] py-1.5 px-3 rounded-xl shadow-xl whitespace-nowrap z-20"
+                  className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 bg-[#1A1713] text-white border border-white/15 font-mono text-[10px] py-1.5 px-3 rounded-xl shadow-xl whitespace-nowrap z-20"
                   style={{
                     left: `${(hoveredPoint.x / 600) * 100}%`,
                     top: `${Math.max(14, (hoveredPoint.y / 224) * 100 - 8)}%`,
@@ -464,54 +464,54 @@ export default function BasketInspectorModal() {
 
             {/* Key Statistics Grid (index.html lines 786-803 & app.js lines 974-977) */}
             <div className="grid grid-cols-2 xs:grid-cols-4 gap-1.5 sm:gap-2 pt-1 text-center font-mono text-[9px] sm:text-[10px]">
-              <div className="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
-                <div className="text-[#8C857B] text-[8px] sm:text-[9px] uppercase">52W High</div>
-                <div id="modal-stat-52h" className="font-bold text-[#121110] mt-0.5">₹{(basket.nav * 1.08).toFixed(2)}</div>
+              <div className="bg-[#100E0C] p-2 rounded-lg border border-white/5">
+                <div className="text-[#A39E93] text-[8px] sm:text-[9px] uppercase">52W High</div>
+                <div id="modal-stat-52h" className="font-bold text-white mt-0.5">₹{(basket.nav * 1.08).toFixed(2)}</div>
               </div>
-              <div className="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
-                <div className="text-[#8C857B] text-[8px] sm:text-[9px] uppercase">52W Low</div>
-                <div id="modal-stat-52l" className="font-bold text-[#121110] mt-0.5">₹{(basket.nav * 0.96).toFixed(2)}</div>
+              <div className="bg-[#100E0C] p-2 rounded-lg border border-white/5">
+                <div className="text-[#A39E93] text-[8px] sm:text-[9px] uppercase">52W Low</div>
+                <div id="modal-stat-52l" className="font-bold text-white mt-0.5">₹{(basket.nav * 0.96).toFixed(2)}</div>
               </div>
-              <div className="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
-                <div className="text-[#8C857B] text-[8px] sm:text-[9px] uppercase">Max Drawdown</div>
-                <div id="modal-stat-dd" className="font-bold text-rose-700 mt-0.5">-3.4%</div>
+              <div className="bg-[#100E0C] p-2 rounded-lg border border-white/5">
+                <div className="text-[#A39E93] text-[8px] sm:text-[9px] uppercase">Max Drawdown</div>
+                <div id="modal-stat-dd" className="font-bold text-rose-400 mt-0.5">-3.4%</div>
               </div>
-              <div className="bg-[#FAF8F5] p-2 rounded-lg border border-[#121110]/6">
-                <div className="text-[#8C857B] text-[8px] sm:text-[9px] uppercase">Sharpe Ratio</div>
-                <div id="modal-stat-sharpe" className="font-bold text-[#0F6E56] mt-0.5">2.14</div>
+              <div className="bg-[#100E0C] p-2 rounded-lg border border-white/5">
+                <div className="text-[#A39E93] text-[8px] sm:text-[9px] uppercase">Sharpe Ratio</div>
+                <div id="modal-stat-sharpe" className="font-bold text-[#10B981] mt-0.5">2.14</div>
               </div>
             </div>
           </div>
 
           {/* Constituent Weights & Live Spot INR (index.html lines 806-809 & app.js lines 1224-1241) */}
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-[#8C857B] mb-2">
+            <div className="font-mono text-[10px] uppercase tracking-widest text-[#A39E93] mb-2">
               Constituent Weights & Live Spot INR
             </div>
-            <div id="modal-asset-breakdown" className="divide-y divide-[#121110]/10 border border-[#121110]/10 rounded-2xl px-4 bg-[#FAF8F5]">
+            <div id="modal-asset-breakdown" className="divide-y divide-white/10 border border-white/10 rounded-2xl px-4 bg-[#1A1713]/80">
               {basket.assets.map((asset) => (
-                <div key={asset.symbol} className="flex items-center justify-between py-3 border-b border-[#121110]/10 last:border-0">
+                <div key={asset.symbol} className="flex items-center justify-between py-3 border-b border-white/10 last:border-0">
                   <div className="flex items-center space-x-3">
                     <div
                       className="w-3 h-3 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: asset.color || "#121110" }}
+                      style={{ backgroundColor: asset.color || "#F59E0B" }}
                     />
                     <div>
-                      <div className="text-sm font-semibold text-[#121110]">
-                        {asset.name} <span className="text-xs font-mono text-[#8C857B]">({asset.symbol})</span>
+                      <div className="text-sm font-semibold text-white">
+                        {asset.name} <span className="text-xs font-mono text-[#A39E93]">({asset.symbol})</span>
                       </div>
-                      <div className="text-xs text-[#5C5752] font-mono">
+                      <div className="text-xs text-[#A39E93] font-mono">
                         Spot Price:{" "}
-                        <span id={`modal-spot-${asset.symbol}`} className="font-bold text-[#121110] px-1 rounded transition-colors">
+                        <span id={`modal-spot-${asset.symbol}`} className="font-bold text-white px-1 rounded transition-colors">
                           ₹{formatINR(asset.price_inr)}
                         </span>
-                        <span className="text-[10px] text-[#0F6E56] ml-1">● Live Feed</span>
+                        <span className="text-[10px] text-[#10B981] ml-1">● Live Feed</span>
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-bold text-[#121110] font-mono">{asset.weight}%</div>
-                    <div className="text-[10px] uppercase tracking-wider text-[#8C857B]">Target Weight</div>
+                    <div className="text-sm font-bold text-white font-mono">{asset.weight}%</div>
+                    <div className="text-[10px] uppercase tracking-wider text-[#A39E93]">Target Weight</div>
                   </div>
                 </div>
               ))}
@@ -520,14 +520,14 @@ export default function BasketInspectorModal() {
         </div>
 
         {/* Modal Action Footer (index.html lines 811-814) */}
-        <div className="p-6 sm:p-8 pt-4 border-t border-[#121110]/10 bg-[#FAF8F5] flex-shrink-0">
+        <div className="p-6 sm:p-8 pt-4 border-t border-white/10 bg-[#13110F]/90 flex-shrink-0">
           <button
             type="button"
             onClick={() => {
               handleClose();
               openUPIModal();
             }}
-            className="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+            className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
           >
             <span>
               Start SIP in This Basket (<span id="modal-basket-min">₹{formatINR(basket.min_sip)}/mo</span>) ↗

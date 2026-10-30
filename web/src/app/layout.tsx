@@ -39,7 +39,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`scroll-smooth ${inter.variable} ${dmSans.variable} ${dmSerif.variable}`}>
-      <body suppressHydrationWarning className="min-h-screen bg-[#F4EFEA] text-[#121110] antialiased selection:bg-[#121110] selection:text-[#F4EFEA] font-sans">
+      <body suppressHydrationWarning className="min-h-screen bg-[#0B0A09] text-[#FFFFFF] antialiased selection:bg-[#F59E0B] selection:text-[#0B0A09] font-sans relative">
+        <div className="ambient-glow-top" />
+        <div className="tech-grid-overlay" />
         <div className="noise-overlay" />
         <BasklyProvider>
           {children}
