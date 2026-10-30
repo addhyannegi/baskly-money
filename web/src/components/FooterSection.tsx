@@ -212,7 +212,7 @@ export default function FooterSection() {
             
             {/* Column 1: Brand Section (~400–450px on desktop) */}
             <div className="lg:col-span-4 space-y-4">
-              {/* Brand Logo: Prominent, fixed warm off-white brand identity (no hover color change) */}
+              {/* Brand Logo: Prominent warm amber brand identity (no hover color change) */}
               <Link href="/" className="inline-flex items-center gap-3">
                 <div className="w-[34px] h-[34px] rounded-full bg-[#F59E0B] text-[#0B0A09] flex items-center justify-center font-serif italic text-xl font-bold flex-shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
                   b

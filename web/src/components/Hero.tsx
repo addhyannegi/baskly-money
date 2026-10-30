@@ -141,7 +141,7 @@ export default function Hero() {
                   <div style={{ width: "20%", background: "#4F46E5" }} />
                   <div style={{ width: "10%", background: "#0D9488" }} />
                   <div style={{ width: "8%", background: "#CA8A04" }} />
-                  <div style={{ width: "7%", background: "#1E293B" }} />
+                  <div style={{ width: "7%", background: "#64748B" }} />
                 </div>
                 <div className="grid grid-cols-5 gap-1 sm:gap-1.5 pt-2 text-center">
                   <div className="bg-[#1A1713] py-1.5 sm:py-2 px-0.5 rounded-xl border border-white/10">

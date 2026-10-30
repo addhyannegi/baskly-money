@@ -77,7 +77,7 @@ export default function TrustAndTax() {
           <h3 className="text-2xl xs:text-3xl sm:text-4xl font-semibold text-white tracking-editorial mt-2">
             Questions Indian <span className="font-serif-italic font-normal text-3xl xs:text-4xl sm:text-5xl text-[#F59E0B]">investors</span> ask.
           </h3>
-          <p className="text-xs sm:text-sm text-[#5C5752] mt-2 max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-[#A39E93] mt-2 max-w-xl mx-auto">
             Everything you need to know about Indian VDA taxation, 1% TDS, NPCI UPI AutoPay, and 1:1 custody.
           </p>
         </div>

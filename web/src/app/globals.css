@@ -88,14 +88,6 @@ body {
   z-index: 0;
 }
 
-.ambient-glow-card {
-  box-shadow: 0 0 60px -15px rgba(245, 158, 11, 0.16), 0 20px 40px -15px rgba(0, 0, 0, 0.85);
-}
-
-.ambient-glow-pill {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.20);
-}
-
 /* Technical Subtle Grid Overlay */
 .tech-grid-overlay {
   position: absolute;
