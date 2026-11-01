@@ -185,7 +185,7 @@ INSERT INTO transactions (id, user_id, basket_id, type, amount_inr, units, nav, 
 ('tx_init_1', 'usr_demo_retail', 'top-5-index', 'BUY', 150000.00, 1500.000000, 100.0000, 0.00, 150000.00, 'SETTLED', 'UPI-9921-X992-01'),
 ('tx_init_2', 'usr_demo_retail', 'crypto-gold', 'BUY', 100000.00, 1000.000000, 100.0000, 0.00, 100000.00, 'SETTLED', 'UPI-8841-B884-02'),
 ('tx_init_3', 'usr_demo_retail', 'bitcoin', 'BUY', 50000.00, 500.000000, 100.0000, 0.00, 50000.00, 'SETTLED', 'UPI-7712-A771-03'),
-('tx_auto_4', 'usr_demo_retail', 'top-5-index', 'BUY', 5000.00, 50.000000, 100.0000, 0.00, 50000.00, 'SETTLED', 'UPI-6612-B661-04'),
+('tx_auto_4', 'usr_demo_retail', 'top-5-index', 'BUY', 5000.00, 50.000000, 100.0000, 0.00, 5000.00, 'SETTLED', 'UPI-6612-B661-04'),
 ('tx_auto_5', 'usr_demo_retail', 'crypto-gold', 'BUY', 3000.00, 30.000000, 100.0000, 0.00, 3000.00, 'SETTLED', 'UPI-5512-C551-05'),
 ('tx_auto_6', 'usr_demo_retail', 'top-5-index', 'BUY', 5000.00, 50.000000, 100.0000, 0.00, 5000.00, 'SETTLED', 'UPI-4412-D441-06'),
 ('tx_auto_7', 'usr_demo_retail', 'crypto-gold', 'BUY', 3000.00, 30.000000, 100.0000, 0.00, 3000.00, 'SETTLED', 'UPI-3312-E331-07')

@@ -599,6 +599,17 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
       }
     } catch { }
 
+    try {
+      const metaKey = "baskly_mandate_meta";
+      const existingMeta = JSON.parse(localStorage.getItem(metaKey) || "{}");
+      existingMeta[newMandate.id] = {
+        frequency: newMandate.frequency,
+        weeklyDay: newMandate.weeklyDay,
+        paymentRail: newMandate.paymentRail,
+      };
+      localStorage.setItem(metaKey, JSON.stringify(existingMeta));
+    } catch { }
+
     const updatedPortfolio = {
       ...portfolio,
       mandates: [newMandate, ...portfolio.mandates],
@@ -615,14 +626,43 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     try {
       const data = await fetchPortfolioFromBackend(user.id);
       if (data) {
-        setPortfolio((prev) => ({
-          ...prev,
-          cashBalanceINR: data.cashBalanceINR ?? prev.cashBalanceINR,
-          holdings: data.holdings && data.holdings.length > 0 ? data.holdings : prev.holdings,
-          mandates: data.mandates && data.mandates.length > 0 ? data.mandates : prev.mandates,
-          transactions: data.transactions && data.transactions.length > 0 ? data.transactions : prev.transactions,
-          growthHistory: data.growthHistory && data.growthHistory.length > 0 ? data.growthHistory : prev.growthHistory,
-        }));
+        setPortfolio((prev) => {
+          let savedMeta: Record<string, { frequency?: "Daily" | "Weekly" | "Monthly"; weeklyDay?: string; paymentRail?: "UPI_AUTOPAY" | "ENACH" }> = {};
+          try {
+            savedMeta = JSON.parse(localStorage.getItem("baskly_mandate_meta") || "{}");
+          } catch { }
+
+          const backendIds = new Set((data.mandates || []).map((m: Mandate) => m.id));
+          const mergedMandates: Mandate[] = [
+            ...(data.mandates || []).map((bm: Mandate) => {
+              const existing = prev.mandates.find((m) => m.id === bm.id);
+              const meta = savedMeta[bm.id];
+              const frequency = existing?.frequency || meta?.frequency || bm.frequency || "Monthly";
+              const weeklyDay = existing?.weeklyDay || meta?.weeklyDay || bm.weeklyDay;
+              const paymentRail = existing?.paymentRail || meta?.paymentRail || bm.paymentRail || "UPI_AUTOPAY";
+              return {
+                ...bm,
+                frequency,
+                weeklyDay,
+                paymentRail,
+              };
+            }),
+            ...prev.mandates.filter((m) => !backendIds.has(m.id)),
+          ];
+
+          const updated = {
+            ...prev,
+            cashBalanceINR: data.cashBalanceINR ?? prev.cashBalanceINR,
+            holdings: data.holdings && data.holdings.length > 0 ? data.holdings : prev.holdings,
+            mandates: mergedMandates.length > 0 ? mergedMandates : prev.mandates,
+            transactions: data.transactions && data.transactions.length > 0 ? data.transactions : prev.transactions,
+            growthHistory: data.growthHistory && data.growthHistory.length > 0 ? data.growthHistory : prev.growthHistory,
+          };
+          try {
+            localStorage.setItem("baskly_portfolio_state", JSON.stringify(updated));
+          } catch { }
+          return updated;
+        });
       }
     } catch { }
   };

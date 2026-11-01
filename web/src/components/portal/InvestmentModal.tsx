@@ -24,10 +24,11 @@ export default function InvestmentModal({
   );
 
   useEffect(() => {
-    if (initialBasketId) {
-      setSelectedBasketId(initialBasketId);
+    if (isOpen) {
+      setSelectedBasketId(initialBasketId || baskets[0]?.id || "top-5-index");
+      setIsSuccess(false);
     }
-  }, [initialBasketId, isOpen]);
+  }, [initialBasketId, isOpen, baskets]);
   const [amount, setAmount] = useState<number>(5000);
   const [paymentMethod, setPaymentMethod] = useState<"UPI" | "NETBANKING" | "CASH">("UPI");
   const [isSuccess, setIsSuccess] = useState(false);

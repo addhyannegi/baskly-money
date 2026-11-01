@@ -208,15 +208,10 @@ export default function PortalPage() {
   if (monthlyCommitment > 0) commitmentParts.push(`₹${monthlyCommitment.toLocaleString("en-IN")}/mo`);
 
   const sipCommitmentDisplay = commitmentParts.length > 0 ? commitmentParts.join(" + ") : "₹0";
-  const activeSipAmount = monthlyCommitment;
 
   // Helper to calculate raw Date object for the next execution (strictly in the future)
   const getMandateNextDateObj = (m: Mandate, index: number): Date => {
     return calculateNextMandateDate(m, index);
-  };
-
-  const getMandateNextIsoDate = (m: Mandate, index: number): string => {
-    return getMandateNextDateObj(m, index).toISOString();
   };
 
   const getMandateNextDate = (m: Mandate, index: number): string => {

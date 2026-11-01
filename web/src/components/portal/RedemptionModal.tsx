@@ -28,10 +28,14 @@ export default function RedemptionModal({
   const [selectedBasketId, setSelectedBasketId] = useState<string>(defaultBasketId);
 
   useEffect(() => {
-    if (initialBasketId) {
-      setSelectedBasketId(initialBasketId);
+    if (isOpen) {
+      const active = holdings.filter((h) => h.units > 0);
+      const fallback = initialBasketId || active[0]?.basketId || baskets[0]?.id || "top-5-index";
+      setSelectedBasketId(fallback);
+      setIsSuccess(false);
+      setSettledResult(null);
     }
-  }, [initialBasketId, isOpen]);
+  }, [initialBasketId, isOpen, holdings, baskets]);
   const [amount, setAmount] = useState<number>(5000);
   const [isSuccess, setIsSuccess] = useState(false);
   const [settledResult, setSettledResult] = useState<{ gross: number; tds: number; net: number } | null>(null);

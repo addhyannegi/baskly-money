@@ -229,36 +229,3 @@ export async function fetchManagerSummaryApi(): Promise<any | null> {
     return null;
   }
 }
-
-export async function toggleCircuitBreakerApi(): Promise<boolean | null> {
-  try {
-    const headers = await getAuthHeaders();
-    const res = await fetch(`${BACKEND_BASE_URL}/manager/circuit-breaker`, {
-      method: "POST",
-      headers,
-      credentials: "include",
-    });
-    if (!res.ok) return null;
-    const json: ApiResponse<boolean> = await res.json();
-    return json.success ? json.data : null;
-  } catch {
-    return null;
-  }
-}
-
-export async function executeRebalanceApi(basketId: string, managerName?: string): Promise<any | null> {
-  try {
-    const headers = await getAuthHeaders();
-    const res = await fetch(`${BACKEND_BASE_URL}/manager/rebalance`, {
-      method: "POST",
-      headers,
-      credentials: "include",
-      body: JSON.stringify({ basketId, managerName }),
-    });
-    if (!res.ok) return null;
-    const json: ApiResponse<any> = await res.json();
-    return json.success ? json.data : null;
-  } catch {
-    return null;
-  }
-}
