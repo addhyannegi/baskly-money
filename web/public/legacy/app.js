@@ -1486,38 +1486,62 @@ function selectQuizAnswer(qIdx, optIdx) {
 }
 
 function updateQuizResult() {
-  const totalScore = quizAnswers.reduce((a, b) => a + b, 0);
+  const answeredAnswers = quizAnswers.filter(a => a !== null);
+  const answeredCount = answeredAnswers.length;
 
-  let profile = {
-    title: "Balanced Index Collector",
-    serifWord: "Collector",
-    badge: "Balanced Core",
-    badgeColor: "#0F6E56",
-    desc: "You understand market cycles and want institutional exposure to blue-chip digital assets without emotional day-trading.",
-    recommendedBasket: "Top-5 Bluechip Index + Pure Bitcoin",
-    suggestedSplit: "70% Top-5 Index · 30% Pure Bitcoin"
-  };
+  let profile;
 
-  if (totalScore <= 4) {
+  if (answeredCount === 0) {
     profile = {
-      title: "Prudent Gold-Backed Stacker",
-      serifWord: "Prudent",
-      badge: "Capital Preservation",
-      badgeColor: "#9A7B56",
-      desc: "You value serenity over speed. Blending 50% physical LBMA gold with Bitcoin & Ether cushions drawdowns while beating fiat inflation.",
-      recommendedBasket: "Crypto + Gold Reserve",
-      suggestedSplit: "75% Crypto + Gold · 25% Top-5 Index"
+      title: "Allocation Archetype",
+      serifWord: "Archetype",
+      badge: "Awaiting Calibration",
+      badgeColor: "#8C857B",
+      desc: "Answer the three questions on the right to calibrate your ideal mix of Gold-backed stability, Bitcoin sovereignty, and DeFi growth.",
+      recommendedBasket: "Select preferences to reveal split",
+      suggestedSplit: "3 questions remaining"
     };
-  } else if (totalScore >= 7) {
-    profile = {
-      title: "Sovereign Alpha Architect",
-      serifWord: "Sovereign",
-      badge: "High Conviction",
-      badgeColor: "#9D174D",
-      desc: "You have a multi-year horizon and the temperament to harness volatility across monetary networks and DeFi protocols.",
-      recommendedBasket: "Top-5 Index + DeFi Architects",
-      suggestedSplit: "60% Top-5 Index · 25% Pure BTC · 15% DeFi"
-    };
+  } else {
+    const answeredScore = answeredAnswers.reduce((a, b) => a + b, 0);
+    const projectedScore = (answeredScore / answeredCount) * 3;
+
+    if (projectedScore <= 4.5) {
+      profile = {
+        title: "Prudent Gold-Backed Stacker",
+        serifWord: "Prudent",
+        badge: "Capital Preservation",
+        badgeColor: "#9A7B56",
+        desc: "You value serenity over speed. Blending 50% physical LBMA gold with Bitcoin & Ether cushions drawdowns while beating fiat inflation.",
+        recommendedBasket: "Crypto + Gold Reserve",
+        suggestedSplit: answeredCount === 3
+          ? "75% Crypto + Gold · 25% Top-5 Index"
+          : `${3 - answeredCount} question${3 - answeredCount > 1 ? "s" : ""} remaining`
+      };
+    } else if (projectedScore <= 7.5) {
+      profile = {
+        title: "Balanced Index Collector",
+        serifWord: "Collector",
+        badge: "Balanced Core",
+        badgeColor: "#0F6E56",
+        desc: "You understand market cycles and want institutional exposure to blue-chip digital assets without emotional day-trading.",
+        recommendedBasket: "Top-5 Bluechip Index + Pure Bitcoin",
+        suggestedSplit: answeredCount === 3
+          ? "70% Top-5 Index · 30% Pure Bitcoin"
+          : `${3 - answeredCount} question${3 - answeredCount > 1 ? "s" : ""} remaining`
+      };
+    } else {
+      profile = {
+        title: "Sovereign Alpha Architect",
+        serifWord: "Sovereign",
+        badge: "High Conviction",
+        badgeColor: "#9D174D",
+        desc: "You have a multi-year horizon and the temperament to harness volatility across monetary networks and DeFi protocols.",
+        recommendedBasket: "Top-5 Index + DeFi Architects",
+        suggestedSplit: answeredCount === 3
+          ? "60% Top-5 Index · 25% Pure BTC · 15% DeFi"
+          : `${3 - answeredCount} question${3 - answeredCount > 1 ? "s" : ""} remaining`
+      };
+    }
   }
 
   const badgeEl = document.getElementById('quiz-profile-badge');
@@ -1533,9 +1557,12 @@ function updateQuizResult() {
       `<span class="font-serif-italic font-normal text-3xl">${profile.serifWord}</span>`
     );
   }
-  document.getElementById('quiz-profile-desc').textContent = profile.desc;
-  document.getElementById('quiz-profile-basket').textContent = profile.recommendedBasket;
-  document.getElementById('quiz-profile-split').textContent = profile.suggestedSplit;
+  const descEl = document.getElementById('quiz-profile-desc');
+  if (descEl) descEl.textContent = profile.desc;
+  const basketEl = document.getElementById('quiz-profile-basket');
+  if (basketEl) basketEl.textContent = profile.recommendedBasket;
+  const splitEl = document.getElementById('quiz-profile-split');
+  if (splitEl) splitEl.textContent = profile.suggestedSplit;
 }
 
 // ============================================================================

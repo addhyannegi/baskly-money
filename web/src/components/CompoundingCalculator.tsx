@@ -188,7 +188,7 @@ export default function CompoundingCalculator() {
                 step={1000} 
                 value={amount} 
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B]"
+                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
               />
               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 min-h-[30px]" suppressHydrationWarning>
                 {mounted ? (
@@ -236,7 +236,7 @@ export default function CompoundingCalculator() {
                 step={1} 
                 value={years} 
                 onChange={(e) => setYears(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B]"
+                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
               />
               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 min-h-[30px]" suppressHydrationWarning>
                 {mounted ? (
@@ -289,7 +289,7 @@ export default function CompoundingCalculator() {
                 step={1} 
                 value={cagr} 
                 onChange={(e) => setCagr(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B]"
+                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
               />
             </div>
 
