@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { fetchBasketNavHistory } from "@/services/api";
+
 import { Basket } from "@/types/baskly";
 
 interface GrowthChartProps {
@@ -128,19 +128,8 @@ export default function GrowthChart({
     }));
   }, [timeframe, baskets]);
 
-  // Try fetching backend historical snapshots on mount/interval change
-  useEffect(() => {
-    let active = true;
-    const intervalParam = timeframe === "ALL" ? "5Y" : timeframe;
-    fetchBasketNavHistory("top-5-index", intervalParam as any).then((res) => {
-      if (active && res && res.length > 0) {
-        // Connected to real Spring Boot backend snapshots
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [timeframe]);
+
+
 
   // Compute displayed bars reacting directly to activeFund benchmark
   const displayedBars = useMemo(() => {

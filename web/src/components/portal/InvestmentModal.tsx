@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Basket } from "@/types/baskly";
 import { ArrowUpRight, Zap, ShieldCheck, CheckCircle2 } from "lucide-react";
 
@@ -22,6 +22,12 @@ export default function InvestmentModal({
   const [selectedBasketId, setSelectedBasketId] = useState<string>(
     initialBasketId || baskets[0]?.id || "top-5-index"
   );
+
+  useEffect(() => {
+    if (initialBasketId) {
+      setSelectedBasketId(initialBasketId);
+    }
+  }, [initialBasketId, isOpen]);
   const [amount, setAmount] = useState<number>(5000);
   const [paymentMethod, setPaymentMethod] = useState<"UPI" | "NETBANKING" | "CASH">("UPI");
   const [isSuccess, setIsSuccess] = useState(false);

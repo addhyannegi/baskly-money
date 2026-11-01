@@ -21,6 +21,7 @@ import {
   toggleMandateApi,
   fetchPortfolioFromBackend
 } from "@/services/api";
+import { calculateNextMandateDate } from "@/utils/mandateDate";
 
 interface BasklyContextType {
   user: User | null;
@@ -136,6 +137,62 @@ const INITIAL_PORTFOLIO: Portfolio = {
       status: "SETTLED",
       bankRef: "NPCI/UPI/819203948172",
     },
+    {
+      id: "tx_auto_3",
+      timestamp: "2026-10-05T09:30:00.000Z",
+      type: "BUY",
+      basketId: "top-5-index",
+      basketName: "Top-5 Bluechip Index",
+      amountINR: 5000.0,
+      units: 50.0,
+      nav: 100.0,
+      tdsINR: 0.0,
+      netAmountINR: 5000.0,
+      status: "SETTLED",
+      bankRef: "NPCI/UPI/910284729104",
+    },
+    {
+      id: "tx_auto_4",
+      timestamp: "2026-09-10T09:30:00.000Z",
+      type: "BUY",
+      basketId: "crypto-gold",
+      basketName: "Crypto + Gold Reserve",
+      amountINR: 3000.0,
+      units: 30.0,
+      nav: 100.0,
+      tdsINR: 0.0,
+      netAmountINR: 3000.0,
+      status: "SETTLED",
+      bankRef: "NPCI/UPI/829104819203",
+    },
+    {
+      id: "tx_auto_5",
+      timestamp: "2026-09-05T09:30:00.000Z",
+      type: "BUY",
+      basketId: "top-5-index",
+      basketName: "Top-5 Bluechip Index",
+      amountINR: 5000.0,
+      units: 50.0,
+      nav: 100.0,
+      tdsINR: 0.0,
+      netAmountINR: 5000.0,
+      status: "SETTLED",
+      bankRef: "NPCI/UPI/739104819204",
+    },
+    {
+      id: "tx_auto_6",
+      timestamp: "2026-08-10T09:30:00.000Z",
+      type: "BUY",
+      basketId: "crypto-gold",
+      basketName: "Crypto + Gold Reserve",
+      amountINR: 3000.0,
+      units: 30.0,
+      nav: 100.0,
+      tdsINR: 0.0,
+      netAmountINR: 3000.0,
+      status: "SETTLED",
+      bankRef: "NPCI/UPI/649104819205",
+    },
   ],
   growthHistory: [
     { month: "May", invested: 100000, value: 100000 },
@@ -190,7 +247,20 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
       if (savedUser) setUser(JSON.parse(savedUser));
 
       const savedPortfolio = localStorage.getItem("baskly_portfolio_state");
-      if (savedPortfolio) setPortfolio(JSON.parse(savedPortfolio));
+      if (savedPortfolio) {
+        const parsed = JSON.parse(savedPortfolio);
+        if (parsed && Array.isArray(parsed.mandates)) {
+          parsed.mandates = parsed.mandates.map((m: Mandate, idx: number) => {
+            const nextObj = calculateNextMandateDate(m, idx);
+            m.nextDebitDate = `${nextObj.getFullYear()}-${String(nextObj.getMonth() + 1).padStart(2, "0")}-${String(nextObj.getDate()).padStart(2, "0")}`;
+            return m;
+          });
+          try {
+            localStorage.setItem("baskly_portfolio_state", JSON.stringify(parsed));
+          } catch { }
+        }
+        setPortfolio(parsed);
+      }
 
       const savedManager = localStorage.getItem("baskly_manager_state");
       if (savedManager) setManager(JSON.parse(savedManager));
@@ -515,7 +585,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const res = await createMandateApi({
-        userId: user?.id || "usr_demo_retail",
+        userId: user?.id || "",
         basketId: payload.basketId,
         monthlyAmountInr: payload.amountINR,
         debitDay: Number(payload.debitDay) || 5,
@@ -523,7 +593,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
       });
       if (res && res.id) {
         newMandate.id = res.id;
-        if (res.nextDebitDate) {
+        if (res.nextDebitDate && payload.frequency === "Monthly") {
           newMandate.nextDebitDate = res.nextDebitDate;
         }
       }
@@ -541,8 +611,9 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const refreshPortfolio = async () => {
+    if (!user || !user.id) return;
     try {
-      const data = await fetchPortfolioFromBackend(user?.id || "usr_demo_retail");
+      const data = await fetchPortfolioFromBackend(user.id);
       if (data) {
         setPortfolio((prev) => ({
           ...prev,

@@ -160,7 +160,15 @@ export default function Navbar() {
                 {user.givenName || user.name.split(" ")[0]}
               </span>
               <Link 
-                href={user.defaultDashboardPath && user.defaultDashboardPath !== "/dashboard/customer" ? user.defaultDashboardPath : (user.role === "FUND_MANAGER" || user.role === "fund_manager" ? "/dashboard/fund-manager" : user.role === "ADMIN" ? "/dashboard/admin" : user.role === "SUPPORT" ? "/dashboard/support" : "/portal")} 
+                href={
+                  user.role?.toUpperCase() === "FUND_MANAGER"
+                    ? (user.defaultDashboardPath || "/dashboard/fund-manager")
+                    : user.role?.toUpperCase() === "ADMIN"
+                    ? (user.defaultDashboardPath || "/dashboard/admin")
+                    : user.role?.toUpperCase() === "SUPPORT"
+                    ? (user.defaultDashboardPath || "/dashboard/support")
+                    : (user.defaultDashboardPath && user.defaultDashboardPath !== "/dashboard/customer" ? user.defaultDashboardPath : "/portal")
+                } 
                 className="text-[10px] font-mono font-bold text-[#0F6E56] hover:underline ml-0.5 sm:ml-1"
               >
                 Dashboard ↗

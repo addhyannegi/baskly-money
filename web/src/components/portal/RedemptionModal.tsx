@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Holding, Basket } from "@/types/baskly";
 import { ShieldCheck, ArrowDownLeft, AlertCircle, Building2, CheckCircle2 } from "lucide-react";
 
@@ -26,6 +26,12 @@ export default function RedemptionModal({
   const activeHoldings = holdings.filter((h) => h.units > 0);
   const defaultBasketId = initialBasketId || activeHoldings[0]?.basketId || "top-5-index";
   const [selectedBasketId, setSelectedBasketId] = useState<string>(defaultBasketId);
+
+  useEffect(() => {
+    if (initialBasketId) {
+      setSelectedBasketId(initialBasketId);
+    }
+  }, [initialBasketId, isOpen]);
   const [amount, setAmount] = useState<number>(5000);
   const [isSuccess, setIsSuccess] = useState(false);
   const [settledResult, setSettledResult] = useState<{ gross: number; tds: number; net: number } | null>(null);

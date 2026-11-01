@@ -54,6 +54,7 @@ import SupportModal from "@/components/portal/SupportModal";
 import PrimeModal from "@/components/portal/PrimeModal";
 import AuthModal from "@/components/modals/AuthModal";
 import { Transaction, Mandate } from "@/types/baskly";
+import { getMandateFrequency, calculateNextMandateDate, formatMandateNextDate } from "@/utils/mandateDate";
 
 export default function PortalPage() {
   const router = useRouter();
@@ -99,6 +100,17 @@ export default function PortalPage() {
   // Modals state
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [selectedBasketIdForModal, setSelectedBasketIdForModal] = useState<string | undefined>(undefined);
+
+  const handleOpenBuyModal = (basketId?: string) => {
+    setSelectedBasketIdForModal(basketId);
+    setIsBuyModalOpen(true);
+  };
+
+  const handleOpenWithdrawModal = (basketId?: string) => {
+    setSelectedBasketIdForModal(basketId);
+    setIsWithdrawModalOpen(true);
+  };
   const [isSIPModalOpen, setIsSIPModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
@@ -143,10 +155,12 @@ export default function PortalPage() {
     };
   }, [isAnyModalOpen]);
 
-  // Refresh data on mount
+  // Trigger portfolio fetch only after user authentication is confirmed
   useEffect(() => {
-    refreshPortfolio();
-  }, []);
+    if (user && user.id) {
+      refreshPortfolio();
+    }
+  }, [user?.id]);
 
   // Calculate live portfolio summary
   let totalInvested = 0;
@@ -174,93 +188,101 @@ export default function PortalPage() {
   const totalReturnPct = totalInvested > 0 ? (totalProfit / totalInvested) * 100 : 0;
   
   const activeMandates = portfolio.mandates.filter((m) => m.status === "ACTIVE");
-  const activeSipAmount = activeMandates.reduce((sum, m) => sum + m.monthlyAmountINR, 0);
 
-  // Helper to determine effective frequency
-  const getMandateFrequency = (m: Mandate, index: number): "Daily" | "Weekly" | "Monthly" => {
-    if (m.frequency) return m.frequency;
-    return "Monthly";
+  // Calculate commitments and labels matching each mandate's actual frequency
+  const dailyCommitment = activeMandates
+    .filter((m, idx) => getMandateFrequency(m, idx) === "Daily")
+    .reduce((sum, m) => sum + m.monthlyAmountINR, 0);
+
+  const weeklyCommitment = activeMandates
+    .filter((m, idx) => getMandateFrequency(m, idx) === "Weekly")
+    .reduce((sum, m) => sum + m.monthlyAmountINR, 0);
+
+  const monthlyCommitment = activeMandates
+    .filter((m, idx) => getMandateFrequency(m, idx) === "Monthly")
+    .reduce((sum, m) => sum + m.monthlyAmountINR, 0);
+
+  const commitmentParts: string[] = [];
+  if (dailyCommitment > 0) commitmentParts.push(`₹${dailyCommitment.toLocaleString("en-IN")}/day`);
+  if (weeklyCommitment > 0) commitmentParts.push(`₹${weeklyCommitment.toLocaleString("en-IN")}/wk`);
+  if (monthlyCommitment > 0) commitmentParts.push(`₹${monthlyCommitment.toLocaleString("en-IN")}/mo`);
+
+  const sipCommitmentDisplay = commitmentParts.length > 0 ? commitmentParts.join(" + ") : "₹0";
+  const activeSipAmount = monthlyCommitment;
+
+  // Helper to calculate raw Date object for the next execution (strictly in the future)
+  const getMandateNextDateObj = (m: Mandate, index: number): Date => {
+    return calculateNextMandateDate(m, index);
   };
 
-  // Helper to format the next date according to the date and frequency fixed during SIP setup
+  const getMandateNextIsoDate = (m: Mandate, index: number): string => {
+    return getMandateNextDateObj(m, index).toISOString();
+  };
+
   const getMandateNextDate = (m: Mandate, index: number): string => {
-    // 1. If nextDebitDate is explicitly set on the mandate, use it directly!
-    if (m.nextDebitDate && typeof m.nextDebitDate === "string") {
-      const parts = m.nextDebitDate.split("T")[0].split("-");
-      if (parts.length === 3) {
-        const y = parseInt(parts[0], 10);
-        const mth = parseInt(parts[1], 10) - 1;
-        const d = parseInt(parts[2], 10);
-        const parsed = new Date(y, mth, d);
-        if (!isNaN(parsed.getTime())) {
-          return parsed.toLocaleDateString("en-IN", {
-            month: "short",
-            day: "2-digit",
-            year: "numeric",
-          });
-        }
-      }
-    }
-
-    // 2. Otherwise calculate accurately based on the frequency and date fixed during setup:
-    const now = new Date();
-    const freq = getMandateFrequency(m, index);
-
-    if (freq === "Daily") {
-      const d = new Date(now);
-      d.setDate(now.getDate() + 1);
-      return d.toLocaleDateString("en-IN", { month: "short", day: "2-digit", year: "numeric" });
-    }
-
-    if (freq === "Weekly") {
-      const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const targetIdx = m.weeklyDay ? daysOfWeek.indexOf(m.weeklyDay) : -1;
-      const currentIdx = now.getDay();
-      let diff = targetIdx >= 0 ? targetIdx - currentIdx : 7;
-      if (diff <= 0) diff += 7;
-      const d = new Date(now);
-      d.setDate(now.getDate() + diff);
-      return d.toLocaleDateString("en-IN", { month: "short", day: "2-digit", year: "numeric" });
-    }
-
-    // Monthly: compute from the debitDay fixed during setup (e.g. 5, 10, 15, 20)
-    let day = Number(m.debitDay);
-    if (!day || isNaN(day) || day < 1 || day > 28) {
-      day = index === 0 ? 5 : 15;
-    }
-
-    let nextYear = now.getFullYear();
-    let nextMonth = now.getMonth();
-
-    if (day <= now.getDate()) {
-      nextMonth += 1;
-      if (nextMonth > 11) {
-        nextMonth = 0;
-        nextYear += 1;
-      }
-    }
-
-    const daysInMonth = new Date(nextYear, nextMonth + 1, 0).getDate();
-    const finalDay = Math.min(day, daysInMonth);
-    const d = new Date(nextYear, nextMonth, finalDay);
-
-    return d.toLocaleDateString("en-IN", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    });
+    return formatMandateNextDate(m, index);
   };
 
-  // Find earliest upcoming debit date among active mandates
-  const earliestMandateDate = activeMandates.length > 0
-    ? activeMandates
-        .map((m, idx) => getMandateNextDate(m, idx))
-        .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] || "Nov 05, 2026"
-    : "Nov 05, 2026";
+  // Helper to find all active mandates executing on the latest upcoming debit date
+  const latestDebitSchedule = activeMandates.length > 0
+    ? (() => {
+        const list = activeMandates
+          .map((m, idx) => {
+            const nextDateObj = getMandateNextDateObj(m, idx);
+            // Local date key (YYYY-MM-DD) to accurately group mandates on the same day
+            const dateKey = `${nextDateObj.getFullYear()}-${String(nextDateObj.getMonth() + 1).padStart(2, "0")}-${String(nextDateObj.getDate()).padStart(2, "0")}`;
+            return {
+              mandate: m,
+              nextDateObj,
+              dateKey,
+              frequency: getMandateFrequency(m, idx),
+            };
+          })
+          .sort((a, b) => a.nextDateObj.getTime() - b.nextDateObj.getTime());
+
+        if (list.length === 0) return null;
+
+        const earliestDateKey = list[0].dateKey;
+        const mandatesOnDate = list.filter((item) => item.dateKey === earliestDateKey);
+        const totalAmount = mandatesOnDate.reduce((sum, item) => sum + item.mandate.monthlyAmountINR, 0);
+        const dateFormatted = list[0].nextDateObj.toLocaleDateString("en-IN", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
+
+        return {
+          dateFormatted,
+          totalAmount,
+          mandates: mandatesOnDate,
+          count: mandatesOnDate.length,
+          detailText:
+            mandatesOnDate.length === 1
+              ? `${mandatesOnDate[0].mandate.basketName} • ${mandatesOnDate[0].frequency}`
+              : `${mandatesOnDate.map((item) => item.mandate.basketName).join(", ")}`,
+        };
+      })()
+    : null;
+
+  const earliestMandateDate = latestDebitSchedule
+    ? latestDebitSchedule.dateFormatted
+    : "No upcoming debits";
+
+  const handleNavigateToAllMandates = () => {
+    setActiveNav("mandates");
+    setTimeout(() => {
+      const el = document.getElementById("all-configured-mandates");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 50);
+  };
 
   // Section 194S TDS calculations across all transactions
   const totalTdsDeducted = portfolio.transactions.reduce((sum, tx) => sum + (tx.tdsINR || 0), 0);
-  const totalNetSettled = portfolio.transactions.reduce((sum, tx) => sum + (tx.netAmountINR || 0), 0);
+  const totalNetSettled = portfolio.transactions
+    .filter((tx) => tx.type === "WITHDRAWAL")
+    .reduce((sum, tx) => sum + (tx.netAmountINR || 0), 0);
 
   // Filtered transactions
   const filteredTransactions = portfolio.transactions.filter((tx) => {
@@ -725,7 +747,7 @@ export default function PortalPage() {
               {/* White Action Pill (+ Add Investment) */}
               <button
                 type="button"
-                onClick={() => setIsBuyModalOpen(true)}
+                onClick={() => handleOpenBuyModal()}
                 className={`px-4 py-2.5 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border ${
                   isDark
                     ? "bg-[#13171B] hover:bg-[#1A2026] text-slate-200 border-[#1E2429]"
@@ -738,7 +760,7 @@ export default function PortalPage() {
               {/* Redeem / Withdraw Pill */}
               <button
                 type="button"
-                onClick={() => setIsWithdrawModalOpen(true)}
+                onClick={() => handleOpenWithdrawModal()}
                 className={`px-4 py-2.5 rounded-full text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border ${
                   isDark
                     ? "bg-[#13171B] hover:bg-[#1A2026] text-rose-400 border-[#1E2429]"
@@ -809,27 +831,60 @@ export default function PortalPage() {
                   </div>
                 </div>
 
-                {/* Card 3: Active Monthly SIP */}
+                {/* Card 3: Latest Auto-Debit */}
                 <div className={`rounded-[26px] p-6 shadow-xs border flex flex-col justify-between min-h-[155px] group transition-colors ${
                   isDark ? "bg-[#13171B] border-[#1E2429]" : "bg-white border-[#DEE5E0]"
                 }`}>
                   <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    <span>Active Auto-Debits</span>
+                    <span>Latest Auto-Debit</span>
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
                       isDark ? "bg-[#1A2026] text-amber-400" : "bg-slate-50 text-slate-400"
                     }`}>
-                      <Calendar className="w-3.5 h-3.5" />
+                      <CalendarClock className="w-3.5 h-3.5" />
                     </div>
                   </div>
+
                   <div className="my-2">
-                    <div className={`text-3xl font-extrabold font-mono tracking-tight flex items-baseline gap-1.5 ${isDark ? "text-white" : "text-slate-900"}`}>
-                      <span>₹{activeSipAmount.toLocaleString("en-IN")}</span>
-                      <span className="text-sm font-semibold font-sans text-slate-400">/mo</span>
-                    </div>
+                    {latestDebitSchedule ? (
+                      <div>
+                        <div className={`text-2xl sm:text-3xl font-extrabold font-mono tracking-tight flex items-baseline gap-2 ${isDark ? "text-white" : "text-slate-900"}`}>
+                          <span>₹{latestDebitSchedule.totalAmount.toLocaleString("en-IN")}</span>
+                          <span className="text-xs font-sans font-medium text-slate-400">
+                            on {earliestMandateDate}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-slate-400 truncate mt-1 font-medium flex items-center gap-1.5" title={latestDebitSchedule.detailText}>
+                          <span className="truncate">{latestDebitSchedule.detailText}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className={`text-xl font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+                          No upcoming debits
+                        </div>
+                        <div className="text-[11px] text-slate-400 mt-1">
+                          No active mandates scheduled
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-xs font-medium flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>● {activeMandates.length} Active Mandates · UPI AutoPay</span>
+
+                  <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100 dark:border-[#1E2429]">
+                    <span className="text-[11px] text-slate-400 font-medium">
+                      {latestDebitSchedule && latestDebitSchedule.count > 1
+                        ? `${latestDebitSchedule.count} debits on this date`
+                        : `${activeMandates.length} Active Mandate${activeMandates.length === 1 ? "" : "s"}`}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleNavigateToAllMandates}
+                      className={`font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer transition text-xs ${
+                        isDark ? "text-emerald-400 hover:text-emerald-300" : "text-[#0B3B24] hover:text-[#072919]"
+                      }`}
+                    >
+                      <span>View All</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
 
@@ -993,7 +1048,7 @@ export default function PortalPage() {
 
                     {/* 2x2 Grid of Mandates with Toggles */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                      {portfolio.mandates.map((m, idx) => {
+                      {portfolio.mandates.slice(0, 4).map((m, idx) => {
                         const isActive = m.status === "ACTIVE";
                         return (
                           <div key={m.id} className={`p-4 rounded-2xl border flex items-center justify-between gap-3 transition ${
@@ -1010,7 +1065,7 @@ export default function PortalPage() {
                                   {m.basketName}
                                 </div>
                                 <div className="text-[11px] text-slate-400 mt-0.5">
-                                  ₹{m.monthlyAmountINR.toLocaleString("en-IN")}/{getMandateFrequency(m, idx) === "Weekly" ? "wk" : "mo"} • {getMandateFrequency(m, idx)} • {isActive ? "Active" : "Paused"}
+                                  ₹{m.monthlyAmountINR.toLocaleString("en-IN")}/{getMandateFrequency(m, idx) === "Weekly" ? "wk" : getMandateFrequency(m, idx) === "Daily" ? "day" : "mo"} • {getMandateFrequency(m, idx)} • {isActive ? "Active" : "Paused"}
                                 </div>
                                 <div className="text-[10px] text-slate-500 font-mono">
                                   Next: {getMandateNextDate(m, idx)}
@@ -1043,7 +1098,7 @@ export default function PortalPage() {
                     <span>NPCI e-Mandate Certified · HDFC / ICICI / SBI Supported</span>
                     <button
                       type="button"
-                      onClick={() => setActiveNav("mandates")}
+                      onClick={handleNavigateToAllMandates}
                       className={`font-semibold hover:underline cursor-pointer ${isDark ? "text-emerald-400" : "text-[#0B3B24]"}`}
                     >
                       View All Mandates ({portfolio.mandates.length}) →
@@ -1069,32 +1124,44 @@ export default function PortalPage() {
                       </span>
                     </div>
 
-                    <p className="text-xs text-emerald-100/80">
+                    <p className="text-xs text-emerald-100/80 mb-3.5">
                       Statutory 1% TDS deducted at redemption & remitted to Income Tax Dept.
                     </p>
 
-                    <div className="grid grid-cols-2 gap-4 my-6">
-                      <div>
-                        <div className="text-[10px] uppercase font-mono tracking-wider text-emerald-200">
-                          TDS REMITTED (1%)
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div className="p-4 rounded-2xl bg-white/10 border border-white/10 flex flex-col justify-between">
+                        <div>
+                          <div className="text-[10px] uppercase font-mono tracking-wider text-emerald-200">
+                            TDS REMITTED (1%)
+                          </div>
+                          <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">
+                            ₹{totalTdsDeducted.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </div>
                         </div>
-                        <div className="text-2xl sm:text-3xl font-extrabold font-mono text-white mt-1 flex items-baseline gap-1">
-                          <span>₹{totalTdsDeducted.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                        <div className="text-[10px] text-emerald-200/70 font-mono mt-2 pt-2 border-t border-white/10 flex items-center justify-between">
+                          <span>TAN BLRB91024D</span>
+                          <span>Auto Challan</span>
                         </div>
                       </div>
 
-                      <div>
-                        <div className="text-[10px] uppercase font-mono tracking-wider text-emerald-200">
-                          NET BANK SETTLED
+                      <div className="p-4 rounded-2xl bg-white/10 border border-white/10 flex flex-col justify-between">
+                        <div>
+                          <div className="text-[10px] uppercase font-mono tracking-wider text-emerald-200">
+                            NET BANK SETTLED
+                          </div>
+                          <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">
+                            ₹{totalNetSettled.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </div>
                         </div>
-                        <div className="text-2xl sm:text-3xl font-extrabold font-mono text-white mt-1 flex items-baseline gap-1">
-                          <span>₹{totalNetSettled.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                        <div className="text-[10px] text-emerald-200/70 font-mono mt-2 pt-2 border-t border-white/10 flex items-center justify-between">
+                          <span>Verified Account</span>
+                          <span>IMPS Rails</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-2">
+                  <div className="pt-3 mt-4 border-t border-white/15 flex items-center gap-3">
                     <button
                       type="button"
                       onClick={handleDownloadTdsReport}
@@ -1242,7 +1309,7 @@ export default function PortalPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setIsBuyModalOpen(true)}
+                    onClick={() => handleOpenBuyModal()}
                     className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
                       isDark ? "bg-emerald-600 hover:bg-emerald-500 text-white" : "bg-[#0B3B24] hover:bg-[#072919] text-white"
                     }`}
@@ -1305,7 +1372,7 @@ export default function PortalPage() {
                             <td className="py-3.5 px-3 text-right space-x-2 font-sans" onClick={(e) => e.stopPropagation()}>
                               <button
                                 type="button"
-                                onClick={() => setIsBuyModalOpen(true)}
+                                onClick={() => handleOpenBuyModal(h.basketId)}
                                 className={`text-xs font-bold hover:underline cursor-pointer ${isDark ? "text-emerald-400" : "text-[#0B3B24]"}`}
                               >
                                 Buy
@@ -1313,7 +1380,7 @@ export default function PortalPage() {
                               <span className="text-slate-600">·</span>
                               <button
                                 type="button"
-                                onClick={() => setIsWithdrawModalOpen(true)}
+                                onClick={() => handleOpenWithdrawModal(h.basketId)}
                                 className={`text-xs font-bold hover:underline cursor-pointer ${isDark ? "text-rose-400" : "text-rose-700"}`}
                               >
                                 Redeem
@@ -1417,9 +1484,9 @@ export default function PortalPage() {
                 <div className={`p-5 rounded-[28px] border shadow-xs transition-colors ${
                   isDark ? "bg-[#13171B] border-[#1E2429]" : "bg-white border-[#DEE5E0]"
                 }`}>
-                  <div className="text-xs text-slate-400 uppercase font-mono font-bold">Total Monthly Commitment</div>
+                  <div className="text-xs text-slate-400 uppercase font-mono font-bold">Total Auto-Debit Commitment</div>
                   <div className={`text-2xl font-bold font-mono mt-1 ${isDark ? "text-white" : "text-slate-900"}`}>
-                    ₹{activeSipAmount.toLocaleString("en-IN")}/mo
+                    {sipCommitmentDisplay}
                   </div>
                   <div className={`text-[11px] font-semibold mt-1 ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>100% On-Schedule Execution</div>
                 </div>
@@ -1446,7 +1513,7 @@ export default function PortalPage() {
               </div>
 
               {/* Detailed Mandates Grid */}
-              <div className="space-y-4">
+              <div id="all-configured-mandates" className="space-y-4">
                 <h3 className={`text-base font-bold ${isDark ? "text-white" : "text-[#0F172A]"}`}>All Configured Auto-Debit Mandates</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1537,7 +1604,7 @@ export default function PortalPage() {
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20">1% Statutory</span>
                   </div>
                   <div className="text-3xl font-bold font-mono my-2">
-                    ₹{totalTdsDeducted > 0 ? totalTdsDeducted.toLocaleString("en-IN") : "4,528"}
+                    ₹{totalTdsDeducted.toLocaleString("en-IN")}
                   </div>
                   <span className="text-[11px] text-emerald-300">Remitted directly under TAN BLRB91024D</span>
                 </div>
@@ -1547,7 +1614,7 @@ export default function PortalPage() {
                 }`}>
                   <span className="text-xs text-slate-400 uppercase font-mono">Net Bank Settlements</span>
                   <div className={`text-3xl font-bold font-mono my-2 ${isDark ? "text-white" : "text-slate-900"}`}>
-                    ₹{totalNetSettled > 0 ? totalNetSettled.toLocaleString("en-IN") : "4,48,272"}
+                    ₹{totalNetSettled.toLocaleString("en-IN")}
                   </div>
                   <span className={`text-[11px] font-semibold ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
                     Credited to Verified Bank (IMPS)
@@ -1735,8 +1802,12 @@ export default function PortalPage() {
       {/* 2. Quick Buy Modal */}
       <InvestmentModal
         isOpen={isBuyModalOpen}
-        onClose={() => setIsBuyModalOpen(false)}
+        onClose={() => {
+          setIsBuyModalOpen(false);
+          setSelectedBasketIdForModal(undefined);
+        }}
         baskets={baskets}
+        initialBasketId={selectedBasketIdForModal}
         onBuySubmit={(basketId, amount) => {
           buyBasket(basketId, amount);
         }}
@@ -1745,10 +1816,14 @@ export default function PortalPage() {
       {/* 3. Quick Withdrawal Modal */}
       <RedemptionModal
         isOpen={isWithdrawModalOpen}
-        onClose={() => setIsWithdrawModalOpen(false)}
+        onClose={() => {
+          setIsWithdrawModalOpen(false);
+          setSelectedBasketIdForModal(undefined);
+        }}
         holdings={portfolio.holdings}
         baskets={baskets}
         userPan={user?.pan || "ABCDE1234F"}
+        initialBasketId={selectedBasketIdForModal}
         onWithdrawSubmit={(basketId, amount) => {
           return withdrawBasket(basketId, amount);
         }}
