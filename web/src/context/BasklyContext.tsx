@@ -632,31 +632,29 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
             savedMeta = JSON.parse(localStorage.getItem("baskly_mandate_meta") || "{}");
           } catch { }
 
-          const backendIds = new Set((data.mandates || []).map((m: Mandate) => m.id));
-          const mergedMandates: Mandate[] = [
-            ...(data.mandates || []).map((bm: Mandate) => {
-              const existing = prev.mandates.find((m) => m.id === bm.id);
-              const meta = savedMeta[bm.id];
-              const frequency = existing?.frequency || meta?.frequency || bm.frequency || "Monthly";
-              const weeklyDay = existing?.weeklyDay || meta?.weeklyDay || bm.weeklyDay;
-              const paymentRail = existing?.paymentRail || meta?.paymentRail || bm.paymentRail || "UPI_AUTOPAY";
-              return {
-                ...bm,
-                frequency,
-                weeklyDay,
-                paymentRail,
-              };
-            }),
-            ...prev.mandates.filter((m) => !backendIds.has(m.id)),
-          ];
+          const mergedMandates: Mandate[] = Array.isArray(data.mandates)
+            ? data.mandates.map((bm: Mandate) => {
+                const existing = prev.mandates.find((m) => m.id === bm.id);
+                const meta = savedMeta[bm.id];
+                const frequency = existing?.frequency || meta?.frequency || bm.frequency || "Monthly";
+                const weeklyDay = existing?.weeklyDay || meta?.weeklyDay || bm.weeklyDay;
+                const paymentRail = existing?.paymentRail || meta?.paymentRail || bm.paymentRail || "UPI_AUTOPAY";
+                return {
+                  ...bm,
+                  frequency,
+                  weeklyDay,
+                  paymentRail,
+                };
+              })
+            : prev.mandates;
 
           const updated = {
             ...prev,
             cashBalanceINR: data.cashBalanceINR ?? prev.cashBalanceINR,
-            holdings: data.holdings && data.holdings.length > 0 ? data.holdings : prev.holdings,
-            mandates: mergedMandates.length > 0 ? mergedMandates : prev.mandates,
-            transactions: data.transactions && data.transactions.length > 0 ? data.transactions : prev.transactions,
-            growthHistory: data.growthHistory && data.growthHistory.length > 0 ? data.growthHistory : prev.growthHistory,
+            holdings: Array.isArray(data.holdings) ? data.holdings : prev.holdings,
+            mandates: mergedMandates,
+            transactions: Array.isArray(data.transactions) ? data.transactions : prev.transactions,
+            growthHistory: Array.isArray(data.growthHistory) && data.growthHistory.length > 0 ? data.growthHistory : prev.growthHistory,
           };
           try {
             localStorage.setItem("baskly_portfolio_state", JSON.stringify(updated));

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Basket } from "@/types/baskly";
 import { ArrowUpRight, Zap, ShieldCheck, CheckCircle2 } from "lucide-react";
 
@@ -22,16 +22,29 @@ export default function InvestmentModal({
   const [selectedBasketId, setSelectedBasketId] = useState<string>(
     initialBasketId || baskets[0]?.id || "top-5-index"
   );
-
-  useEffect(() => {
-    if (isOpen) {
-      setSelectedBasketId(initialBasketId || baskets[0]?.id || "top-5-index");
-      setIsSuccess(false);
-    }
-  }, [initialBasketId, isOpen, baskets]);
   const [amount, setAmount] = useState<number>(5000);
   const [paymentMethod, setPaymentMethod] = useState<"UPI" | "NETBANKING" | "CASH">("UPI");
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const basketsRef = useRef(baskets);
+  basketsRef.current = baskets;
+
+  const wasOpenRef = useRef(false);
+  const prevInitialBasketIdRef = useRef(initialBasketId);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (!wasOpenRef.current) {
+        // Modal just transitioned from closed to open
+        setSelectedBasketId(initialBasketId || basketsRef.current[0]?.id || "top-5-index");
+        setIsSuccess(false);
+      } else if (initialBasketId && initialBasketId !== prevInitialBasketIdRef.current) {
+        setSelectedBasketId(initialBasketId);
+      }
+    }
+    wasOpenRef.current = isOpen;
+    prevInitialBasketIdRef.current = initialBasketId;
+  }, [isOpen, initialBasketId]);
 
   if (!isOpen) return null;
 

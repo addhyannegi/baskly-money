@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Holding, Basket } from "@/types/baskly";
 import { ShieldCheck, ArrowDownLeft, AlertCircle, Building2, CheckCircle2 } from "lucide-react";
 
@@ -26,19 +26,35 @@ export default function RedemptionModal({
   const activeHoldings = holdings.filter((h) => h.units > 0);
   const defaultBasketId = initialBasketId || activeHoldings[0]?.basketId || "top-5-index";
   const [selectedBasketId, setSelectedBasketId] = useState<string>(defaultBasketId);
-
-  useEffect(() => {
-    if (isOpen) {
-      const active = holdings.filter((h) => h.units > 0);
-      const fallback = initialBasketId || active[0]?.basketId || baskets[0]?.id || "top-5-index";
-      setSelectedBasketId(fallback);
-      setIsSuccess(false);
-      setSettledResult(null);
-    }
-  }, [initialBasketId, isOpen, holdings, baskets]);
   const [amount, setAmount] = useState<number>(5000);
   const [isSuccess, setIsSuccess] = useState(false);
   const [settledResult, setSettledResult] = useState<{ gross: number; tds: number; net: number } | null>(null);
+
+  const basketsRef = useRef(baskets);
+  basketsRef.current = baskets;
+
+  const holdingsRef = useRef(holdings);
+  holdingsRef.current = holdings;
+
+  const wasOpenRef = useRef(false);
+  const prevInitialBasketIdRef = useRef(initialBasketId);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (!wasOpenRef.current) {
+        // Modal just transitioned from closed to open
+        const active = holdingsRef.current.filter((h) => h.units > 0);
+        const fallback = initialBasketId || active[0]?.basketId || basketsRef.current[0]?.id || "top-5-index";
+        setSelectedBasketId(fallback);
+        setIsSuccess(false);
+        setSettledResult(null);
+      } else if (initialBasketId && initialBasketId !== prevInitialBasketIdRef.current) {
+        setSelectedBasketId(initialBasketId);
+      }
+    }
+    wasOpenRef.current = isOpen;
+    prevInitialBasketIdRef.current = initialBasketId;
+  }, [isOpen, initialBasketId]);
 
   if (!isOpen) return null;
 
