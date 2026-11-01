@@ -12,6 +12,10 @@ import {
   ArrowUpRight,
   Cpu,
   Layers,
+  TrendingDown,
+  ShieldAlert,
+  FileText,
+  Shuffle,
 } from "lucide-react";
 
 export const metadata = {
@@ -26,19 +30,19 @@ export default function AboutPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-16 sm:pt-24 md:pt-32 pb-16 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="max-w-4xl">
+      <section className="pt-16 sm:pt-24 md:pt-32 2xl:pt-40 pb-16 sm:pb-20 2xl:pb-28 max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
+        <div className="max-w-4xl 2xl:max-w-5xl 3xl:max-w-6xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1713] border border-white/10 text-[#F59E0B] text-xs font-mono uppercase tracking-[0.2em] mb-6 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
             <Compass className="w-3.5 h-3.5" />
-            <span>01 — Our Mission & Manifesto</span>
+            <span>Our Mission & Manifesto</span>
           </div>
 
-          <h1 className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-editorial text-white leading-[1.04] mb-8">
+          <h1 className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl 2xl:text-8xl font-semibold tracking-editorial text-white leading-[1.04] mb-8">
             Bringing institutional <span className="font-serif-italic font-light text-[#F59E0B]">discipline</span>,
             calm design, and regulatory clarity to Indian wealth.
           </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl text-[#A39E93] leading-relaxed max-w-3xl">
+          <p className="text-base sm:text-lg lg:text-xl 2xl:text-2xl text-[#A39E93] leading-relaxed max-w-3xl 2xl:max-w-4xl">
             Baskly was engineered to replace speculative, casino-like crypto exchanges with institutional calm, rule-based index baskets, automated monthly rebalancing, and native rupee SIPs.
           </p>
         </div>
@@ -46,10 +50,10 @@ export default function AboutPage() {
 
       {/* The Problem We Solve */}
       <section className="py-16 sm:py-20 border-t border-white/10 bg-[#0E0C0A]/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
           <div className="max-w-3xl mb-12 sm:mb-16">
             <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
-              02 — The Problem We Solve
+              The Problem We Solve
             </span>
             <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-white mt-3 leading-tight">
               Why retail crypto in India was <span className="font-serif-italic font-normal text-[#F59E0B]">broken</span>.
@@ -62,8 +66,8 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {/* Problem 1 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
-                01
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                <TrendingDown className="w-5 h-5" />
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 Emotional Speculation & Day-Trading
@@ -75,8 +79,8 @@ export default function AboutPage() {
 
             {/* Problem 2 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
-                02
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                <ShieldAlert className="w-5 h-5" />
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 P2P Bank Freeze Risks & Shady Spreads
@@ -88,8 +92,8 @@ export default function AboutPage() {
 
             {/* Problem 3 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
-                03
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                <FileText className="w-5 h-5" />
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 Tax & Compliance Anxiety
@@ -101,8 +105,8 @@ export default function AboutPage() {
 
             {/* Problem 4 */}
             <div className="tilt-card p-6 sm:p-8 space-y-4">
-              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center font-mono text-sm font-bold">
-                04
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                <Shuffle className="w-5 h-5" />
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-editorial">
                 Token Picking Fatigue
@@ -116,10 +120,10 @@ export default function AboutPage() {
       </section>
 
       {/* What Baskly Actually Does */}
-      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6">
+      <section className="py-16 sm:py-24 2xl:py-32 max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
         <div className="max-w-3xl mb-12 sm:mb-16">
           <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
-            03 — The Baskly Solution
+            The Baskly Solution
           </span>
           <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-white mt-3 leading-tight">
             How Baskly works for <span className="font-serif-italic font-normal text-[#F59E0B]">Indian</span> investors.
@@ -144,7 +148,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
-              ● Diversified Core
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-1.5" />Diversified Core
             </div>
           </div>
 
@@ -162,7 +166,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
-              ● Zero Emotional Bias
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-1.5" />Zero Emotional Bias
             </div>
           </div>
 
@@ -180,7 +184,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
-              ● Direct Banking Rails
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-1.5" />Direct Banking Rails
             </div>
           </div>
 
@@ -198,7 +202,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
-              ● CA-Ready Ledger
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-1.5" />CA-Ready Ledger
             </div>
           </div>
 
@@ -216,7 +220,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
-              ● Proof of Reserves
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-1.5" />Proof of Reserves
             </div>
           </div>
 
@@ -234,7 +238,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-[#10B981]">
-              ● Institutional Safeguard
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block mr-1.5" />Institutional Safeguard
             </div>
           </div>
         </div>
@@ -242,10 +246,10 @@ export default function AboutPage() {
 
       {/* Core Principles */}
       <section className="py-16 sm:py-24 border-t border-white/10 bg-[#0E0C0A]/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
           <div className="max-w-3xl mb-12 sm:mb-16">
             <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
-              04 — Guiding Principles
+              Guiding Principles
             </span>
             <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold tracking-editorial text-white mt-3 leading-tight">
               The values that dictate our <span className="font-serif-italic font-normal text-[#F59E0B]">code</span>.
@@ -254,7 +258,7 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
             <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
-              <div className="font-mono text-xs text-[#F59E0B]">01 / METHODOLOGY</div>
+              <div className="font-mono text-xs text-[#F59E0B]">METHODOLOGY</div>
               <h3 className="text-lg font-semibold text-white">Compounding over Timing</h3>
               <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Rupee-Cost Averaging across market cycles consistently beats emotional market timing for 99% of wealth builders.
@@ -262,7 +266,7 @@ export default function AboutPage() {
             </div>
 
             <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
-              <div className="font-mono text-xs text-[#F59E0B]">02 / COMPLIANCE</div>
+              <div className="font-mono text-xs text-[#F59E0B]">COMPLIANCE</div>
               <h3 className="text-lg font-semibold text-white">Compliance by Design</h3>
               <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 We operate strictly within the legal framework of Indian VDA taxation, PAN verification, and direct banking rails.
@@ -270,7 +274,7 @@ export default function AboutPage() {
             </div>
 
             <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
-              <div className="font-mono text-xs text-[#F59E0B]">03 / INTEGRITY</div>
+              <div className="font-mono text-xs text-[#F59E0B]">INTEGRITY</div>
               <h3 className="text-lg font-semibold text-white">Radical Transparency</h3>
               <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 Zero hidden exit loads, zero withdrawal penalties, and 100% public visibility into basket weights and live NAV math.
@@ -278,7 +282,7 @@ export default function AboutPage() {
             </div>
 
             <div className="p-6 rounded-2xl bg-[#13110F] border border-white/10 space-y-3">
-              <div className="font-mono text-xs text-[#F59E0B]">04 / EXPERIENCE</div>
+              <div className="font-mono text-xs text-[#F59E0B]">EXPERIENCE</div>
               <h3 className="text-lg font-semibold text-white">Institutional Calm</h3>
               <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
                 An Apple-minimalist alabaster palette designed to inspire discipline, focus, and peace of mind rather than FOMO.
@@ -289,8 +293,8 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Box */}
-      <section className="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="rounded-3xl bg-[#13110F] text-white p-8 sm:p-12 md:p-16 relative overflow-hidden text-center max-w-4xl mx-auto border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)]">
+      <section className="py-20 sm:py-28 2xl:py-36 max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
+        <div className="rounded-3xl bg-[#13110F] text-white p-8 sm:p-12 md:p-16 2xl:p-20 relative overflow-hidden text-center max-w-4xl 2xl:max-w-5xl 3xl:max-w-6xl mx-auto border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)]">
           <div className="relative z-10 max-w-2xl mx-auto space-y-6">
             <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
               Disciplined Wealth Building
@@ -304,7 +308,7 @@ export default function AboutPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/#baskets"
-                className="btn-unseen w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                className="btn-unseen w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.2)]"
               >
                 <span>Explore Baskets</span>
                 <ArrowUpRight className="w-4 h-4" />

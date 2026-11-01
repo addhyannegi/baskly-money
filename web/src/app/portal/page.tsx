@@ -10,7 +10,8 @@ import {
   ArrowUpRight, 
   ArrowDownLeft, 
   Pause, 
-  Play 
+  Play,
+  X 
 } from "lucide-react";
 import { useBaskly } from "@/context/BasklyContext";
 import { formatINR, formatINRCurrency } from "@/data/baskets";
@@ -88,7 +89,7 @@ export default function PortalPage() {
       
       {/* Header Navigation */}
       <header className="sticky top-0 z-40 bg-[#F4EFEA] border-b border-[#121110]/10 shadow-[0_1px_3px_rgba(18,17,16,0.03)] transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+        <div className="max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16 h-14 sm:h-16 2xl:h-20 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="w-8 h-8 rounded-full bg-[#121110] flex items-center justify-center text-[#F4EFEA] font-serif font-bold text-lg">
@@ -136,7 +137,7 @@ export default function PortalPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16 py-8 2xl:py-12 space-y-8 2xl:space-y-10">
         
         {/* Banner */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#121110]/10">
@@ -215,7 +216,7 @@ export default function PortalPage() {
                 ₹{formatINR(activeSipAmount)}/mo
               </div>
               <div className="flex items-center gap-2 mt-2 text-xs font-mono text-[#0F6E56]">
-                <span>● {portfolio.mandates.filter((m) => m.status === "ACTIVE").length} Mandates Active</span>
+                <span className="inline-flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#0F6E56] inline-block" />{portfolio.mandates.filter((m) => m.status === "ACTIVE").length} Mandates Active</span>
                 <span className="text-[#8C857B]">· UPI AutoPay</span>
               </div>
             </div>
@@ -416,7 +417,7 @@ export default function PortalPage() {
                   onClick={() => setIsBuyModalOpen(false)}
                   className="w-7 h-7 rounded-full border border-[#121110]/15 flex items-center justify-center text-xs cursor-pointer"
                 >
-                  ✕
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
               <form onSubmit={handleBuySubmit} className="space-y-4">
@@ -470,7 +471,7 @@ export default function PortalPage() {
                   onClick={() => setIsWithdrawModalOpen(false)}
                   className="w-7 h-7 rounded-full border border-[#121110]/15 flex items-center justify-center text-xs cursor-pointer"
                 >
-                  ✕
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
               <form onSubmit={handleWithdrawSubmit} className="space-y-4">

@@ -1229,7 +1229,7 @@ function renderModalAssetBreakdown(basket) {
           <div class="text-sm font-semibold text-[#121110]">${asset.name} <span class="text-xs font-mono text-[#8C857B]">(${asset.symbol})</span></div>
           <div class="text-xs text-[#5C5752] font-mono">
             Spot Price: <span id="modal-spot-${asset.symbol}" class="font-bold text-[#121110] px-1 rounded transition-colors">₹${formatINR(asset.price_inr)}</span>
-            <span class="text-[10px] text-[#0F6E56]">● Live Feed</span>
+            <span class="text-[10px] text-[#0F6E56]"><span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Live Feed</span>
           </div>
         </div>
       </div>
@@ -1450,7 +1450,7 @@ const quizQuestions = [
   }
 ];
 
-let quizAnswers = [2, 2, 2];
+let quizAnswers = [null, null, null];
 
 function renderQuiz() {
   const container = document.getElementById('quiz-container');

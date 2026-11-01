@@ -85,11 +85,12 @@ export default function AuthModal() {
       onClick={closeAuthModal}
     >
       <div 
-        className="bg-[#13110F]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-9 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] max-w-[420px] w-full space-y-6 relative animate-in fade-in zoom-in-95 duration-150 text-white"
+        className="bg-[#13110F]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-9 shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_50px_rgba(245,158,11,0.12)] max-w-[420px] w-full max-h-[90vh] overflow-y-auto space-y-6 relative animate-in fade-in zoom-in-95 duration-150 text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
-        <button 
+        <button
+              suppressHydrationWarning 
           type="button"
           onClick={closeAuthModal} 
           aria-label="Close sign in modal"
@@ -132,9 +133,10 @@ export default function AuthModal() {
               <div className="mt-2.5 pt-2 border-t border-amber-500/30 flex items-center justify-between">
                 <span className="text-xs text-amber-300">New to Baskly.money?</span>
                 <button
+              suppressHydrationWarning
                   type="button"
                   onClick={handleCreateAccountClick}
-                  className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-white text-[#0B0A09] text-xs font-semibold hover:bg-[#F59E0B] transition-colors cursor-pointer"
+                  className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-white text-[#0B0A09] text-xs font-semibold hover:bg-[#EAE6DE] transition-colors cursor-pointer"
                 >
                   Create an account
                 </button>
@@ -204,6 +206,7 @@ export default function AuthModal() {
               />
               <Lock className="w-4 h-4 text-[#A39E93] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <button
+              suppressHydrationWarning
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
@@ -215,9 +218,10 @@ export default function AuthModal() {
           </div>
 
           <button
+              suppressHydrationWarning
             type="submit"
             disabled={loading}
-            className="w-full h-11 sm:h-12 rounded-xl bg-white hover:bg-[#F59E0B] text-[#0B0A09] text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-2"
+            className="w-full h-11 sm:h-12 rounded-xl bg-white hover:bg-[#EAE6DE] text-[#0B0A09] text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-50 mt-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             <span>Sign in</span>

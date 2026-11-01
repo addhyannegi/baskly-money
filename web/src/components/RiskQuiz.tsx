@@ -46,14 +46,30 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
 
 export default function RiskQuiz() {
   const { openUPIModal } = useBaskly();
-  const [answers, setAnswers] = useState<number[]>([1, 1, 1]); // default options selected
+  const [answers, setAnswers] = useState<(number | null)[]>([null, null, null]);
 
-  const totalScore = answers.reduce((sum, optIdx, qIdx) => {
+  const answeredCount = answers.filter((a) => a !== null).length;
+  const answeredScore = answers.reduce<number>((sum, optIdx, qIdx) => {
+    if (optIdx === null) return sum;
     return sum + QUIZ_QUESTIONS[qIdx].options[optIdx].points;
   }, 0);
 
   const getProfile = () => {
-    if (totalScore <= 4) {
+    if (answeredCount === 0) {
+      return {
+        badge: "Awaiting Calibration",
+        badgeClass: "bg-white/10 text-[#D8D2C5] border border-white/20",
+        title: "Allocation",
+        serifWord: "Archetype",
+        desc: "Answer the three questions on the right to calibrate your ideal mix of Gold-backed stability, Bitcoin sovereignty, and DeFi growth.",
+        basket: "Select preferences to reveal split",
+        split: "3 questions remaining",
+      };
+    }
+
+    const projectedScore = (answeredScore / answeredCount) * 3;
+
+    if (projectedScore <= 4.5) {
       return {
         badge: "Conservative / Capital Preservation",
         badgeClass: "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30",
@@ -63,7 +79,7 @@ export default function RiskQuiz() {
         basket: "Crypto + Gold Reserve",
         split: "70% Crypto+Gold · 30% Pure Bitcoin",
       };
-    } else if (totalScore <= 7) {
+    } else if (projectedScore <= 7.5) {
       return {
         badge: "Balanced Core",
         badgeClass: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
@@ -95,23 +111,21 @@ export default function RiskQuiz() {
   };
 
   return (
-    <section id="quiz" className="py-16 sm:py-20 md:py-28 bg-[#0E0C0A]/80 border-y border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+    <section id="quiz" className="py-16 sm:py-20 md:py-28 2xl:py-36 bg-[#0E0C0A]/80 border-y border-white/10">
+      <div className="max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 2xl:gap-16 3xl:gap-20 items-start">
           
           {/* Left 5 Cols: Live Archetype Output Card */}
-          <div className="lg:col-span-5 space-y-5 sm:space-y-6">
-            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
-              04 — Risk Calibration
-            </span>
-            <h2 className="text-3xl xs:text-4xl sm:text-5xl font-semibold text-white tracking-editorial leading-[1.06]">
-              Discover your <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl text-[#F59E0B]">allocation</span> archetype.
+          <div className="lg:col-span-5 space-y-5 sm:space-y-6 2xl:space-y-8">
+
+            <h2 className="text-3xl xs:text-4xl sm:text-5xl 2xl:text-6xl font-semibold text-white tracking-editorial leading-[1.06]">
+              Discover your <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl 2xl:text-7xl text-[#F59E0B]">allocation</span> archetype.
             </h2>
-            <p className="text-xs sm:text-sm text-[#A39E93] leading-relaxed">
+            <p className="text-xs sm:text-sm 2xl:text-base text-[#A39E93] leading-relaxed">
               Answer the three questions on the right to calibrate your ideal mix of Gold-backed stability, Bitcoin sovereignty, and DeFi growth.
             </p>
 
-            <div className="tilt-card p-5 sm:p-7 space-y-4 sm:space-y-5 bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
+            <div className="tilt-card p-4 sm:p-7 2xl:p-8 space-y-4 sm:space-y-5 bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
               <div className="tilt-card-content space-y-4">
                 <div className="flex items-center justify-between">
                   <span className={`font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 sm:px-3 py-1 rounded-full ${profile.badgeClass}`}>
@@ -146,17 +160,18 @@ export default function RiskQuiz() {
 
                 <button 
                   type="button"
+                  suppressHydrationWarning
                   onClick={openUPIModal} 
-                  className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                  className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] hover:text-[#0B0A09] py-3.5 text-xs font-semibold uppercase tracking-wider cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.2)]"
                 >
-                  <span>Activate Recommended Split ↗</span>
+                  <span>{answeredCount === 3 ? "Activate Recommended Split ↗" : "Start Mandate SIP ↗"}</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Right 7 Cols: 3-Step Questionnaire */}
-          <div className="lg:col-span-7 tilt-card p-5 sm:p-8 md:p-10 bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
+          <div className="lg:col-span-7 tilt-card p-4 sm:p-8 md:p-10 2xl:p-12 bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
             <div className="tilt-card-content space-y-6 sm:space-y-8">
               {QUIZ_QUESTIONS.map((q, qIdx) => (
                 <div key={qIdx} className="space-y-3 pb-6 border-b border-white/10 last:border-b-0 last:pb-0">
@@ -173,6 +188,7 @@ export default function RiskQuiz() {
                         <button
                           key={optIdx}
                           type="button"
+                          suppressHydrationWarning
                           onClick={() => handleSelect(qIdx, optIdx)}
                           className={`w-full text-left p-3 sm:p-3.5 rounded-xl border text-[11px] sm:text-xs font-medium transition cursor-pointer flex items-start sm:items-center justify-between gap-3 ${
                             isSelected

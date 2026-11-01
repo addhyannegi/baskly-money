@@ -162,7 +162,7 @@ export default function BasketCard({ basket }: BasketCardProps) {
               e.stopPropagation();
               openUPIModal();
             }}
-            className="btn-unseen bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider cursor-pointer flex-shrink-0 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+            className="btn-unseen bg-white text-[#0B0A09] hover:bg-[#EAE6DE] hover:text-[#0B0A09] px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider cursor-pointer flex-shrink-0 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)]"
           >
             <span>SIP</span>
           </button>
