@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useBaskly } from "@/context/BasklyContext";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, X } from "lucide-react";
 import { formatINRCurrency } from "@/data/baskets";
 
 interface TokenPriceRow {
@@ -64,12 +64,13 @@ export default function OracleModal() {
                 Binance WebSocket + CoinDCX USDT/INR + CoinGecko Fallback ({tickCount} Ticks Processed)
               </p>
             </div>
-            <button 
+            <button
+              suppressHydrationWarning 
               type="button"
               onClick={closeOracleModal} 
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/15 flex items-center justify-center text-sm text-white/80 hover:bg-white hover:text-[#0B0A09] transition cursor-pointer flex-shrink-0"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
 
@@ -162,10 +163,11 @@ export default function OracleModal() {
             </p>
           </div>
 
-          <button 
+          <button
+              suppressHydrationWarning 
             type="button"
             onClick={closeOracleModal} 
-            className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] py-3.5 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+            className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] py-3.5 text-xs font-semibold uppercase tracking-widest cursor-pointer"
           >
             <span>Close Telemetry Monitor ↗</span>
           </button>

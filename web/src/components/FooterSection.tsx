@@ -167,19 +167,19 @@ export default function FooterSection() {
   return (
     <>
       {/* Monumental Editorial Footer CTA */}
-      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 max-w-7xl mx-auto">
-        <div className="rounded-[24px] sm:rounded-[32px] bg-[#13110F]/90 border border-[#F59E0B]/30 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.18)] text-white p-6 xs:p-8 sm:p-14 md:p-20 text-center relative overflow-hidden backdrop-blur-xl">
-          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[550px] h-[250px] bg-[#F59E0B]/25 blur-3xl pointer-events-none rounded-full" />
+      <section className="py-16 sm:py-20 md:py-24 2xl:py-32 px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16 max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto">
+        <div className="rounded-[24px] sm:rounded-[32px] bg-[#13110F]/90 border border-[#F59E0B]/30 shadow-[0_20px_60px_-15px_rgba(245,158,11,0.18)] text-white p-6 xs:p-8 sm:p-14 md:p-20 2xl:p-24 text-center relative overflow-hidden backdrop-blur-xl">
+          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[550px] 2xl:w-[800px] h-[250px] 2xl:h-[350px] bg-[#F59E0B]/25 blur-3xl pointer-events-none rounded-full" />
 
-          <div className="relative z-10 max-w-2xl mx-auto space-y-5 sm:space-y-6">
-            <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#F59E0B]">
+          <div className="relative z-10 max-w-2xl 2xl:max-w-3xl mx-auto space-y-5 sm:space-y-6 2xl:space-y-8">
+            <span className="font-mono text-[10px] sm:text-xs 2xl:text-sm uppercase tracking-[0.25em] text-[#F59E0B]">
               Begin Your Habit
             </span>
-            <h2 className="text-3xl xs:text-4xl sm:text-6xl lg:text-7xl font-light tracking-editorial leading-[1.04] sm:leading-[1.02] text-white">
+            <h2 className="text-3xl xs:text-4xl sm:text-6xl lg:text-7xl 2xl:text-8xl font-light tracking-editorial leading-[1.04] sm:leading-[1.02] text-white">
               ₹1,000 a month.<br />
-              <span className="font-serif-italic text-4xl xs:text-5xl sm:text-7xl lg:text-8xl text-[#F59E0B]">Zero</span> chart noise.
+              <span className="font-serif-italic text-4xl xs:text-5xl sm:text-7xl lg:text-8xl 2xl:text-9xl text-[#F59E0B]">Zero</span> chart noise.
             </h2>
-            <p className="text-xs sm:text-sm md:text-base text-[#A39E93] max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-base 2xl:text-lg text-[#A39E93] max-w-lg 2xl:max-w-xl mx-auto leading-relaxed">
               Set your mandate once in 3 minutes. Let mathematical rebalancing and multi-year Rupee-Cost Averaging do the rest.
             </p>
 
@@ -188,13 +188,13 @@ export default function FooterSection() {
                 type="button"
                 suppressHydrationWarning
                 onClick={openUPIModal} 
-                className="btn-unseen bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] px-7 sm:px-9 py-3.5 sm:py-4 text-xs font-bold uppercase tracking-widest cursor-pointer text-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                className="btn-unseen bg-white text-[#0B0A09] hover:bg-[#EAE6DE] hover:text-[#0B0A09] px-7 sm:px-9 2xl:px-11 py-3.5 sm:py-4 2xl:py-5 text-xs 2xl:text-sm font-bold uppercase tracking-widest cursor-pointer text-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]"
               >
                 <span>Start Your ₹1,000 SIP ↗</span>
               </button>
               <Link 
                 href="/#baskets" 
-                className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-white/20 text-white text-xs font-mono uppercase tracking-widest hover:border-[#F59E0B] hover:text-[#F59E0B] transition cursor-pointer text-center justify-center"
+                className="px-6 sm:px-8 2xl:px-10 py-3.5 sm:py-4 2xl:py-5 rounded-full border border-white/20 text-white text-xs 2xl:text-sm font-mono uppercase tracking-widest hover:border-[#F59E0B] hover:text-[#F59E0B] transition cursor-pointer text-center justify-center"
               >
                 Inspect All 06 Baskets
               </Link>
@@ -204,8 +204,8 @@ export default function FooterSection() {
       </section>
 
       {/* Main Footer: Deep Warm Dark Espresso Palette matching BitSave Structure & Proportions */}
-      <footer className="relative z-10 bg-[#0A0908] text-[#F4EFEA] border-t border-white/10 transition-colors">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-[90px] pt-12 sm:pt-16 pb-0">
+      <footer className="relative z-10 bg-[#0A0908] text-[#F4EFEA] transition-colors">
+        <div className="max-w-[1400px] 2xl:max-w-[1680px] 3xl:max-w-[1920px] 4xl:max-w-[2160px] mx-auto px-4 sm:px-8 lg:px-[90px] 2xl:px-[120px] 3xl:px-[160px] pt-12 sm:pt-16 2xl:pt-20 pb-0">
           
           {/* Top 4-Column Layout matching BitSave Proportions */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 pb-10 sm:pb-14">
@@ -278,7 +278,7 @@ export default function FooterSection() {
               {/* Navigation Options: Spacious 13.5px, Line-height 21px */}
               <ul className="space-y-3 text-[13.5px] leading-[21px] font-normal text-[#BDB5AB]">
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => openBasketInspector("top-5-index")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -287,7 +287,7 @@ export default function FooterSection() {
                   </button>
                 </li>
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => openBasketInspector("crypto-gold")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -296,7 +296,7 @@ export default function FooterSection() {
                   </button>
                 </li>
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => openBasketInspector("bitcoin")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -317,7 +317,7 @@ export default function FooterSection() {
               <ul className="space-y-3 text-[13.5px] leading-[21px] font-normal text-[#BDB5AB]">
                 <li>
                   <Link
-                    href="/#faq"
+                    href="/faq"
                     className="hover:text-[#FFFFFF] transition-colors block"
                   >
                     FAQ
@@ -407,7 +407,7 @@ export default function FooterSection() {
                   </span>
                 </li>
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => setActiveLegalKey("terms")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -416,7 +416,7 @@ export default function FooterSection() {
                   </button>
                 </li>
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => setActiveLegalKey("privacy")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -425,7 +425,7 @@ export default function FooterSection() {
                   </button>
                 </li>
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => setActiveLegalKey("aml")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -434,7 +434,7 @@ export default function FooterSection() {
                   </button>
                 </li>
                 <li>
-                  <button
+                  <button suppressHydrationWarning
                     type="button"
                     onClick={() => setActiveLegalKey("risk")}
                     className="hover:text-[#FFFFFF] transition-colors text-left cursor-pointer"
@@ -460,11 +460,11 @@ export default function FooterSection() {
             
             {/* Left Content: Target 13px, Line-height 20px */}
             <div className="text-[12px] sm:text-[13px] leading-[18px] sm:leading-[20px] font-normal text-[#8C857B] font-mono">
-              © 2026 Baskly · A Casper Wealth Group product · Kochi, India
+              © 2026 Baskly Technologies · Rupee Crypto SIPs · Noida, India
             </div>
 
             {/* Right Button: Clean 12px, Line-height 18px */}
-            <button
+            <button suppressHydrationWarning
               type="button"
               onClick={openOracleModal}
               title="Inspect Live Multi-Feed Pricing Oracle & Proof of Reserves"
@@ -511,7 +511,7 @@ export default function FooterSection() {
                   {activeLegalDoc.subtitle}
                 </p>
               </div>
-              <button
+              <button suppressHydrationWarning
                 type="button"
                 onClick={() => setActiveLegalKey(null)}
                 className="w-9 h-9 rounded-full border border-[#121110]/15 flex items-center justify-center text-sm text-[#171615] hover:bg-[#121110] hover:text-[#F4EFEA] transition cursor-pointer flex-shrink-0"
@@ -541,7 +541,7 @@ export default function FooterSection() {
 
             {/* Modal Footer */}
             <div className="p-4 sm:p-6 border-t border-[#121110]/10 bg-[#FAF8F5] flex justify-end">
-              <button
+              <button suppressHydrationWarning
                 type="button"
                 onClick={() => setActiveLegalKey(null)}
                 className="px-6 py-2.5 rounded-full bg-[#121110] text-[#F4EFEA] text-xs font-semibold hover:bg-[#9A7B56] transition cursor-pointer"

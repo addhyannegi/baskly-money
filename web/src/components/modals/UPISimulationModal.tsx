@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Check, X } from "lucide-react";
 import { useBaskly } from "@/context/BasklyContext";
 import { formatINR } from "@/data/baskets";
 
@@ -46,19 +47,20 @@ export default function UPISimulationModal() {
                 Configure <span className="font-serif-italic font-normal text-2xl sm:text-3xl text-[#F59E0B]">AutoPay</span>
               </h3>
             </div>
-            <button 
+            <button
+              suppressHydrationWarning 
               type="button"
               onClick={handleClose} 
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/15 flex items-center justify-center text-sm text-white/80 hover:bg-white hover:text-[#0B0A09] transition cursor-pointer flex-shrink-0"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
 
           {isSuccess ? (
             <div className="space-y-5 text-center py-4">
-              <div className="w-14 h-14 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 flex items-center justify-center mx-auto text-2xl">
-                ✓
+              <div className="w-14 h-14 rounded-full bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 flex items-center justify-center mx-auto">
+                <Check className="w-7 h-7 text-[#10B981]" />
               </div>
               <div>
                 <h4 className="text-xl font-bold text-white">Mandate Registered</h4>
@@ -70,9 +72,10 @@ export default function UPISimulationModal() {
                 </div>
               </div>
               <button
+              suppressHydrationWarning
                 type="button"
                 onClick={handleClose}
-                className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer"
+                className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer"
               >
                 <span>Done ↗</span>
               </button>
@@ -144,12 +147,13 @@ export default function UPISimulationModal() {
               </div>
 
               <div className="p-3.5 bg-[#1A1713] rounded-xl border border-white/5 text-[11px] text-[#D4CFC7]">
-                ✓ Zero lock-in. Pause or revoke anytime from GPay, PhonePe, or Paytm.
+                <span className="inline-flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" /> Zero lock-in. Pause or revoke anytime from GPay, PhonePe, or Paytm.</span>
               </div>
 
-              <button 
+              <button
+              suppressHydrationWarning 
                 type="submit" 
-                className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+                className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
               >
                 <span>Authorize NPCI e-Mandate ↗</span>
               </button>

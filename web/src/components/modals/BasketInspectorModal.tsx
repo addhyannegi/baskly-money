@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { X } from "lucide-react";
 import { useBaskly } from "@/context/BasklyContext";
 import { formatINR, BASKET_HISTORICAL_DATA } from "@/data/baskets";
 
@@ -260,12 +261,13 @@ export default function BasketInspectorModal() {
             <p id="modal-basket-tagline" className="text-xs text-[#A39E93] mt-0.5 sm:mt-1">{basket.tagline}</p>
           </div>
           <button
+              suppressHydrationWarning
             type="button"
             onClick={handleClose}
             className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/15 flex items-center justify-center text-sm text-white/80 hover:bg-white hover:text-[#0B0A09] transition cursor-pointer flex-shrink-0"
             title="Close (Esc)"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -326,6 +328,7 @@ export default function BasketInspectorModal() {
               <div className="flex items-center gap-1 bg-[#100E0C] p-1 rounded-full border border-white/10 font-mono text-[10px]">
                 {(["1D", "1W", "1M", "1Y", "5Y"] as const).map((tf) => (
                   <button
+              suppressHydrationWarning
                     key={tf}
                     id={`tf-${tf}`}
                     type="button"
@@ -505,7 +508,7 @@ export default function BasketInspectorModal() {
                         <span id={`modal-spot-${asset.symbol}`} className="font-bold text-white px-1 rounded transition-colors">
                           ₹{formatINR(asset.price_inr)}
                         </span>
-                        <span className="text-[10px] text-[#10B981] ml-1">● Live Feed</span>
+                        <span className="text-[10px] text-[#10B981] ml-1.5 inline-flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block" /> Live Feed</span>
                       </div>
                     </div>
                   </div>
@@ -522,12 +525,13 @@ export default function BasketInspectorModal() {
         {/* Modal Action Footer (index.html lines 811-814) */}
         <div className="p-6 sm:p-8 pt-4 border-t border-white/10 bg-[#13110F]/90 flex-shrink-0">
           <button
+              suppressHydrationWarning
             type="button"
             onClick={() => {
               handleClose();
               openUPIModal();
             }}
-            className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
+            className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer"
           >
             <span>
               Start SIP in This Basket (<span id="modal-basket-min">₹{formatINR(basket.min_sip)}/mo</span>) ↗

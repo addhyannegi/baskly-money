@@ -93,7 +93,7 @@
         <button 
           onclick="openOracleModal()" 
           title="Inspect Live Pricing Oracle & Feed Health"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all">
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#0F6E56]/30 bg-[#0F6E56]/8 hover:bg-[#0F6E56]/15 text-[11px] font-mono text-[#0F6E56] transition-all">
           <span class="oracle-pulse-live"></span>
           <span id="oracle-nav-badge">ORACLE LIVE</span>
         </button>
@@ -142,12 +142,12 @@
           <!-- Magnetic CTA Row -->
           <div class="reveal-up hero-reveal flex flex-wrap items-center gap-4 pt-2">
             <a 
-              href="#baskets" 
+              href="/signup" 
               class="btn-unseen bg-[#121110] text-[#F4EFEA] px-8 py-4 text-sm font-semibold tracking-wide shadow-lg"
               data-magnetic>
               <span class="flex items-center gap-2.5">
-                Explore 06 Curated Baskets
-                <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+                Get Started
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
               </span>
             </a>
 
@@ -194,7 +194,7 @@
                   <p class="text-xs text-[#5C5752] mt-0.5">HDFC Bank UPI AutoPay · 5th of every month</p>
                 </div>
                 <span class="px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-[#0F6E56]/10 text-[#0F6E56] font-semibold">
-                  ● Compounding
+                  <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Compounding
                 </span>
               </div>
 
@@ -252,7 +252,7 @@
               </div>
 
               <div class="pt-2 flex items-center justify-between text-xs text-[#5C5752]">
-                <span class="font-mono text-[11px]">✓ Section 194S TDS Ready</span>
+                <span class="font-mono text-[11px]"><span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Section 194S TDS Ready</span>
                 <button onclick="openBasketModal('top-5-index')" class="font-semibold text-[#121110] underline underline-offset-4 hover:text-[#9A7B56] transition-colors">
                   Inspect Methodology ↗
                 </button>
@@ -268,18 +268,18 @@
     <!-- ==================== 7. INFINITE EDITORIAL MARQUEE RIBBON ==================== -->
     <div class="marquee-wrap py-4">
       <div class="marquee-track space-x-12 text-xs font-mono uppercase tracking-[0.22em] text-[#5C5752]">
-        <span>✦ RULE-BASED CRYPTO BASKETS</span>
-        <span>✦ PRICED DIRECTLY IN INDIAN RUPEES (INR)</span>
-        <span>✦ NPCI UPI AUTOPAY MANDATES</span>
-        <span>✦ AUTOMATED 1% TDS & FORM 26AS SYNC</span>
-        <span>✦ 1:1 SEGREGATED COLD VAULT CUSTODY</span>
-        <span>✦ ZERO LOCK-IN · T+1 BANK REDEMPTION</span>
-        <span>✦ RULE-BASED CRYPTO BASKETS</span>
-        <span>✦ PRICED DIRECTLY IN INDIAN RUPEES (INR)</span>
-        <span>✦ NPCI UPI AUTOPAY MANDATES</span>
-        <span>✦ AUTOMATED 1% TDS & FORM 26AS SYNC</span>
-        <span>✦ 1:1 SEGREGATED COLD VAULT CUSTODY</span>
-        <span>✦ ZERO LOCK-IN · T+1 BANK REDEMPTION</span>
+        <span>· RULE-BASED CRYPTO BASKETS</span>
+        <span>· PRICED DIRECTLY IN INDIAN RUPEES (INR)</span>
+        <span>· NPCI UPI AUTOPAY MANDATES</span>
+        <span>· AUTOMATED 1% TDS & FORM 26AS SYNC</span>
+        <span>· 1:1 SEGREGATED COLD VAULT CUSTODY</span>
+        <span>· ZERO LOCK-IN · T+1 BANK REDEMPTION</span>
+        <span>· RULE-BASED CRYPTO BASKETS</span>
+        <span>· PRICED DIRECTLY IN INDIAN RUPEES (INR)</span>
+        <span>· NPCI UPI AUTOPAY MANDATES</span>
+        <span>· AUTOMATED 1% TDS & FORM 26AS SYNC</span>
+        <span>· 1:1 SEGREGATED COLD VAULT CUSTODY</span>
+        <span>· ZERO LOCK-IN · T+1 BANK REDEMPTION</span>
       </div>
     </div>
 
@@ -287,7 +287,6 @@
     <section id="methodology" class="py-28 max-w-7xl mx-auto px-6">
       <div class="grid lg:grid-cols-12 gap-8 items-end mb-16 reveal-up">
         <div class="lg:col-span-7">
-          <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">01 — The Manifesto</span>
           <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.04]">
             Why 92% of traders lose.<br>
             And why <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">patience</span> wins.
@@ -303,7 +302,7 @@
         <div class="tilt-card p-8 sm:p-9 flex flex-col justify-between reveal-up" data-cursor-label="DISCIPLINE">
           <div class="tilt-card-content">
             <div class="flex justify-between items-center mb-8">
-              <span class="font-mono text-xs text-[#9A7B56]">/ 01</span>
+              
               <i data-lucide="compass" class="w-5 h-5 text-[#121110]"></i>
             </div>
             <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-3">
@@ -314,14 +313,14 @@
             </p>
           </div>
           <div class="tilt-card-content mt-10 pt-4 border-t border-[#121110]/10 font-mono text-[11px] uppercase tracking-wider text-[#0F6E56]">
-            ● Zero Emotional Bias
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Zero Emotional Bias
           </div>
         </div>
 
         <div class="tilt-card p-8 sm:p-9 flex flex-col justify-between reveal-up" data-cursor-label="RUPEE NATIVE">
           <div class="tilt-card-content">
             <div class="flex justify-between items-center mb-8">
-              <span class="font-mono text-xs text-[#9A7B56]">/ 02</span>
+              
               <i data-lucide="indian-rupee" class="w-5 h-5 text-[#121110]"></i>
             </div>
             <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-3">
@@ -332,14 +331,14 @@
             </p>
           </div>
           <div class="tilt-card-content mt-10 pt-4 border-t border-[#121110]/10 font-mono text-[11px] uppercase tracking-wider text-[#0F6E56]">
-            ● Direct NPCI Banking Rails
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Direct NPCI Banking Rails
           </div>
         </div>
 
         <div class="tilt-card p-8 sm:p-9 flex flex-col justify-between reveal-up" data-cursor-label="FIDUCIARY">
           <div class="tilt-card-content">
             <div class="flex justify-between items-center mb-8">
-              <span class="font-mono text-xs text-[#9A7B56]">/ 03</span>
+              
               <i data-lucide="shield-check" class="w-5 h-5 text-[#121110]"></i>
             </div>
             <h3 class="text-2xl font-semibold text-[#121110] tracking-editorial mb-3">
@@ -350,7 +349,7 @@
             </p>
           </div>
           <div class="tilt-card-content mt-10 pt-4 border-t border-[#121110]/10 font-mono text-[11px] uppercase tracking-wider text-[#0F6E56]">
-            ● Form 26AS Synchronised
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Form 26AS Synchronised
           </div>
         </div>
 
@@ -363,7 +362,6 @@
         
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
           <div>
-            <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">02 — Curated Indices</span>
             <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-none">
               Six architectural <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">baskets.</span>
             </h2>
@@ -384,7 +382,6 @@
     <!-- ==================== 10. INTERACTIVE COMPOUNDING STUDIO (SPLINE CANVAS) ==================== -->
     <section id="calculator" class="py-28 max-w-7xl mx-auto px-6">
       <div class="max-w-3xl mb-16 reveal-up">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">03 — Mathematical Compounding</span>
         <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.05]">
           The quiet geometry of <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">time.</span>
         </h2>
@@ -515,7 +512,6 @@
           
           <!-- Left 5 Cols: Live Persona Output Card -->
           <div class="lg:col-span-5 space-y-6 reveal-up">
-            <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">04 — Risk Calibration</span>
             <h2 class="text-4xl sm:text-5xl font-semibold text-[#121110] tracking-editorial leading-[1.06]">
               Discover your <span class="font-serif-italic font-light text-5xl sm:text-6xl text-[#9A7B56]">allocation</span> archetype.
             </h2>
@@ -566,7 +562,6 @@
     <!-- ==================== 12. TRUST, CUSTODY & INDIAN TAX ARCHITECTURE ==================== -->
     <section id="trust" class="py-28 max-w-7xl mx-auto px-6">
       <div class="max-w-3xl mb-16 reveal-up">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#9A7B56]">05 — Institutional Architecture</span>
         <h2 class="text-4xl sm:text-6xl font-semibold text-[#121110] tracking-editorial mt-3 leading-[1.05]">
           Engineered for <span class="font-serif-italic font-light text-5xl sm:text-7xl text-[#9A7B56]">Indian</span> regulatory peace of mind.
         </h2>
@@ -698,7 +693,7 @@
   </main>
 
   <!-- ==================== FOOTER ==================== -->
-  <footer class="relative z-10 border-t border-[#121110]/10 py-14 text-xs text-[#5C5752]">
+  <footer class="relative z-10 py-14 text-xs text-[#5C5752]">
     <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
       <div>
         <span class="font-semibold text-base text-[#121110] tracking-editorial">
@@ -875,7 +870,7 @@
             </div>
 
             <div class="p-3.5 bg-[#F4EFEA] rounded-xl border border-[#121110]/8 text-[11px] text-[#5C5752]">
-              ✓ Zero lock-in. Pause or revoke anytime from GPay, PhonePe, or Paytm.
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Zero lock-in. Pause or revoke anytime from GPay, PhonePe, or Paytm.
             </div>
 
             <button type="submit" class="btn-unseen w-full bg-[#121110] text-[#F4EFEA] py-4 text-xs font-semibold uppercase tracking-widest">

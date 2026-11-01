@@ -6,9 +6,14 @@ import { useBaskly } from "@/context/BasklyContext";
 
 export default function CompoundingCalculator() {
   const { openUPIModal } = useBaskly();
+  const [mounted, setMounted] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(5000);
   const [years, setYears] = useState<number>(5);
   const [cagr, setCagr] = useState<number>(28);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -147,23 +152,20 @@ export default function CompoundingCalculator() {
   }, [amount, years, cagr, futureValueCrypto, futureValueNifty, futureValueFD, totalInvested, months, rateNifty, ratePerMonth]);
 
   return (
-    <section id="calculator" className="py-16 sm:py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6">
-      <div className="max-w-3xl mb-10 sm:mb-16">
-        <span className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
-          03 — Mathematical Compounding
-        </span>
-        <h2 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-semibold text-white tracking-editorial mt-3 leading-[1.05]">
-          The quiet geometry of <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl lg:text-7xl text-[#F59E0B]">time.</span>
+    <section id="calculator" className="py-16 sm:py-20 md:py-28 2xl:py-36 max-w-7xl 2xl:max-w-[1520px] 3xl:max-w-[1780px] 4xl:max-w-[1980px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 3xl:px-16">
+      <div className="max-w-3xl 2xl:max-w-4xl mb-10 sm:mb-16 2xl:mb-20">
+        <h2 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl 2xl:text-7xl font-semibold text-white tracking-editorial leading-[1.05]">
+          The quiet geometry of <span className="font-serif-italic font-light text-4xl xs:text-5xl sm:text-6xl lg:text-7xl 2xl:text-8xl text-[#F59E0B]">time.</span>
         </h2>
-        <p className="text-xs sm:text-base text-[#A39E93] mt-3 leading-relaxed">
+        <p className="text-xs sm:text-base 2xl:text-lg text-[#A39E93] mt-3 leading-relaxed">
           Drag the sliders to simulate how systematic monthly Rupee-Cost Averaging performs against traditional Indian asset classes.
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
+      <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 2xl:gap-10 3xl:gap-12 items-stretch">
         
         {/* Left 5 Cols: Sliders */}
-        <div className="lg:col-span-5 tilt-card p-5 sm:p-7 md:p-8 flex flex-col justify-between h-full bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
+        <div suppressHydrationWarning className="lg:col-span-5 tilt-card p-4 sm:p-7 md:p-8 2xl:p-10 flex flex-col justify-between h-full bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
           <div className="tilt-card-content space-y-6 sm:space-y-8">
             
             {/* Slider 1: Monthly SIP */}
@@ -178,28 +180,39 @@ export default function CompoundingCalculator() {
               </div>
               <input 
                 type="range" 
+                suppressHydrationWarning
+                data-lpignore="true"
+                data-1p-ignore="true"
                 min={1000} 
                 max={50000} 
                 step={1000} 
                 value={amount} 
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B]"
+                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
               />
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
-                {[1000, 5000, 10000, 25000].map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setAmount(val)}
-                    className={`text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full border transition cursor-pointer ${
-                      amount === val 
-                        ? "bg-white text-[#0B0A09] border-white font-semibold" 
-                        : "border-white/15 text-[#A39E93] hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    ₹{formatINR(val)}
-                  </button>
-                ))}
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 min-h-[30px]" suppressHydrationWarning>
+                {mounted ? (
+                  [1000, 5000, 10000, 25000].map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      suppressHydrationWarning
+                      data-lpignore="true"
+                      data-1p-ignore="true"
+                      data-form-type="other"
+                      onClick={() => setAmount(val)}
+                      className={`text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full border transition cursor-pointer ${
+                        amount === val 
+                          ? "bg-white text-[#0B0A09] border-white font-semibold" 
+                          : "border-white/15 text-[#A39E93] hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      ₹{formatINR(val)}
+                    </button>
+                  ))
+                ) : (
+                  <div className="h-6" />
+                )}
               </div>
             </div>
 
@@ -215,28 +228,39 @@ export default function CompoundingCalculator() {
               </div>
               <input 
                 type="range" 
+                suppressHydrationWarning
+                data-lpignore="true"
+                data-1p-ignore="true"
                 min={1} 
                 max={10} 
                 step={1} 
                 value={years} 
                 onChange={(e) => setYears(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B]"
+                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
               />
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
-                {[3, 5, 7, 10].map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => setYears(val)}
-                    className={`text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full border transition cursor-pointer ${
-                      years === val 
-                        ? "bg-white text-[#0B0A09] border-white font-semibold" 
-                        : "border-white/15 text-[#A39E93] hover:bg-white/10 hover:text-white"
-                    }`}
-                  >
-                    {val} Yrs
-                  </button>
-                ))}
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 min-h-[30px]" suppressHydrationWarning>
+                {mounted ? (
+                  [3, 5, 7, 10].map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      suppressHydrationWarning
+                      data-lpignore="true"
+                      data-1p-ignore="true"
+                      data-form-type="other"
+                      onClick={() => setYears(val)}
+                      className={`text-[10px] sm:text-[11px] font-mono px-2.5 sm:px-3 py-1 rounded-full border transition cursor-pointer ${
+                        years === val 
+                          ? "bg-white text-[#0B0A09] border-white font-semibold" 
+                          : "border-white/15 text-[#A39E93] hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      {val} Yrs
+                    </button>
+                  ))
+                ) : (
+                  <div className="h-6" />
+                )}
               </div>
             </div>
 
@@ -257,12 +281,15 @@ export default function CompoundingCalculator() {
               </div>
               <input 
                 type="range" 
+                suppressHydrationWarning
+                data-lpignore="true"
+                data-1p-ignore="true"
                 min={12} 
                 max={55} 
                 step={1} 
                 value={cagr} 
                 onChange={(e) => setCagr(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B]"
+                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
               />
             </div>
 
@@ -271,8 +298,9 @@ export default function CompoundingCalculator() {
           <div className="tilt-card-content pt-6 mt-6 border-t border-white/10">
             <button 
               type="button"
+              suppressHydrationWarning
               onClick={openUPIModal} 
-              className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#F59E0B] hover:text-[#0B0A09] py-3.5 sm:py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+              className="btn-unseen w-full bg-white text-[#0B0A09] hover:bg-[#EAE6DE] hover:text-[#0B0A09] py-3.5 sm:py-4 text-xs font-semibold uppercase tracking-widest cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.2)]"
             >
               <span>Lock In This Monthly Habit ↗</span>
             </button>
@@ -280,32 +308,32 @@ export default function CompoundingCalculator() {
         </div>
 
         {/* Right 7 Cols: Canvas Spline Graph & Multi-Asset Benchmarks */}
-        <div className="lg:col-span-7 tilt-card p-5 sm:p-7 md:p-8 flex flex-col justify-between h-full bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
+        <div className="lg:col-span-7 tilt-card p-4 sm:p-7 md:p-8 2xl:p-10 flex flex-col justify-between h-full bg-[#13110F]/90 border border-white/10 shadow-xl backdrop-blur-xl">
           <div className="tilt-card-content">
             
             <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-5 sm:pb-6 border-b border-white/10 gap-3 sm:gap-4">
               <div>
-                <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#736E65]">
+                <div className="font-mono text-[9px] sm:text-[10px] 2xl:text-[11px] uppercase tracking-[0.2em] text-[#736E65]">
                   Projected Portfolio Value
                 </div>
-                <div className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-semibold text-white tracking-editorial font-mono mt-1">
+                <div className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl 2xl:text-7xl font-semibold text-white tracking-editorial font-mono mt-1">
                   ₹{formatINR(futureValueCrypto)}
                 </div>
               </div>
               <div className="flex flex-wrap gap-4 sm:gap-6 mt-1 sm:mt-0">
                 <div>
-                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#736E65]">
+                  <div className="font-mono text-[9px] sm:text-[10px] 2xl:text-[11px] uppercase tracking-wider text-[#736E65]">
                     Total Principal
                   </div>
-                  <div className="text-sm sm:text-base font-bold text-white font-mono">
+                  <div className="text-sm sm:text-base 2xl:text-lg font-bold text-white font-mono">
                     ₹{formatINR(totalInvested)}
                   </div>
                 </div>
                 <div>
-                  <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-emerald-400">
+                  <div className="font-mono text-[9px] sm:text-[10px] 2xl:text-[11px] uppercase tracking-wider text-emerald-400">
                     Compounded Gain
                   </div>
-                  <div className="text-sm sm:text-base font-bold text-emerald-400 font-mono">
+                  <div className="text-sm sm:text-base 2xl:text-lg font-bold text-emerald-400 font-mono">
                     +₹{formatINR(returnsEarned)}
                   </div>
                 </div>
@@ -314,7 +342,7 @@ export default function CompoundingCalculator() {
 
             {/* Canvas Curve */}
             <div className="my-5 sm:my-6 relative">
-              <div className="flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] font-mono text-[#736E65] mb-2 gap-2">
+              <div className="flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] 2xl:text-xs font-mono text-[#736E65] mb-2 gap-2">
                 <span>Wealth Trajectory Curve</span>
                 <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
                   <span className="flex items-center gap-1.5">
@@ -330,12 +358,12 @@ export default function CompoundingCalculator() {
               </div>
               <canvas 
                 ref={canvasRef} 
-                className="w-full h-48 sm:h-56 rounded-2xl bg-[#1A1713] border border-white/10 block"
+                className="w-full h-48 sm:h-56 2xl:h-64 3xl:h-72 rounded-2xl bg-[#1A1713] border border-white/10 block"
               />
             </div>
 
             {/* Benchmark Comparison Strip */}
-            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-4 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4 pt-2">
               <div className="p-3 sm:p-4 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30">
                 <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-[#F59E0B] font-semibold">
                   Baskly Basket
