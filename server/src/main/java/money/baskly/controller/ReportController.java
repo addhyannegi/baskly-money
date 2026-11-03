@@ -5,6 +5,7 @@ import money.baskly.repository.TransactionRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -22,10 +23,15 @@ public class ReportController {
 
     @GetMapping(value = "/tds", produces = "text/csv")
     public ResponseEntity<byte[]> exportTdsLedger(
-            @RequestParam(required = false) String userId) {
-        List<TransactionEntity> transactions = userId != null
-                ? transactionRepository.findByUserIdOrderByCreatedAtDesc(userId)
-                : transactionRepository.findAllByOrderByCreatedAtDesc();
+            @RequestParam(required = false) String userId,
+            Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+            return ResponseEntity.status(401).build();
+        }
+        String currentUserId = authentication.getName();
+        List<TransactionEntity> transactions = transactionRepository.findByUserIdOrderByCreatedAtDesc(currentUserId);
+
+
 
         StringBuilder csv = new StringBuilder();
         csv.append("Transaction_ID,User_ID,Date,Type,Basket_ID,Gross_Amount_INR,Units,NAV,TDS_Deducted_194S_INR,Net_Amount_INR,Status,Bank_Reference\n");

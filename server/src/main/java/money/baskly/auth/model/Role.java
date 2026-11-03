@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum Role {
     ADMIN("ADMIN", "System Administrator", "/dashboard/admin"),
     FUND_MANAGER("FUND_MANAGER", "Institutional Fund Manager", "/dashboard/fund-manager"),
-    CUSTOMER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
-    RETAIL_USER("CUSTOMER", "Retail Customer Investor", "/dashboard/customer"),
+    CUSTOMER("CUSTOMER", "Retail Customer Investor", "/portal"),
+    RETAIL_USER("CUSTOMER", "Retail Customer Investor", "/portal"),
     SUPPORT("SUPPORT", "Customer Support Specialist", "/dashboard/support");
 
     private final String code;

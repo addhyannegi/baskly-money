@@ -176,7 +176,7 @@ class AuthServiceTest {
         assertTrue(res.isSuccess());
         assertNotNull(res.getToken());
         assertEquals("CUSTOMER", res.getUser().getRole());
-        assertEquals("/dashboard/customer", res.getUser().getDefaultDashboardPath());
+        assertEquals("/portal", res.getUser().getDefaultDashboardPath());
     }
 
     @Test
@@ -465,7 +465,7 @@ class AuthServiceTest {
     @Test
     @DisplayName("18. Dashboard routing paths respect all four authenticated roles")
     void testRoleDashboardPaths() {
-        assertEquals("/dashboard/customer", Role.CUSTOMER.getDefaultDashboardPath());
+        assertEquals("/portal", Role.CUSTOMER.getDefaultDashboardPath());
         assertEquals("/dashboard/admin", Role.ADMIN.getDefaultDashboardPath());
         assertEquals("/dashboard/fund-manager", Role.FUND_MANAGER.getDefaultDashboardPath());
         assertEquals("/dashboard/support", Role.SUPPORT.getDefaultDashboardPath());

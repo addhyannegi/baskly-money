@@ -313,7 +313,10 @@ export default function SignUpPage() {
 
         if (res.user) {
           setUserFromBackend(res.user);
-          router.push(res.user.defaultDashboardPath || "/dashboard/customer");
+          const target = res.user.defaultDashboardPath && res.user.defaultDashboardPath !== "/dashboard/customer"
+            ? res.user.defaultDashboardPath
+            : "/portal";
+          router.push(target);
         }
       } else {
         const res = await authApi.register({
@@ -339,7 +342,10 @@ export default function SignUpPage() {
 
         if (res.user) {
           setUserFromBackend(res.user);
-          router.push(res.user.defaultDashboardPath || "/dashboard/customer");
+          const target = res.user.defaultDashboardPath && res.user.defaultDashboardPath !== "/dashboard/customer"
+            ? res.user.defaultDashboardPath
+            : "/portal";
+          router.push(target);
         }
       }
     } catch (err: unknown) {

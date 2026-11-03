@@ -347,7 +347,18 @@ public class PortfolioService {
         dto.setDebitDay(m.getDebitDay());
         dto.setStatus(m.getStatus());
         dto.setVpa(m.getVpa());
-        dto.setNextDebitDate(m.getNextDebitDate().toString());
+        LocalDate nextDebit = m.getNextDebitDate();
+        LocalDate today = LocalDate.now();
+        if (nextDebit == null || nextDebit.isBefore(today)) {
+            int debitDay = m.getDebitDay() > 0 ? Math.min(m.getDebitDay(), 28) : 5;
+            LocalDate candidate = today.withDayOfMonth(Math.min(debitDay, today.lengthOfMonth()));
+            if (!candidate.isAfter(today)) {
+                candidate = candidate.plusMonths(1);
+                candidate = candidate.withDayOfMonth(Math.min(debitDay, candidate.lengthOfMonth()));
+            }
+            nextDebit = candidate;
+        }
+        dto.setNextDebitDate(nextDebit.toString());
         return dto;
     }
 

@@ -48,8 +48,8 @@ public class SecurityConfig {
                         // Public Catalog, Funds & General Data Read Endpoints
                         .requestMatchers(HttpMethod.GET, 
                                 "/api/baskets/**", "/api/v1/baskets/**",
-                                "/api/funds/**", "/api/v1/funds/**",
-                                "/api/reports/**", "/api/v1/reports/**").permitAll()
+                                "/api/funds/**", "/api/v1/funds/**").permitAll()
+
 
                         // Write operations on funds/baskets (e.g. updating NAV) require FUND_MANAGER or ADMIN
                         .requestMatchers(HttpMethod.POST,
@@ -68,7 +68,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/support/**", "/api/v1/support/**").hasAnyRole("SUPPORT", "ADMIN")
                         .requestMatchers("/api/portfolio/**", "/api/v1/portfolio/**",
                                 "/api/orders/**", "/api/v1/orders/**",
-                                "/api/mandates/**", "/api/v1/mandates/**").authenticated()
+                                "/api/mandates/**", "/api/v1/mandates/**",
+                                "/api/reports/**", "/api/v1/reports/**").authenticated()
 
                         // Error dispatch & CORS pre-flight
                         .requestMatchers("/error").permitAll()

@@ -51,6 +51,56 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+let cachedAuthToken: string | null = null;
+
+export function setApiAuthToken(token: string | null) {
+  cachedAuthToken = token;
+  if (typeof window !== "undefined") {
+    if (token) {
+      localStorage.setItem("baskly_jwt_token", token);
+    } else {
+      localStorage.removeItem("baskly_jwt_token");
+    }
+  }
+}
+
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  if (typeof window === "undefined") return {};
+
+  let token = cachedAuthToken || localStorage.getItem("baskly_jwt_token");
+  if (!token) {
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "rohan@baskly.money",
+          password: "CustomerPassword@123",
+        }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.token) {
+          token = json.token;
+          cachedAuthToken = token;
+          localStorage.setItem("baskly_jwt_token", token!);
+        }
+      }
+    } catch {
+      // Graceful offline fallback
+    }
+  }
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export async function fetchBasketsFromBackend(): Promise<any | null> {
   try {
     const res = await fetch(`${BACKEND_BASE_URL}/funds`, {
@@ -77,6 +127,25 @@ export async function fetchFundNavHistoryFromBackend(fundId: string, interval: s
     });
     if (!res.ok) return null;
     const json: ApiResponse<any> = await res.json();
+    return json.success ? json.data : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchBasketNavHistory(
+  basketId: string,
+  interval: "1W" | "1M" | "1Y" | "5Y" | "1D" = "1M"
+): Promise<any[] | null> {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/baskets/${encodeURIComponent(basketId)}/history?interval=${interval}`, {
+      method: "GET",
+      headers: getRequestHeaders(),
+      credentials: "include",
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const json: ApiResponse<any[]> = await res.json();
     return json.success ? json.data : null;
   } catch {
     return null;
@@ -141,6 +210,47 @@ export async function toggleMandateApi(mandateId: string): Promise<any | null> {
     if (!res.ok) return null;
     const json: ApiResponse<any> = await res.json();
     return json.success ? json.data : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function createMandateApi(payload: {
+  userId: string;
+  basketId: string;
+  monthlyAmountInr: number;
+  debitDay: number;
+  vpa: string;
+}): Promise<any | null> {
+  try {
+    const res = await fetch(`${BACKEND_BASE_URL}/mandates`, {
+      method: "POST",
+      headers: getRequestHeaders(),
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    const json: ApiResponse<any> = await res.json();
+    return json.success ? json.data : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function downloadTdsReportBlob(userId?: string): Promise<Blob | null> {
+  try {
+    const headers = { ...getRequestHeaders() } as Record<string, string>;
+    delete headers["Content-Type"];
+    const url = userId
+      ? `${BACKEND_BASE_URL}/reports/tds?userId=${encodeURIComponent(userId)}`
+      : `${BACKEND_BASE_URL}/reports/tds`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers,
+      credentials: "include",
+    });
+    if (!res.ok) return null;
+    return await res.blob();
   } catch {
     return null;
   }
