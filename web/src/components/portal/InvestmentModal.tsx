@@ -27,7 +27,9 @@ export default function InvestmentModal({
   const [isSuccess, setIsSuccess] = useState(false);
 
   const basketsRef = useRef(baskets);
-  basketsRef.current = baskets;
+  useEffect(() => {
+    basketsRef.current = baskets;
+  });
 
   const wasOpenRef = useRef(false);
   const prevInitialBasketIdRef = useRef(initialBasketId);
