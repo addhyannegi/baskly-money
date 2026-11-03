@@ -31,10 +31,12 @@ export default function RedemptionModal({
   const [settledResult, setSettledResult] = useState<{ gross: number; tds: number; net: number } | null>(null);
 
   const basketsRef = useRef(baskets);
-  basketsRef.current = baskets;
-
   const holdingsRef = useRef(holdings);
-  holdingsRef.current = holdings;
+
+  useEffect(() => {
+    basketsRef.current = baskets;
+    holdingsRef.current = holdings;
+  });
 
   const wasOpenRef = useRef(false);
   const prevInitialBasketIdRef = useRef(initialBasketId);
