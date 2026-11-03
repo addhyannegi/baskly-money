@@ -21,7 +21,8 @@ ALTER TABLE auth_accounts ADD CONSTRAINT auth_accounts_role_check
     CHECK (role IN ('ADMIN', 'FUND_MANAGER', 'CUSTOMER', 'SUPPORT', 'RETAIL_USER'));
 
 -- 5. Extend compatibility view 'nav_history' with fund_id, nav_inr, and timestamp aliases
-CREATE OR REPLACE VIEW nav_history AS
+DROP VIEW IF EXISTS nav_history;
+CREATE VIEW nav_history AS
 SELECT 
     id, 
     basket_id, 

@@ -826,7 +826,7 @@ export default function SignUpPage() {
                 </label>
                 <div className="flex gap-2">
                   <div className="h-11 sm:h-12 px-3.5 rounded-xl border border-[#121110]/15 bg-[#FAF8F5] text-sm font-medium text-[#121110] flex items-center justify-center select-none flex-shrink-0">
-                    🇮🇳 +91
+                    +91
                   </div>
                   <input
                     type="tel"

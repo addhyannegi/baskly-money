@@ -12,7 +12,7 @@ import ModalsContainer from "@/components/modals/ModalsContainer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#F4EFEA] text-[#121110] relative">
+    <main className="min-h-screen bg-[#0B0A09] text-[#FFFFFF] relative">
       <Navbar />
       <Hero />
       <MarqueeRibbon />

@@ -13,7 +13,10 @@ declare global {
             callback: (response: { credential: string; select_by?: string }) => void;
             auto_select?: boolean;
             cancel_on_tap_outside?: boolean;
+            use_fedcm_for_button?: boolean;
+            use_fedcm_for_prompt?: boolean;
             itp_support?: boolean;
+            error_callback?: (error: unknown) => void;
           }) => void;
           prompt: (momentListener?: (notification: {
             isNotDisplayed: () => boolean;
@@ -138,7 +141,12 @@ export async function triggerGoogleAccountChooser(
       },
       auto_select: false,
       cancel_on_tap_outside: true,
+      use_fedcm_for_button: false,
+      use_fedcm_for_prompt: false,
       itp_support: true,
+      error_callback: (error) => {
+        console.warn("[Baskly Google Auth] GIS non-fatal notification:", error);
+      },
     });
 
     window.google.accounts.id.prompt((notification) => {
