@@ -908,26 +908,36 @@ export default function FundManagerOperationsTerminal() {
                       <div className="space-y-1 text-xs">
                         <Link
                           href="/portal"
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl transition hover:bg-white/5"
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition group ${
+                            isDark
+                              ? "hover:bg-white/5 text-[#A39E93] hover:text-white"
+                              : "hover:bg-[#FAF8F5] text-[#5C5752] hover:text-[#121110]"
+                          }`}
                         >
-                          <div className="flex items-center gap-2 text-[#A39E93] hover:text-white">
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                            <span>Switch to Retail Portal</span>
+                          <div className="flex items-center gap-2">
+                            <ArrowUpRight className="w-3.5 h-3.5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            <span className="font-medium">Switch to Retail Portal</span>
                           </div>
-                          <span className="text-[10px] font-mono text-[#A39E93]">/portal</span>
+                          <span className={`text-[10px] font-mono transition ${
+                            isDark ? "text-[#736E65] group-hover:text-white/80" : "text-[#A39E93] group-hover:text-[#121110]"
+                          }`}>
+                            /portal
+                          </span>
                         </Link>
 
                         <button
                           type="button"
                           onClick={handleSwitchToDemoCIO}
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl transition hover:bg-white/5 text-left cursor-pointer"
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer ${
+                            isDark ? "hover:bg-white/5 text-emerald-400" : "hover:bg-[#FAF8F5] text-emerald-600"
+                          }`}
                         >
-                          <span className="text-emerald-400 font-semibold">Reload Demo CIO Session</span>
-                          <RotateCw className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="font-semibold">Reload Demo CIO Session</span>
+                          <RotateCw className="w-3.5 h-3.5" />
                         </button>
                       </div>
 
-                      <div className="pt-1 border-t border-white/5">
+                      <div className={`pt-1 border-t ${isDark ? "border-white/5" : "border-[#E7E1D8]/60"}`}>
                         <button
                           type="button"
                           onClick={() => {
