@@ -241,37 +241,22 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   border-radius: 9999px;
-  background: rgba(250, 248, 245, 0.85);
-  color: #121110;
-  border: 1px solid rgba(18, 17, 16, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #F4EFEA;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(12px);
-  transition: color 0.35s ease, border-color 0.35s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease;
   cursor: pointer;
   will-change: transform;
 }
 
-.btn-unseen-light::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #121110;
-  border-radius: 9999px;
-  transform: translateY(102%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 0;
-}
-
 .btn-unseen-light:hover {
-  color: #F4EFEA;
-  border-color: #121110;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
   transform: translateY(-1.5px);
-  box-shadow: 0 8px 24px rgba(18, 17, 16, 0.18);
-}
-
-.btn-unseen-light:hover::before {
-  transform: translateY(0%);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 .btn-unseen-light:active {
@@ -281,11 +266,6 @@ body {
 .btn-unseen-light > * {
   position: relative;
   z-index: 1;
-  transition: color 0.35s ease;
-}
-
-.btn-unseen-light:hover > * {
-  color: #F4EFEA;
 }
 
 /* ==========================================================================
@@ -413,8 +393,8 @@ input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
-  background: rgba(18, 17, 16, 0.14);
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   outline: none;
   cursor: pointer;
@@ -422,7 +402,7 @@ input[type="range"] {
 }
 
 input[type="range"]:hover {
-  background: rgba(18, 17, 16, 0.25);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -450,14 +430,20 @@ input[type="range"]::-webkit-slider-thumb:active {
 
 input[type="range"]::-moz-range-track {
   width: 100%;
-  height: 4px;
-  background: rgba(18, 17, 16, 0.14);
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   border: none;
 }
 
 input[type="range"]:hover::-moz-range-track {
-  background: rgba(18, 17, 16, 0.25);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 6px;
+  background: #F59E0B;
+  border-radius: 999px;
 }
 
 input[type="range"]::-moz-range-thumb {

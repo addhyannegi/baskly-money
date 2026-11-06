@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useBaskly } from "@/context/BasklyContext";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const { user, logout, openOracleModal, openAuthModal, oracleState } = useBaskly();
@@ -110,11 +110,17 @@ export default function Navbar() {
             {/* Dynamic User Status or Login Button */}
             {user ? (
               <div className="flex items-center gap-1.5 sm:gap-2 bg-[#161412] border border-white/10 rounded-full pl-1.5 sm:pl-2 pr-2.5 sm:pr-3 py-1 shadow-xs">
-                <img 
-                  src={user.avatar} 
-                  alt={user.name} 
-                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-white/10 flex-shrink-0" 
-                />
+                {user.avatar && !user.avatar.includes("dicebear") && !user.avatar.includes("unsplash") ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-white/10 flex-shrink-0" 
+                  />
+                ) : (
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 text-white border border-white/10 flex items-center justify-center shrink-0">
+                    <UserIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  </div>
+                )}
                 <span className="text-[11px] sm:text-xs font-bold text-white max-w-[60px] sm:max-w-none truncate">
                   {user.givenName || user.name.split(" ")[0]}
                 </span>

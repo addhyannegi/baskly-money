@@ -11,6 +11,10 @@ export default function CompoundingCalculator() {
   const [years, setYears] = useState<number>(5);
   const [cagr, setCagr] = useState<number>(28);
 
+  const amountPct = Math.min(100, Math.max(0, ((amount - 1000) / (50000 - 1000)) * 100));
+  const yearsPct = Math.min(100, Math.max(0, ((years - 1) / (10 - 1)) * 100));
+  const cagrPct = Math.min(100, Math.max(0, ((cagr - 12) / (55 - 12)) * 100));
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -188,7 +192,10 @@ export default function CompoundingCalculator() {
                 step={1000} 
                 value={amount} 
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
+                style={{
+                  background: `linear-gradient(to right, #F59E0B 0%, #F59E0B ${amountPct}%, rgba(255, 255, 255, 0.22) ${amountPct}%, rgba(255, 255, 255, 0.22) 100%)`
+                }}
+                className="w-full cursor-pointer accent-[#F59E0B] h-1.5 rounded-lg"
               />
               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 min-h-[30px]" suppressHydrationWarning>
                 {mounted ? (
@@ -236,7 +243,10 @@ export default function CompoundingCalculator() {
                 step={1} 
                 value={years} 
                 onChange={(e) => setYears(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
+                style={{
+                  background: `linear-gradient(to right, #F59E0B 0%, #F59E0B ${yearsPct}%, rgba(255, 255, 255, 0.22) ${yearsPct}%, rgba(255, 255, 255, 0.22) 100%)`
+                }}
+                className="w-full cursor-pointer accent-[#F59E0B] h-1.5 rounded-lg"
               />
               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 min-h-[30px]" suppressHydrationWarning>
                 {mounted ? (
@@ -289,7 +299,10 @@ export default function CompoundingCalculator() {
                 step={1} 
                 value={cagr} 
                 onChange={(e) => setCagr(Number(e.target.value))}
-                className="w-full cursor-pointer accent-[#F59E0B] bg-white/15 h-1.5 rounded-lg"
+                style={{
+                  background: `linear-gradient(to right, #F59E0B 0%, #F59E0B ${cagrPct}%, rgba(255, 255, 255, 0.22) ${cagrPct}%, rgba(255, 255, 255, 0.22) 100%)`
+                }}
+                className="w-full cursor-pointer accent-[#F59E0B] h-1.5 rounded-lg"
               />
             </div>
 
