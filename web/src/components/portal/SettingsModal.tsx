@@ -22,6 +22,16 @@ export default function SettingsModal({
   const [activeTab, setActiveTab] = useState<"profile" | "banking" | "tax" | "security">("profile");
   const [copied, setCopied] = useState(false);
 
+  const [avatarError, setAvatarError] = useState(false);
+
+  const hasCustomPhoto = Boolean(
+    user?.avatar &&
+    !avatarError &&
+    !user.avatar.includes("dicebear.com") &&
+    !user.avatar.includes("api.dicebear") &&
+    !user.avatar.includes("unsplash.com")
+  );
+
   if (!isOpen) return null;
 
   const handleCopyPan = () => {
@@ -91,11 +101,26 @@ export default function SettingsModal({
         {activeTab === "profile" && (
           <div className="space-y-4 text-xs">
             <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#F8FAF9] dark:bg-[#22242B] border border-[#E2E8E4] dark:border-[#2C2E37]">
-              <img
-                src={user?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"}
-                alt="Avatar"
-                className="w-14 h-14 rounded-full object-cover border-2 border-[#0B3B24] dark:border-emerald-500"
-              />
+              <div className="relative shrink-0">
+                {hasCustomPhoto ? (
+                  <img
+                    src={user?.avatar}
+                    alt="Avatar"
+                    onError={() => setAvatarError(true)}
+                    className="w-14 h-14 rounded-2xl object-cover border-2 border-white/10 shadow-md"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-2xl bg-[#E8F4EC] dark:bg-white/10 border-2 border-[#0B3B24]/20 dark:border-white/15 flex items-center justify-center text-[#0B3B24] dark:text-emerald-400 shadow-md select-none">
+                    <UserCheck className="w-7 h-7" />
+                  </div>
+                )}
+                <span 
+                  className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white dark:border-[#22242B] flex items-center justify-center"
+                  title="KYC Verified"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                </span>
+              </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-base font-bold text-slate-900 dark:text-white">{user?.name || "Investor"}</span>

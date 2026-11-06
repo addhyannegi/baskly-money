@@ -18,6 +18,7 @@ const dmSans = DM_Sans({
 
 const dmSerif = DM_Serif_Display({
   weight: ["400"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
   variable: "--font-dm-serif",
   display: "swap",
@@ -41,7 +42,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`scroll-smooth ${inter.variable} ${dmSans.variable} ${dmSerif.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-[#0B0A09] text-[#FFFFFF] antialiased selection:bg-[#F59E0B] selection:text-[#0B0A09] font-sans relative">
         <div className="ambient-glow-top" />
-        <div className="tech-grid-overlay" />
         <div className="noise-overlay" />
         <BasklyProvider>
           {children}

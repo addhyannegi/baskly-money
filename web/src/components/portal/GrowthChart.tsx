@@ -162,8 +162,8 @@ export default function GrowthChart({
   }, [chartData, activeFund]);
 
   return (
-    <div className={`border rounded-[28px] p-6 shadow-xs flex flex-col justify-between h-full transition-colors ${
-      isDark ? "bg-[#13171B] border-[#1E2429]" : "bg-white border-[#DEE5E0]"
+    <div className={`border rounded-[24px] sm:rounded-[28px] p-4.5 sm:p-6 shadow-xs flex flex-col justify-between h-full transition-colors ${
+      isDark ? "bg-[#161412] border-white/10" : "bg-white border-[#DEE5E0]"
     }`}>
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3">
@@ -243,7 +243,7 @@ export default function GrowthChart({
       </div>
 
       {/* Fund comparison filter tabs */}
-      <div className="flex items-center gap-2 pt-1 pb-3 text-[11px] overflow-x-auto">
+      <div className="flex items-center gap-2 pt-1 pb-3 text-[11px] overflow-x-auto no-scrollbar">
         <span className={`${isDark ? "text-slate-400" : "text-slate-400"} font-medium shrink-0`}>Benchmark:</span>
         {[
           { id: "all", label: "All Funds Blended" },
