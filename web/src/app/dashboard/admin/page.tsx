@@ -213,6 +213,10 @@ export default function AdminDashboardPage() {
   // Local state for user accounts directory
   const [usersList, setUsersList] = useState<AdminUserRecord[]>(INITIAL_ADMIN_USERS);
 
+  const pendingKycCount = useMemo(() => {
+    return usersList.filter((u) => u.kycStatus === "PENDING").length;
+  }, [usersList]);
+
   // Local state for system settings
   const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
   const [minSipThreshold, setMinSipThreshold] = useState<number>(1000);
@@ -508,7 +512,7 @@ export default function AdminDashboardPage() {
 
               {[
                 { id: "overview", label: "Operations Overview", icon: BarChart3 },
-                { id: "users", label: "User & KYC Governance", icon: Users, badge: `${usersList.filter(u => u.kycStatus === 'PENDING').length} Pending` },
+                { id: "users", label: "User & KYC Governance", icon: Users, badge: pendingKycCount > 0 ? `${pendingKycCount}!` : undefined },
                 { id: "transactions", label: "Financial & TDS Ledger", icon: FileText },
                 { id: "mandates", label: "NPCI AutoPay Mandates", icon: CreditCard },
                 { id: "system", label: "System & Security Controls", icon: Settings },
@@ -529,12 +533,12 @@ export default function AdminDashboardPage() {
                         : isDark ? "text-[#A39E93] hover:bg-white/5 hover:text-white" : "text-[#5C5752] hover:bg-[#FAF8F5] hover:text-[#121110]"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <Icon className="w-4 h-4 shrink-0" />
                       <span>{tab.label}</span>
                     </div>
                     {tab.badge && (
-                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold">
+                      <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold shrink-0 whitespace-nowrap">
                         {tab.badge}
                       </span>
                     )}
@@ -632,7 +636,7 @@ export default function AdminDashboardPage() {
 
                 {[
                   { id: "overview", label: "Operations Overview", icon: BarChart3 },
-                  { id: "users", label: "User & KYC Governance", icon: Users, badge: `${usersList.filter(u => u.kycStatus === 'PENDING').length} Pending` },
+                  { id: "users", label: "User & KYC Governance", icon: Users, badge: pendingKycCount > 0 ? `${pendingKycCount}!` : undefined },
                   { id: "transactions", label: "Financial & TDS Ledger", icon: FileText },
                   { id: "mandates", label: "NPCI AutoPay Mandates", icon: CreditCard },
                   { id: "system", label: "System & Security Controls", icon: Settings },
@@ -654,12 +658,12 @@ export default function AdminDashboardPage() {
                             : "text-[#5C5752] hover:bg-[#FAF8F5] hover:text-[#121110]"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <Icon className="w-4 h-4 shrink-0" />
                         <span>{item.label}</span>
                       </div>
                       {item.badge && (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold">
+                        <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold shrink-0 whitespace-nowrap">
                           {item.badge}
                         </span>
                       )}
@@ -973,7 +977,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 text-xs">
               {[
                 { id: "overview", label: "Operations Overview" },
-                { id: "users", label: `User & KYC Governance (${usersList.filter(u => u.kycStatus === 'PENDING').length} Pending)` },
+                { id: "users", label: pendingKycCount > 0 ? `User & KYC (${pendingKycCount}!)` : "User & KYC Governance" },
                 { id: "transactions", label: "Financial & TDS Ledger" },
                 { id: "mandates", label: "NPCI AutoPay Mandates" },
                 { id: "system", label: "System & Security Controls" },

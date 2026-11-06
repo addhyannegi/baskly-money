@@ -489,7 +489,7 @@ export default function FundManagerOperationsTerminal() {
 
               {[
                 { id: "overview", label: "AUM & Fund Overview", icon: BarChart3 },
-                { id: "drift", label: "Drift & Rebalancing", icon: TrendingUp, badge: driftedFundsCount > 0 ? `${driftedFundsCount} Drifted` : undefined },
+                { id: "drift", label: "Drift & Rebalancing", icon: TrendingUp, badge: driftedFundsCount > 0 ? `${driftedFundsCount}!` : undefined },
                 { id: "circuit", label: "Emergency Circuit Breaker", icon: ShieldAlert },
                 { id: "compliance", label: "Regulatory & TDS Vault", icon: ReceiptIcon },
                 { id: "methodology", label: "Index Methodology", icon: Layers }
@@ -510,12 +510,12 @@ export default function FundManagerOperationsTerminal() {
                         : isDark ? "text-[#A39E93] hover:bg-white/5 hover:text-white" : "text-[#5C5752] hover:bg-[#FAF8F5] hover:text-[#121110]"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <Icon className="w-4 h-4 shrink-0" />
                       <span>{tab.label}</span>
                     </div>
                     {tab.badge && (
-                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold">
+                      <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold shrink-0 whitespace-nowrap">
                         {tab.badge}
                       </span>
                     )}
@@ -627,7 +627,7 @@ export default function FundManagerOperationsTerminal() {
 
                 {[
                   { id: "overview", label: "AUM & Overview", icon: BarChart3 },
-                  { id: "drift", label: "Drift & Rebalancing", icon: TrendingUp, badge: driftedFundsCount > 0 ? `${driftedFundsCount} Drifted` : undefined },
+                  { id: "drift", label: "Drift & Rebalancing", icon: TrendingUp, badge: driftedFundsCount > 0 ? `${driftedFundsCount}!` : undefined },
                   { id: "circuit", label: "Emergency Circuit Breaker", icon: ShieldAlert },
                   { id: "compliance", label: "Statutory TDS Vault", icon: ReceiptIcon },
                   { id: "methodology", label: "Index Methodology", icon: Layers }
@@ -649,12 +649,12 @@ export default function FundManagerOperationsTerminal() {
                             : "text-[#5C5752] hover:bg-[#FAF8F5] hover:text-[#121110]"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <Icon className="w-4 h-4 shrink-0" />
                         <span>{item.label}</span>
                       </div>
                       {item.badge && (
-                        <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold">
+                        <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-mono font-bold shrink-0 whitespace-nowrap">
                           {item.badge}
                         </span>
                       )}
@@ -976,7 +976,7 @@ export default function FundManagerOperationsTerminal() {
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 text-xs">
               {[
                 { id: "overview", label: "AUM & Overview" },
-                { id: "drift", label: `Drift & Rebalancing (${driftedFundsCount} Alert)` },
+                { id: "drift", label: driftedFundsCount > 0 ? `Drift & Rebalance (${driftedFundsCount}!)` : "Drift & Rebalancing" },
                 { id: "circuit", label: "Emergency Circuit Breaker" },
                 { id: "compliance", label: "Statutory TDS Vault" },
                 { id: "methodology", label: "Index Methodology" }
