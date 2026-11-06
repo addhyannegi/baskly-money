@@ -972,34 +972,6 @@ export default function FundManagerOperationsTerminal() {
               </div>
             </div>
 
-            {/* Quick Horizontal Tab Switcher on Desktop & Mobile */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 text-xs">
-              {[
-                { id: "overview", label: "AUM & Overview" },
-                { id: "drift", label: driftedFundsCount > 0 ? `Drift & Rebalance (${driftedFundsCount}!)` : "Drift & Rebalancing" },
-                { id: "circuit", label: "Emergency Circuit Breaker" },
-                { id: "compliance", label: "Statutory TDS Vault" },
-                { id: "methodology", label: "Index Methodology" }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveNav(tab.id as NavTab)}
-                  className={`px-4 py-2 rounded-full font-bold transition shrink-0 cursor-pointer flex items-center gap-2 ${
-                    activeNav === tab.id
-                      ? isDark
-                        ? "bg-[#F59E0B] text-[#0B0A09] shadow-xs"
-                        : "bg-[#121110] text-white shadow-xs"
-                      : isDark
-                        ? "bg-[#161412] text-[#A39E93] hover:text-white border border-white/10"
-                        : "bg-white text-[#5C5752] hover:text-[#121110] border border-[#E7E1D8]"
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </div>
-
             {/* ========================================================================= */}
             {/* TAB VIEW 1: INSTITUTIONAL AUM & INFLOW OVERVIEW                           */}
             {/* ========================================================================= */}

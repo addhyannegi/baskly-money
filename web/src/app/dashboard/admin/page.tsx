@@ -973,34 +973,6 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Quick Horizontal Tab Switcher on Desktop & Mobile */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 text-xs">
-              {[
-                { id: "overview", label: "Operations Overview" },
-                { id: "users", label: pendingKycCount > 0 ? `User & KYC (${pendingKycCount}!)` : "User & KYC Governance" },
-                { id: "transactions", label: "Financial & TDS Ledger" },
-                { id: "mandates", label: "NPCI AutoPay Mandates" },
-                { id: "system", label: "System & Security Controls" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveNav(tab.id as AdminTab)}
-                  className={`px-4 py-2 rounded-full font-bold transition shrink-0 cursor-pointer flex items-center gap-2 ${
-                    activeNav === tab.id
-                      ? isDark
-                        ? "bg-[#F59E0B] text-[#0B0A09] shadow-xs"
-                        : "bg-[#121110] text-white shadow-xs"
-                      : isDark
-                        ? "bg-[#161412] text-[#A39E93] hover:text-white border border-white/10"
-                        : "bg-white text-[#5C5752] hover:text-[#121110] border border-[#E7E1D8]"
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                </button>
-              ))}
-            </div>
-
             {/* ========================================================================= */}
             {/* TAB VIEW 1: OPERATIONS OVERVIEW                                          */}
             {/* ========================================================================= */}
