@@ -716,23 +716,23 @@ export default function AdminDashboardPage() {
             {/* Bottom Card: Maintenance & Global Switch */}
             <div className={`mt-6 rounded-[22px] p-4 text-white relative overflow-hidden transition-all border ${
               maintenanceMode
-                ? "bg-amber-950/40 border-amber-500/40"
+                ? "bg-[#1C130B] border-amber-500/50 shadow-md text-white"
                 : isDark
-                ? "bg-[#1E1B17] border-[#F59E0B]/25"
-                : "bg-[#121110] border-[#121110]"
+                ? "bg-[#1E1B17] border-[#F59E0B]/25 text-white"
+                : "bg-[#121110] border-[#121110] text-white"
             }`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[#F59E0B] text-[10px] font-mono font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-1.5 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider">
                   <Key className="w-3.5 h-3.5" />
                   <span>SYSTEM OVERRIDE</span>
                 </div>
-                <span className={`w-2 h-2 rounded-full ${maintenanceMode ? "bg-amber-500 animate-ping" : "bg-emerald-500"}`} />
+                <span className={`w-2 h-2 rounded-full ${maintenanceMode ? "bg-amber-400 animate-pulse" : "bg-emerald-500"}`} />
               </div>
 
               <h4 className="text-xs font-bold text-white tracking-wide mt-1.5">
                 {maintenanceMode ? "Maintenance Mode Active" : "Operational Mode Active"}
               </h4>
-              <p className="text-[11px] text-[#A39E93] mt-1 leading-snug">
+              <p className="text-[11px] text-[#D8D2C9] mt-1 leading-snug">
                 {maintenanceMode
                   ? "Retail investor portal in read-only maintenance window."
                   : "All customer endpoints and payment rails accepting requests."}
@@ -811,7 +811,7 @@ export default function AdminDashboardPage() {
                 {/* Global Status Pill */}
                 <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-full border text-xs font-mono font-bold ${
                   maintenanceMode
-                    ? "bg-amber-500/15 border-amber-500/40 text-amber-400"
+                    ? isDark ? "bg-amber-500/15 border-amber-500/40 text-amber-400" : "bg-amber-100 border-amber-300 text-amber-800"
                     : isDark
                     ? "bg-[#161412] border-white/10 text-emerald-400"
                     : "bg-white border-[#E7E1D8] text-emerald-700"
@@ -1095,14 +1095,14 @@ export default function AdminDashboardPage() {
                   {/* Card 4: Platform Health */}
                   <div className={`rounded-[24px] sm:rounded-[26px] p-5 sm:p-6 shadow-xs border flex flex-col justify-between min-h-[160px] group transition-all ${
                     maintenanceMode
-                      ? "bg-amber-500/10 border-amber-500/40"
+                      ? isDark ? "bg-amber-500/10 border-amber-500/40" : "bg-amber-50 border-amber-300"
                       : isDark ? "bg-[#161412] border-white/10" : "bg-white border-[#E7E1D8]"
                   }`}>
                     <div className="flex items-center justify-between text-xs text-[#736E65] dark:text-[#A39E93]">
                       <span className="font-medium">Infrastructure State</span>
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
                         maintenanceMode
-                          ? "bg-amber-500/20 text-amber-500"
+                          ? isDark ? "bg-amber-500/20 text-amber-400" : "bg-amber-100 text-amber-700"
                           : isDark ? "bg-white/5 text-emerald-400" : "bg-[#FAF8F5] text-emerald-600"
                       }`}>
                         <Activity className="w-3.5 h-3.5" />
@@ -1115,7 +1115,9 @@ export default function AdminDashboardPage() {
                           maintenanceMode ? "bg-amber-500" : "bg-emerald-500 animate-pulse"
                         }`} />
                         <span className={`text-base sm:text-lg xl:text-xl font-extrabold font-sans tracking-tight ${
-                          maintenanceMode ? "text-amber-500" : "text-emerald-500"
+                          maintenanceMode 
+                            ? isDark ? "text-amber-400" : "text-amber-800"
+                            : "text-emerald-500"
                         }`}>
                           {maintenanceMode ? "MAINTENANCE" : "ALL SYSTEMS LIVE"}
                         </span>
@@ -1124,7 +1126,13 @@ export default function AdminDashboardPage() {
 
                     <div className="flex items-center justify-between text-xs pt-2 font-mono">
                       <span className="text-[#A39E93]">API & DB Uptime</span>
-                      <span className="font-bold text-emerald-500">99.98%</span>
+                      <span className={`font-bold ${
+                        maintenanceMode
+                          ? isDark ? "text-amber-400" : "text-amber-800"
+                          : "text-emerald-500"
+                      }`}>
+                        {maintenanceMode ? "READ-ONLY" : "99.98%"}
+                      </span>
                     </div>
                   </div>
 

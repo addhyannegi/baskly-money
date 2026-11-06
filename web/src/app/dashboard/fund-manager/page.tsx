@@ -733,22 +733,22 @@ export default function FundManagerOperationsTerminal() {
             {/* Bottom Card: Emergency Circuit Breaker Switch */}
             <div className={`mt-6 rounded-[22px] p-4 relative overflow-hidden transition-all border ${
               isCircuitBreaker
-                ? "bg-rose-950/40 border-rose-500/40 text-white"
+                ? "bg-[#1F0C0E] border-rose-500/50 shadow-md text-white"
                 : isDark
                 ? "bg-[#1E1B17] border-[#F59E0B]/25 text-white"
                 : "bg-[#121110] border-[#121110] text-white"
             }`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[#F59E0B] text-[10px] font-mono font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-1.5 text-rose-400 text-[10px] font-mono font-bold uppercase tracking-wider">
                   <ShieldAlert className="w-3.5 h-3.5" />
                   <span>EMERGENCY CONTROLS</span>
                 </div>
-                <span className={`w-2 h-2 rounded-full ${isCircuitBreaker ? "bg-rose-500 animate-ping" : "bg-emerald-500"}`} />
+                <span className={`w-2 h-2 rounded-full ${isCircuitBreaker ? "bg-rose-400 animate-pulse" : "bg-emerald-500"}`} />
               </div>
               <h4 className="text-xs font-bold text-white tracking-wide mt-1.5">
                 {isCircuitBreaker ? "Market Execution Halted" : "Circuit Breaker Armed"}
               </h4>
-              <p className="text-[11px] text-[#A39E93] mt-1 leading-snug">
+              <p className="text-[11px] text-[#DDD0D0] mt-1 leading-snug">
                 {isCircuitBreaker
                   ? "Trading and withdrawals locked across all indices."
                   : "Instant multi-sig fail-safe during severe volatility."}
@@ -1092,14 +1092,14 @@ export default function FundManagerOperationsTerminal() {
                   {/* Card 4: Emergency Circuit Breaker */}
                   <div className={`rounded-[24px] sm:rounded-[26px] p-5 sm:p-6 shadow-xs border flex flex-col justify-between min-h-[160px] group transition-all ${
                     isCircuitBreaker
-                      ? "bg-rose-500/10 border-rose-500/40"
+                      ? isDark ? "bg-rose-500/10 border-rose-500/40" : "bg-rose-50 border-rose-300"
                       : isDark ? "bg-[#161412] border-white/10" : "bg-white border-[#E7E1D8]"
                   }`}>
                     <div className="flex items-center justify-between text-xs text-[#736E65] dark:text-[#A39E93]">
                       <span className="font-medium">Market Execution Status</span>
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
                         isCircuitBreaker
-                          ? "bg-rose-500/20 text-rose-500"
+                          ? isDark ? "bg-rose-500/20 text-rose-400" : "bg-rose-100 text-rose-700"
                           : isDark ? "bg-white/5 text-emerald-400" : "bg-[#FAF8F5] text-emerald-600"
                       }`}>
                         <ShieldAlert className="w-3.5 h-3.5" />
@@ -1112,7 +1112,9 @@ export default function FundManagerOperationsTerminal() {
                           isCircuitBreaker ? "bg-rose-500" : "bg-emerald-500 animate-pulse"
                         }`} />
                         <span className={`text-base sm:text-lg xl:text-xl font-extrabold font-sans tracking-tight ${
-                          isCircuitBreaker ? "text-rose-500" : "text-emerald-500"
+                          isCircuitBreaker 
+                            ? isDark ? "text-rose-400" : "text-rose-700"
+                            : "text-emerald-500"
                         }`}>
                           {isCircuitBreaker ? "HALTED" : "LIVE & HEALTHY"}
                         </span>
