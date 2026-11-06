@@ -120,18 +120,10 @@ export default function PortalPage() {
   const [statusFilter] = useState<string>("ALL");
   const [isDownloadingReport, setIsDownloadingReport] = useState(false);
 
-  // Compute initials for the executive monogram badge
-  const userInitials = useMemo(() => {
-    if (!user?.name) return "RY";
-    const parts = user.name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    if (parts.length === 1 && parts[0].length >= 2) {
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-    return parts[0]?.toUpperCase() || "RY";
-  }, [user?.name]);
+  // Calendar date in Indian Standard Time (Asia/Kolkata)
+  const decisionDateIST = useMemo(() => {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+  }, []);
 
   // Track broken image fallback state
   const [avatarError, setAvatarError] = useState(false);
@@ -416,12 +408,18 @@ export default function PortalPage() {
               type="button"
               onClick={openOracleModal}
               className={`hidden xs:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-mono transition cursor-pointer ${
-                isDark ? "bg-white/5 border-white/10 text-emerald-400" : "bg-[#FAF8F5] border-[#E7E1D8] text-emerald-700"
+                isDark
+                  ? isFrozen
+                    ? "bg-white/5 border-white/10 text-amber-400"
+                    : "bg-white/5 border-white/10 text-emerald-400"
+                  : isFrozen
+                    ? "bg-[#FAF8F5] border-[#E7E1D8] text-amber-700"
+                    : "bg-[#FAF8F5] border-[#E7E1D8] text-emerald-700"
               }`}
-              title="Pricing Oracle"
+              title={isFrozen ? "Pricing Oracle (NAV Frozen)" : "Pricing Oracle (Live Ticks)"}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>₹{usdtRate}</span>
+              <span className={`w-1.5 h-1.5 rounded-full ${isFrozen ? "bg-amber-500" : "bg-emerald-500 animate-pulse"}`} />
+              <span>₹{usdtRate}{isFrozen ? " (Frozen)" : ""}</span>
             </button>
 
             {/* Theme Toggle */}
@@ -574,7 +572,7 @@ export default function PortalPage() {
             </div>
 
             {/* Curated Baskets Quick Selector */}
-            <div className="space-y-1.5 pt-2 border-t border-white/5">
+            <div className={`space-y-1.5 pt-2 border-t ${isDark ? "border-white/5" : "border-[#E7E1D8]"}`}>
               <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-[#A39E93] px-3 mb-1 font-medium">
                 CURATED BASKETS
               </div>
@@ -616,9 +614,9 @@ export default function PortalPage() {
             >
               <div className="flex items-center justify-between text-[10px] font-mono">
                 <span className="uppercase tracking-widest text-[#A39E93]">PRICING ORACLE</span>
-                <span className="text-emerald-500 font-bold inline-flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Live Ticks
+                <span className={`font-bold inline-flex items-center gap-1.5 ${isFrozen ? "text-amber-500" : "text-emerald-500"}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isFrozen ? "bg-amber-500" : "bg-emerald-500 animate-pulse"}`} />
+                  {isFrozen ? "NAV Frozen" : "Live Ticks"}
                 </span>
               </div>
               <p className="text-[11px] text-[#A39E93] mt-1">
@@ -664,7 +662,7 @@ export default function PortalPage() {
 
             {/* Mobile User Profile & Logout */}
             {user && (
-              <div className="pt-2 flex items-center justify-between border-t border-white/5">
+              <div className={`pt-2 flex items-center justify-between border-t ${isDark ? "border-white/5" : "border-[#E7E1D8]"}`}>
                 <button
                   type="button"
                   onClick={() => {
@@ -683,16 +681,20 @@ export default function PortalPage() {
                       />
                     ) : (
                       <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10 text-white border border-white/10"
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
+                          isDark
+                            ? "bg-white/10 text-white border-white/10"
+                            : "bg-[#FAF8F5] text-[#121110] border-[#E7E1D8]"
+                        }`}
                       >
                         <UserIcon className="w-4 h-4" />
                       </div>
                     )}
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border-2 border-[#161412]" />
+                    <span className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border-2 ${isDark ? "border-[#161412]" : "border-white"}`} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold leading-tight text-white group-hover:text-[#F59E0B] transition-colors">{user.name}</div>
-                    <div className="flex items-center gap-1 mt-0.5 text-[10px] text-emerald-400 font-medium">
+                    <div className={`text-xs font-bold leading-tight transition-colors ${isDark ? "text-white group-hover:text-[#F59E0B]" : "text-[#121110] group-hover:text-[#B45309]"}`}>{user.name}</div>
+                    <div className={`flex items-center gap-1 mt-0.5 text-[10px] font-medium ${isDark ? "text-emerald-400" : "text-emerald-600"}`}>
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                       <span>KYC Verified</span>
                       {user.pan && <span className="text-[#A39E93] font-mono text-[9px]">· {user.pan}</span>}
@@ -702,7 +704,7 @@ export default function PortalPage() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center gap-1.5 cursor-pointer py-1.5 px-2.5 rounded-full hover:bg-rose-500/10 transition"
+                  className="text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 dark:hover:text-rose-300 flex items-center gap-1.5 cursor-pointer py-1.5 px-2.5 rounded-full hover:bg-rose-500/10 transition"
                   title="Sign Out"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -964,13 +966,17 @@ export default function PortalPage() {
                   onClick={openOracleModal}
                   className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full border text-xs font-mono transition-all cursor-pointer ${
                     isDark
-                      ? "bg-[#161412] border-white/10 text-emerald-400 hover:bg-white/5"
-                      : "bg-white border-[#E7E1D8] text-emerald-700 hover:bg-[#FAF8F5]"
+                      ? isFrozen
+                        ? "bg-[#161412] border-white/10 text-amber-400 hover:bg-white/5"
+                        : "bg-[#161412] border-white/10 text-emerald-400 hover:bg-white/5"
+                      : isFrozen
+                        ? "bg-white border-[#E7E1D8] text-amber-700 hover:bg-[#FAF8F5]"
+                        : "bg-white border-[#E7E1D8] text-emerald-700 hover:bg-[#FAF8F5]"
                   }`}
-                  title="Inspect Pricing Oracle"
+                  title={isFrozen ? "Inspect Pricing Oracle (NAV Frozen)" : "Inspect Pricing Oracle (Live)"}
                 >
-                  <Activity className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>USDT ₹{usdtRate}</span>
+                  <Activity className={`w-3.5 h-3.5 ${isFrozen ? "text-amber-500" : "text-emerald-500"}`} />
+                  <span>USDT ₹{usdtRate}{isFrozen ? " (Frozen)" : ""}</span>
                 </button>
 
                 {/* Theme Toggle Button Pill */}
@@ -1301,7 +1307,7 @@ export default function PortalPage() {
 
               {/* Decision Date / Timestamp */}
               <div className="text-[11px] text-[#A39E93] font-mono">
-                Decision Date: <strong>{new Date().toISOString().split("T")[0]} @ 11:00 IST</strong>
+                Decision Date: <strong>{decisionDateIST} @ 11:00 IST</strong>
               </div>
             </div>
 
@@ -1339,8 +1345,12 @@ export default function PortalPage() {
 
                     <div className="flex items-center justify-between text-xs pt-2 text-white/80 font-mono">
                       <span className="truncate">Invested: ₹{totalInvested.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 shrink-0 ml-1">
-                        +{totalReturnPct.toFixed(1)}%
+                      <span className={`px-2 py-0.5 rounded-full font-bold border shrink-0 ml-1 ${
+                        totalReturnPct >= 0
+                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                          : "bg-rose-500/20 text-rose-400 border-rose-500/30"
+                      }`}>
+                        {totalReturnPct >= 0 ? `+${totalReturnPct.toFixed(1)}%` : `${totalReturnPct.toFixed(1)}%`}
                       </span>
                     </div>
                   </div>
@@ -1366,8 +1376,12 @@ export default function PortalPage() {
 
                     <div className="flex items-center justify-between text-xs pt-2 font-mono">
                       <span className="text-[#A39E93] truncate">{activeMandates.length} Active Mandates</span>
-                      <span className={`font-semibold shrink-0 ml-1 ${totalProfit >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
-                        +{totalProfit >= 0 ? "₹" : ""}{totalProfit.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                      <span className={`font-semibold shrink-0 ml-1 ${
+                        totalProfit >= 0
+                          ? isDark ? "text-emerald-400" : "text-emerald-600"
+                          : isDark ? "text-rose-400" : "text-rose-600"
+                      }`}>
+                        {totalProfit >= 0 ? `+₹${totalProfit.toLocaleString("en-IN", { maximumFractionDigits: 0 })}` : `-₹${Math.abs(totalProfit).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`}
                       </span>
                     </div>
                   </div>
@@ -1386,8 +1400,10 @@ export default function PortalPage() {
                     </div>
 
                     <div className="my-2">
-                      <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight text-emerald-500 truncate">
-                        +{totalReturnPct.toFixed(1)}%
+                      <div className={`text-2xl sm:text-3xl font-extrabold font-mono tracking-tight truncate ${
+                        totalReturnPct >= 0 ? "text-emerald-500" : "text-rose-500"
+                      }`}>
+                        {totalReturnPct >= 0 ? `+${totalReturnPct.toFixed(1)}%` : `${totalReturnPct.toFixed(1)}%`}
                       </div>
                     </div>
 
@@ -1732,8 +1748,12 @@ export default function PortalPage() {
                               ₹{h.currentVal.toLocaleString("en-IN")}
                             </td>
                             <td className="py-3 px-3 text-right">
-                              <span className="font-bold inline-block px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                +{h.retPct.toFixed(1)}% (+₹{h.profit.toLocaleString("en-IN")})
+                              <span className={`font-bold inline-block px-2 py-0.5 rounded-full border ${
+                                h.retPct >= 0
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                  : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                              }`}>
+                                {h.retPct >= 0 ? `+${h.retPct.toFixed(1)}%` : `${h.retPct.toFixed(1)}%`} ({h.profit >= 0 ? `+₹${h.profit.toLocaleString("en-IN")}` : `-₹${Math.abs(h.profit).toLocaleString("en-IN")}`})
                               </span>
                             </td>
                           </tr>
@@ -1778,11 +1798,15 @@ export default function PortalPage() {
                     isDark ? "bg-[#161412] border-white/10" : "bg-white border-[#E7E1D8]"
                   }`}>
                     <span className="text-xs text-[#A39E93]">Unrealized Capital Gains</span>
-                    <div className="text-2xl sm:text-3xl font-bold font-mono my-1 text-emerald-500 truncate">
-                      +₹{totalProfit.toLocaleString("en-IN", { minimumFractionDigits: 0 })}
+                    <div className={`text-2xl sm:text-3xl font-bold font-mono my-1 truncate ${
+                      totalProfit >= 0 ? "text-emerald-500" : "text-rose-500"
+                    }`}>
+                      {totalProfit >= 0 ? `+₹${totalProfit.toLocaleString("en-IN", { minimumFractionDigits: 0 })}` : `-₹${Math.abs(totalProfit).toLocaleString("en-IN", { minimumFractionDigits: 0 })}`}
                     </div>
-                    <span className="text-xs font-semibold text-emerald-500">
-                      +{totalReturnPct.toFixed(1)}% Multi-Asset Compound
+                    <span className={`text-xs font-semibold ${
+                      totalReturnPct >= 0 ? "text-emerald-500" : "text-rose-500"
+                    }`}>
+                      {totalReturnPct >= 0 ? `+${totalReturnPct.toFixed(1)}%` : `${totalReturnPct.toFixed(1)}%`} Multi-Asset Compound
                     </span>
                   </div>
                 </div>
@@ -1852,8 +1876,12 @@ export default function PortalPage() {
                                 ₹{h.currentVal.toLocaleString("en-IN")}
                               </td>
                               <td className="py-3.5 px-3">
-                                <span className="font-bold inline-block px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                  +{h.retPct.toFixed(1)}% (+₹{h.profit.toLocaleString("en-IN")})
+                                <span className={`font-bold inline-block px-2 py-0.5 rounded-full border ${
+                                  h.retPct >= 0
+                                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                    : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                                }`}>
+                                  {h.retPct >= 0 ? `+${h.retPct.toFixed(1)}%` : `${h.retPct.toFixed(1)}%`} ({h.profit >= 0 ? `+₹${h.profit.toLocaleString("en-IN")}` : `-₹${Math.abs(h.profit).toLocaleString("en-IN")}`})
                                 </span>
                               </td>
                               <td className="py-3.5 px-3 text-right space-x-2 font-sans" onClick={(e) => e.stopPropagation()}>

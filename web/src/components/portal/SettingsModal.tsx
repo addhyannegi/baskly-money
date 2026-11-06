@@ -22,18 +22,6 @@ export default function SettingsModal({
   const [activeTab, setActiveTab] = useState<"profile" | "banking" | "tax" | "security">("profile");
   const [copied, setCopied] = useState(false);
 
-  const userInitials = React.useMemo(() => {
-    if (!user?.name) return "RY";
-    const parts = user.name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    if (parts.length === 1 && parts[0].length >= 2) {
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-    return parts[0]?.toUpperCase() || "RY";
-  }, [user?.name]);
-
   const [avatarError, setAvatarError] = useState(false);
 
   const hasCustomPhoto = Boolean(
