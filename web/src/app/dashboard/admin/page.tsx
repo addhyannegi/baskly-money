@@ -1025,7 +1025,8 @@ export default function AdminDashboardPage() {
 
                     <div className="my-2">
                       <div className="text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight text-white flex items-baseline gap-1.5">
-                        <span>3,842 Accounts</span>
+                        <span>3,842</span>
+                        <span className="text-xs font-sans font-normal text-white/70">Accounts</span>
                       </div>
                     </div>
 
@@ -1051,8 +1052,9 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="my-2">
-                      <div className="text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight text-emerald-500 whitespace-nowrap">
-                        ₹42.80 Lakhs
+                      <div className="text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight text-emerald-500 flex items-baseline gap-1.5">
+                        <span>₹42.80</span>
+                        <span className="text-xs font-sans font-normal text-emerald-400/80">Lakhs</span>
                       </div>
                     </div>
 
@@ -1076,10 +1078,11 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="my-2">
-                      <div className={`text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight ${
+                      <div className={`text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight flex items-baseline gap-1.5 ${
                         isDark ? "text-white" : "text-[#121110]"
                       }`}>
-                        1,290 Mandates
+                        <span>1,290</span>
+                        <span className="text-xs font-sans font-normal text-[#736E65] dark:text-[#A39E93]">Mandates</span>
                       </div>
                     </div>
 
@@ -1107,10 +1110,15 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="my-2">
-                      <div className={`text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight whitespace-nowrap ${
-                        maintenanceMode ? "text-amber-500" : "text-emerald-500"
-                      }`}>
-                        {maintenanceMode ? "MAINTENANCE" : "ALL SYSTEMS LIVE"}
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                          maintenanceMode ? "bg-amber-500" : "bg-emerald-500 animate-pulse"
+                        }`} />
+                        <span className={`text-base sm:text-lg xl:text-xl font-extrabold font-sans tracking-tight ${
+                          maintenanceMode ? "text-amber-500" : "text-emerald-500"
+                        }`}>
+                          {maintenanceMode ? "MAINTENANCE" : "ALL SYSTEMS LIVE"}
+                        </span>
                       </div>
                     </div>
 

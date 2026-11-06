@@ -1050,8 +1050,9 @@ export default function FundManagerOperationsTerminal() {
                     </div>
 
                     <div className="my-2">
-                      <div className="text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight text-emerald-500 whitespace-nowrap">
-                        +₹12.45 Lakhs
+                      <div className="text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight text-emerald-500 flex items-baseline gap-1.5">
+                        <span>+₹12.45</span>
+                        <span className="text-xs font-sans font-normal text-emerald-400/80">Lakhs</span>
                       </div>
                     </div>
 
@@ -1106,10 +1107,15 @@ export default function FundManagerOperationsTerminal() {
                     </div>
 
                     <div className="my-2">
-                      <div className={`text-xl sm:text-2xl xl:text-3xl font-extrabold font-mono tracking-tight whitespace-nowrap ${
-                        isCircuitBreaker ? "text-rose-500" : "text-emerald-500"
-                      }`}>
-                        {isCircuitBreaker ? "HALTED" : "LIVE & HEALTHY"}
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                          isCircuitBreaker ? "bg-rose-500" : "bg-emerald-500 animate-pulse"
+                        }`} />
+                        <span className={`text-base sm:text-lg xl:text-xl font-extrabold font-sans tracking-tight ${
+                          isCircuitBreaker ? "text-rose-500" : "text-emerald-500"
+                        }`}>
+                          {isCircuitBreaker ? "HALTED" : "LIVE & HEALTHY"}
+                        </span>
                       </div>
                     </div>
 
