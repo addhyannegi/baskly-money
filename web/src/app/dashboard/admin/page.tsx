@@ -31,6 +31,7 @@ import {
   Sliders,
   DollarSign,
   ArrowUpRight,
+  ArrowLeft,
   ArrowDownRight,
   Lock,
   Unlock,
@@ -50,30 +51,9 @@ import {
 } from "lucide-react";
 import { useBaskly } from "@/context/BasklyContext";
 import { User, Transaction, Mandate } from "@/types/baskly";
+import { formatKolkataTimestamp } from "@/utils/date";
 
-/**
- * Deterministic timestamp formatter for Baskly.money in IST.
- */
-function formatKolkataTimestamp(timestamp?: string | null): string {
-  if (!timestamp) return "—";
-  const date = new Date(timestamp);
-  if (isNaN(date.getTime())) return "—";
 
-  try {
-    return date.toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
-  } catch {
-    return "—";
-  }
-}
 
 type AdminTab = "overview" | "users" | "transactions" | "mandates" | "system";
 
@@ -182,6 +162,7 @@ export default function AdminDashboardPage() {
   const {
     user,
     manager,
+    toggleMaintenanceMode,
     baskets,
     portfolio,
     oracleState,
@@ -217,8 +198,8 @@ export default function AdminDashboardPage() {
     return usersList.filter((u) => u.kycStatus === "PENDING").length;
   }, [usersList]);
 
-  // Local state for system settings
-  const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
+  // System settings synced via central Baskly governance state
+  const maintenanceMode = Boolean(manager?.maintenanceModeActive);
   const [minSipThreshold, setMinSipThreshold] = useState<number>(1000);
   const [platformExpenseFee, setPlatformExpenseFee] = useState<number>(1.00);
 
@@ -275,15 +256,7 @@ export default function AdminDashboardPage() {
   const usdtRate = oracleState?.usdtInr || 100.16;
   const isCircuitBreaker = Boolean(oracleState?.isNavFrozen || manager?.circuitBreakerActive);
 
-  // Fast switch to Admin demo identity
-  const handleSwitchToDemoAdmin = () => {
-    login("Rajesh Sharma (Super Admin)", "admin@baskly.money", "ADMIN");
-    setFlashNotice({
-      message: "Authenticated as Super Administrator with full operational governance privileges.",
-      type: "success"
-    });
-    setTimeout(() => setFlashNotice(null), 4000);
-  };
+
 
   // User management actions
   const handleApproveKyc = (userId: string) => {
@@ -440,6 +413,43 @@ export default function AdminDashboardPage() {
     );
   }
 
+  const isAdmin = user?.role === "ADMIN";
+
+  if (!isAdmin) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center p-4 font-sans ${isDark ? "bg-[#0B0A09] text-white" : "bg-[#F4EFEA] text-[#121110]"}`}>
+        <div className={`max-w-md w-full rounded-3xl p-6 sm:p-8 text-center space-y-5 border shadow-xl ${
+          isDark ? "bg-[#141210] border-white/10" : "bg-white border-[#E7E1D8]"
+        }`}>
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
+            <ShieldAlert className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h1 className="text-xl font-bold">Access Restricted</h1>
+            <p className="text-xs text-[#A39E93]">
+              System Administrator authorization is required to access the central operations control terminal.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-white/10 text-xs font-semibold hover:bg-white/5 transition"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return Home</span>
+            </Link>
+            <Link
+              href="/signin"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full bg-[#F59E0B] text-[#0B0A09] font-bold text-xs hover:bg-[#F0A828] transition shadow-xs"
+            >
+              <span>Sign In</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen w-full overflow-x-hidden font-sans antialiased selection:bg-[#F59E0B] selection:text-[#0B0A09] transition-colors duration-200 ${
       isDark ? "bg-[#0B0A09] text-white" : "bg-[#F4EFEA] text-[#121110]"
@@ -563,13 +573,7 @@ export default function AdminDashboardPage() {
                 <span>Switch to CIO Operations Desk</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
-              <button
-                type="button"
-                onClick={handleSwitchToDemoAdmin}
-                className="text-xs font-semibold text-white/80 hover:text-white text-left pt-1"
-              >
-                Simulate Super Admin Session
-              </button>
+
             </div>
           </div>
         )}
@@ -741,8 +745,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => {
-                  const next = !maintenanceMode;
-                  setMaintenanceMode(next);
+                  const next = toggleMaintenanceMode();
                   setFlashNotice({
                     message: next
                       ? "WARNING: Maintenance mode activated. Retail investor portal locked."
@@ -934,16 +937,7 @@ export default function AdminDashboardPage() {
                           </span>
                         </Link>
 
-                        <button
-                          type="button"
-                          onClick={handleSwitchToDemoAdmin}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition text-left cursor-pointer ${
-                            isDark ? "hover:bg-white/5 text-emerald-400" : "hover:bg-[#FAF8F5] text-emerald-600"
-                          }`}
-                        >
-                          <span className="font-semibold">Reload Super Admin Session</span>
-                          <RotateCw className="w-3.5 h-3.5" />
-                        </button>
+                        
                       </div>
 
                       <div className={`pt-1 border-t ${isDark ? "border-white/5" : "border-[#E7E1D8]/60"}`}>

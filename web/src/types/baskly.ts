@@ -113,6 +113,7 @@ export interface ManagerSummary {
   totalAUM_INR: number;
   verifiedInvestors: number;
   circuitBreakerActive: boolean;
+  maintenanceModeActive: boolean;
   rebalanceLogs: RebalanceLog[];
 }
 

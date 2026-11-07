@@ -16,7 +16,8 @@ import {
   CalendarClock, 
   Receipt, 
   Download, 
-  ShieldCheck, 
+  ShieldCheck,
+  ShieldAlert, 
   Clock, 
   Sparkles, 
   ChevronRight, 
@@ -57,7 +58,8 @@ export default function PortalPage() {
     refreshPortfolio,
     logout,
     oracleState,
-    openOracleModal
+    openOracleModal,
+    manager
   } = useBaskly();
 
   // Active Menu Navigation tab
@@ -928,6 +930,14 @@ export default function PortalPage() {
           {/* Aligned directly on same level as the sidebar             */}
           {/* ========================================================= */}
           <main className="w-full flex-1 min-w-0 space-y-5 sm:space-y-6">
+            {manager?.maintenanceModeActive && (
+              <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-mono flex items-center gap-3">
+                <ShieldAlert className="w-5 h-5 shrink-0 text-amber-500" />
+                <div>
+                  <strong>SYSTEM UNDER MAINTENANCE:</strong> Retail investor order placement, redemptions, and fresh SIP registrations are temporarily locked by platform operations. Existing portfolios remain secure in 1:1 cold custody.
+                </div>
+              </div>
+            )}
             
             {/* Top Control Bar on Desktop (Search Pill & Floating Status Pills) */}
             <div className="hidden lg:flex items-center justify-between gap-4">

@@ -43,6 +43,7 @@ interface BasklyContextType {
   toggleMandate: (mandateId: string) => void;
   refreshPortfolio: () => Promise<void>;
   toggleCircuitBreaker: () => boolean;
+  toggleMaintenanceMode: () => boolean;
   executeRebalance: (basketId: string, managerName?: string) => RebalanceLog;
   openBasketInspector: (id: string) => void;
   closeBasketInspector: () => void;
@@ -208,6 +209,7 @@ const INITIAL_MANAGER: ManagerSummary = {
   totalAUM_INR: 48620000.0,
   verifiedInvestors: 2418,
   circuitBreakerActive: false,
+  maintenanceModeActive: false,
   rebalanceLogs: [
     {
       id: "reb_init_01",
@@ -459,6 +461,9 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const withdrawBasket = (basketId: string, amountINR: number) => {
+    if (manager.maintenanceModeActive) {
+      throw new Error("Platform Under Maintenance: Redemptions and withdrawals are temporarily paused by administrators.");
+    }
     if (manager.circuitBreakerActive) {
       throw new Error("Circuit Breaker is Active. Redemptions are temporarily paused to protect liquidity.");
     }
@@ -547,6 +552,12 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     nextDebitDate?: string;
     paymentRail?: 'UPI_AUTOPAY' | 'ENACH';
   }) => {
+    if (manager.maintenanceModeActive) {
+      throw new Error("Platform Under Maintenance: SIP AutoPay registration is temporarily paused.");
+    }
+    if (manager.circuitBreakerActive) {
+      throw new Error("Circuit Breaker is Active: SIP AutoPay registration is temporarily paused.");
+    }
     const basket = baskets.find((b) => b.id === payload.basketId) || baskets[0];
 
     // Compute proper upcoming debit date from frequency & debitDay if not explicitly passed
@@ -691,7 +702,20 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     return nextVal;
   };
 
+  const toggleMaintenanceMode = (): boolean => {
+    const nextVal = !manager.maintenanceModeActive;
+    const updated = { ...manager, maintenanceModeActive: nextVal };
+    setManager(updated);
+    try {
+      localStorage.setItem("baskly_manager_state", JSON.stringify(updated));
+    } catch { }
+    return nextVal;
+  };
+
   const executeRebalance = (basketId: string, managerName = "CIO Algorithmic Engine"): RebalanceLog => {
+    if (manager.circuitBreakerActive || oracleState.isNavFrozen) {
+      throw new Error("Cannot execute rebalance while Emergency Volatility Circuit Breaker is active.");
+    }
     const basket = baskets.find((b) => b.id === basketId) || baskets[0];
     const log: RebalanceLog = {
       id: "reb_" + Date.now().toString(36),
@@ -740,6 +764,7 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
         toggleMandate,
         refreshPortfolio,
         toggleCircuitBreaker,
+        toggleMaintenanceMode,
         executeRebalance,
         openBasketInspector: (id) => setInspectedBasketId(id),
         closeBasketInspector: () => setInspectedBasketId(null),
