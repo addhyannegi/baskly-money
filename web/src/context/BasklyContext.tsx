@@ -267,15 +267,21 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
     } catch { }
   }, []);
 
-  // Start Real-Time Multi-Source Pricing Oracle Engine
+  // Start Real-Time Multi-Source Pricing Oracle Engine (with Smooth Throttled Batching)
   useEffect(() => {
     pricingOracle.start();
 
-    const unsubscribe = pricingOracle.subscribe((newOracleState, updatedSym) => {
+    let throttleTimer: NodeJS.Timeout | null = null;
+    let pendingState: { oracleState: ClientOracleState; updatedSym?: string } | null = null;
+
+    const flushUpdates = () => {
+      if (!pendingState) return;
+      const { oracleState: newOracleState, updatedSym } = pendingState;
+      pendingState = null;
+
       setOracleState({ ...newOracleState });
       setLastUpdatedSymbol(updatedSym || null);
 
-      // Recalculate dynamic NAV for all baskets
       setBaskets((prevBaskets) => {
         const nextBaskets = prevBaskets.map((basket) => {
           const { nav, change24h } = pricingOracle.calculateBasketNav(basket);
@@ -292,7 +298,6 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
           };
         });
 
-        // Sync portfolio holdings live NAV and valuations
         setPortfolio((prevPortfolio) => {
           const updatedHoldings = prevPortfolio.holdings.map((h) => {
             const basket = nextBaskets.find((b) => b.id === h.basketId);
@@ -318,9 +323,20 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
 
         return nextBaskets;
       });
+    };
+
+    const unsubscribe = pricingOracle.subscribe((newOracleState, updatedSym) => {
+      pendingState = { oracleState: newOracleState, updatedSym };
+      if (!throttleTimer) {
+        throttleTimer = setTimeout(() => {
+          throttleTimer = null;
+          flushUpdates();
+        }, 500);
+      }
     });
 
     return () => {
+      if (throttleTimer) clearTimeout(throttleTimer);
       unsubscribe();
       pricingOracle.stop();
     };
