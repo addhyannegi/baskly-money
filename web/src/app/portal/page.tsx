@@ -97,13 +97,29 @@ export default function PortalPage() {
   const [selectedBasketIdForModal, setSelectedBasketIdForModal] = useState<string | undefined>(undefined);
 
   const handleOpenBuyModal = (basketId?: string) => {
+    if (manager?.maintenanceModeActive) {
+      alert("Platform Under Maintenance: New investments are currently locked by administrators.");
+      return;
+    }
     setSelectedBasketIdForModal(basketId);
     setIsBuyModalOpen(true);
   };
 
   const handleOpenWithdrawModal = (basketId?: string) => {
+    if (manager?.maintenanceModeActive) {
+      alert("Platform Under Maintenance: Redemptions and withdrawals are currently locked by administrators.");
+      return;
+    }
     setSelectedBasketIdForModal(basketId);
     setIsWithdrawModalOpen(true);
+  };
+
+  const handleOpenSIPModal = () => {
+    if (manager?.maintenanceModeActive) {
+      alert("Platform Under Maintenance: SIP AutoPay registration is currently locked by administrators.");
+      return;
+    }
+    setIsSIPModalOpen(true);
   };
 
   const [isSIPModalOpen, setIsSIPModalOpen] = useState(false);
@@ -1255,7 +1271,7 @@ export default function PortalPage() {
                 {/* Primary Filled Pill Button */}
                 <button
                   type="button"
-                  onClick={() => setIsSIPModalOpen(true)}
+                  onClick={handleOpenSIPModal}
                   className="bg-[#121110] hover:bg-[#2A2826] dark:bg-[#F59E0B] dark:hover:bg-[#F0A828] text-white dark:text-[#0B0A09] px-4 sm:px-5 py-2.5 rounded-full text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:scale-[1.01]"
                 >
                   <Calendar className="w-3.5 h-3.5" />
@@ -1571,7 +1587,7 @@ export default function PortalPage() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => setIsSIPModalOpen(true)}
+                          onClick={handleOpenSIPModal}
                           className="text-xs font-bold text-[#F59E0B] hover:underline cursor-pointer"
                         >
                           + New Mandate
@@ -1995,7 +2011,7 @@ export default function PortalPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setIsSIPModalOpen(true)}
+                    onClick={handleOpenSIPModal}
                     className="px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition shrink-0 cursor-pointer shadow-sm bg-[#F59E0B] text-[#0B0A09] hover:bg-[#F0A828]"
                   >
                     + Setup New Mandate ↗

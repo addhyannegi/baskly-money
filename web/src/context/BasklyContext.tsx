@@ -396,6 +396,9 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const buyBasket = (basketId: string, amountINR: number): Transaction => {
+    if (manager.maintenanceModeActive) {
+      throw new Error("Platform Under Maintenance: New investments and order placement are temporarily locked by administrators.");
+    }
     if (manager.circuitBreakerActive) {
       throw new Error("Circuit Breaker is Active. Market purchases are temporarily halted for volatility protection.");
     }
@@ -524,6 +527,9 @@ export function BasklyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleMandate = (mandateId: string) => {
+    if (manager.maintenanceModeActive) {
+      throw new Error("Platform Under Maintenance: Mandate modifications are temporarily locked by administrators.");
+    }
     const updatedMandates = portfolio.mandates.map((m) => {
       if (m.id !== mandateId) return m;
       return {
